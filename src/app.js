@@ -7,7 +7,7 @@ const flash = require("connect-flash");
 
 const authRouter = require("./routes/auth.routes");
 const { isLoggedIn } = require("./middleware/auth");
-
+const pool = require("./config/db");
 const app = express();
 
 app.set("view engine", "ejs");
@@ -36,9 +36,28 @@ app.get("/dashboard", isLoggedIn, (req, res) => {
 });
 
 app.get("/test-session", (req, res) => {
-    res.send(req.session);
+  res.send(req.session);
 });
 
+app.get("/test-db", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT current_database()"
+    );
+
+    res.json({
+      success: true,
+      database: result.rows[0].current_database,
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
+});
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
