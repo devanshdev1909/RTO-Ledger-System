@@ -71,15 +71,14 @@ module.exports.login = async (req, res) => {
             );
         }
 
-        req.session.userId =
-            user.id;
+        req.session.userId = user.id;
 
-        req.session.roleId =
-            user.role_id;
+        req.session.userName = user.full_name;
 
-        req.session.userName =
-            user.full_name;
+        req.session.roleId = user.role_id;
 
+        req.session.roleName = user.role_name;
+ 
         res.redirect("/dashboard");
 
     } catch (err) {
