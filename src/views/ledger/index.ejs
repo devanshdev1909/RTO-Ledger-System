@@ -1,0 +1,39 @@
+<%- include('../partials/header') %>
+
+<h1>Ledger</h1>
+<a href="/ledger/add">+ Add Entry</a>
+
+<table border="1" cellpadding="8" cellspacing="0" style="width:100%; margin-top:16px;">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Service</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Mode</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% entries.forEach((e, i) => { %>
+        <tr>
+            <td><%= i + 1 %></td>
+            <td><%= new Date(e.created_at).toLocaleDateString('en-IN') %></td>
+            <td><%= e.customer_name %></td>
+            <td><%= e.service_type || '-' %></td>
+            <td style="color: <%= e.transaction_type === 'credit' ? '#2e7d32' : '#c62828' %>">
+                <%= e.transaction_type %>
+            </td>
+            <td>₹<%= e.amount %></td>
+            <td><%= e.payment_mode %></td>
+            <td>
+                <a href="/ledger/<%= e.id %>">View</a>
+            </td>
+        </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<%- include('../partials/footer') %>

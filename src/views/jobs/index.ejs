@@ -1,0 +1,38 @@
+<%- include('../partials/header') %>
+
+<h1>Jobs / Services</h1>
+<a href="/jobs/add">+ Add Job</a>
+
+<table border="1" cellpadding="8" cellspacing="0" style="width:100%; margin-top:16px;">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Service</th>
+            <th>Customer</th>
+            <th>Vehicle</th>
+            <th>Total</th>
+            <th>Paid</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% jobs.forEach((j, i) => { %>
+        <tr>
+            <td><%= i + 1 %></td>
+            <td><%= j.service_type %></td>
+            <td><%= j.customer_name %></td>
+            <td><%= j.vehicle_number %></td>
+            <td>₹<%= j.total_amount %></td>
+            <td>₹<%= j.paid_amount %></td>
+            <td><%= j.status %></td>
+            <td>
+                <a href="/jobs/<%= j.id %>">View</a> |
+                <a href="/jobs/<%= j.id %>/edit">Edit</a>
+            </td>
+        </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,39 @@
+<%- include('../partials/header') %>
+
+<h1>Edit Vehicle</h1>
+
+<form action="/vehicles/<%= vehicle.id %>" method="POST" style="max-width:500px; margin-top:16px;">
+
+    <label>Vehicle Number *</label><br>
+    <input type="text" name="vehicleNumber" value="<%= vehicle.vehicle_number %>" required style="width:100%; padding:8px; margin-bottom:12px;"><br>
+
+    <label>Vehicle Type</label><br>
+    <select name="vehicleType" style="width:100%; padding:8px; margin-bottom:12px;">
+        <option value="">Select Type</option>
+        <option value="two-wheeler" <%= vehicle.vehicle_type === 'two-wheeler' ? 'selected' : '' %>>Two Wheeler</option>
+        <option value="four-wheeler" <%= vehicle.vehicle_type === 'four-wheeler' ? 'selected' : '' %>>Four Wheeler</option>
+        <option value="commercial" <%= vehicle.vehicle_type === 'commercial' ? 'selected' : '' %>>Commercial</option>
+        <option value="other" <%= vehicle.vehicle_type === 'other' ? 'selected' : '' %>>Other</option>
+    </select><br>
+
+    <label>Make *</label><br>
+    <input type="text" name="make" value="<%= vehicle.make %>" required style="width:100%; padding:8px; margin-bottom:12px;"><br>
+
+    <label>Model *</label><br>
+    <input type="text" name="model" value="<%= vehicle.model %>" required style="width:100%; padding:8px; margin-bottom:12px;"><br>
+
+    <label>Year</label><br>
+    <input type="number" name="year" value="<%= vehicle.year || '' %>" style="width:100%; padding:8px; margin-bottom:12px;"><br>
+
+    <label>Chassis Number</label><br>
+    <input type="text" name="chassisNumber" value="<%= vehicle.chassis_number || '' %>" style="width:100%; padding:8px; margin-bottom:12px;"><br>
+
+    <label>Engine Number</label><br>
+    <input type="text" name="engineNumber" value="<%= vehicle.engine_number || '' %>" style="width:100%; padding:8px; margin-bottom:12px;"><br>
+
+    <button type="submit" style="padding:10px 24px; background:#1a237e; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+        Update Vehicle
+    </button>
+</form>
+
+<%- include('../partials/footer') %>
