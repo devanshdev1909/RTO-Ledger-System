@@ -1,17 +1,41 @@
 const express = require("express");
-const cors = require("cors");
+const router = express.Router();
 
-const app = express();
+const authController = require(
+    "../controllers/auth.controller"
+);
 
-app.use(cors());
-app.use(express.json());
+router.get(
+    "/signup",
+    authController.renderSignup
+);
 
-app.get("/", (req, res) => {
-  res.send("RTO Ledger Backend Running");
-});
+router.post(
+    "/signup",
+    authController.signup
+);
 
-const PORT = 5000;
+router.get(
+    "/login",
+    authController.renderLogin
+);
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+router.post(
+    "/login",
+    authController.login
+);
+
+router.get(
+    "/logout",
+    (req, res) => {
+
+        req.session.destroy(() => {
+
+            res.redirect("/login");
+
+        });
+
+    }
+);
+
+module.exports = router;

@@ -1,23 +1,43 @@
-const express = require("express");
-const cors = require("cors");
+require("dotenv").config();
 
-const customerRoutes = require("./routes/customer.routes");
+const express = require("express");
+const path = require("path");
+const session = require("express-session");
+const flash = require("connect-flash");
+
+const authRouter = require("./routes/auth.routes");
+const { isLoggedIn } = require("./middleware/auth");
 
 const app = express();
 
-app.use(cors());
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
+// Middleware
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("RTO Ledger Backend Running");
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "rtoledgersecret",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+app.use(flash());
+
+// Routes
+app.use("/", authRouter);
+
+// Dashboard
+app.get("/dashboard", isLoggedIn, (req, res) => {
+  res.render("dashboard", { userName: req.session.userName });
 });
 
-// const PORT = 5000;
-
-// const customerRoutes = require("./routes/customer.routes");
-// app.use("/api/customers", customerRoutes);
-
-app.use("/api/customers", customerRoutes);
+app.get("/test-session", (req, res) => {
+    res.send(req.session);
+});
 
 const PORT = process.env.PORT || 5000;
 
