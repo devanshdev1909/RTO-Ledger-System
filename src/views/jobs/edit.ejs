@@ -1,0 +1,44 @@
+<%- include('../partials/header') %>
+
+<h1>Edit Job</h1>
+
+<form action="/jobs/<%= job.id %>" method="POST" style="max-width:500px; margin-top:16px;">
+
+    <label>Service Type *</label><br>
+    <select name="serviceType" required style="width:100%; padding:8px; margin-bottom:12px;">
+        <option value="RC Transfer" <%= job.service_type === 'RC Transfer' ? 'selected' : '' %>>RC Transfer</option>
+        <option value="Insurance" <%= job.service_type === 'Insurance' ? 'selected' : '' %>>Insurance</option>
+        <option value="Fitness" <%= job.service_type === 'Fitness' ? 'selected' : '' %>>Fitness</option>
+        <option value="Permit" <%= job.service_type === 'Permit' ? 'selected' : '' %>>Permit</option>
+        <option value="Tax" <%= job.service_type === 'Tax' ? 'selected' : '' %>>Tax</option>
+        <option value="NOC" <%= job.service_type === 'NOC' ? 'selected' : '' %>>NOC</option>
+        <option value="HP Addition" <%= job.service_type === 'HP Addition' ? 'selected' : '' %>>HP Addition</option>
+        <option value="HP Removal" <%= job.service_type === 'HP Removal' ? 'selected' : '' %>>HP Removal</option>
+        <option value="Address Change" <%= job.service_type === 'Address Change' ? 'selected' : '' %>>Address Change</option>
+        <option value="Duplicate RC" <%= job.service_type === 'Duplicate RC' ? 'selected' : '' %>>Duplicate RC</option>
+        <option value="Other" <%= job.service_type === 'Other' ? 'selected' : '' %>>Other</option>
+    </select><br>
+
+    <label>Description</label><br>
+    <textarea name="description" rows="3" style="width:100%; padding:8px; margin-bottom:12px;"><%= job.description || '' %></textarea><br>
+
+    <label>Total Amount *</label><br>
+    <input type="number" name="totalAmount" step="0.01" value="<%= job.total_amount %>" required style="width:100%; padding:8px; margin-bottom:12px;"><br>
+
+    <label>Paid Amount</label><br>
+    <input type="number" name="paidAmount" step="0.01" value="<%= job.paid_amount %>" style="width:100%; padding:8px; margin-bottom:12px;"><br>
+
+    <label>Status *</label><br>
+    <select name="status" required style="width:100%; padding:8px; margin-bottom:12px;">
+        <option value="pending" <%= job.status === 'pending' ? 'selected' : '' %>>Pending</option>
+        <option value="in-progress" <%= job.status === 'in-progress' ? 'selected' : '' %>>In Progress</option>
+        <option value="completed" <%= job.status === 'completed' ? 'selected' : '' %>>Completed</option>
+        <option value="cancelled" <%= job.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+    </select><br>
+
+    <button type="submit" style="padding:10px 24px; background:#1a237e; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+        Update Job
+    </button>
+</form>
+
+<%- include('../partials/footer') %>

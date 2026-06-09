@@ -1,0 +1,29 @@
+<%- include('../partials/header') %>
+
+<h1>Ledger Entry Details</h1>
+
+<div style="margin-top:16px; background:#fff; padding:20px; border-radius:8px;">
+    <p><strong>Date:</strong> <%= new Date(entry.created_at).toLocaleDateString('en-IN') %></p>
+    <p><strong>Customer:</strong> <%= entry.customer_name %></p>
+    <p><strong>Service:</strong> <%= entry.service_type || 'N/A' %></p>
+    <p><strong>Type:</strong>
+        <span style="color: <%= entry.transaction_type === 'credit' ? '#2e7d32' : '#c62828' %>">
+            <%= entry.transaction_type %>
+        </span>
+    </p>
+    <p><strong>Amount:</strong> ₹<%= entry.amount %></p>
+    <p><strong>Payment Mode:</strong> <%= entry.payment_mode %></p>
+    <p><strong>Notes:</strong> <%= entry.notes || '-' %></p>
+    <p><strong>Recorded By:</strong> <%= entry.created_by_name %></p>
+</div>
+
+<div style="margin-top:16px;">
+    <a href="/ledger">Back to Ledger</a> |
+    <form action="/ledger/<%= entry.id %>/delete" method="POST" style="display:inline;">
+        <button type="submit" onclick="return confirm('Are you sure?')" style="background:#c62828; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;">
+            Delete
+        </button>
+    </form>
+</div>
+
+<%- include('../partials/footer') %>

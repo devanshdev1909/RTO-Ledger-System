@@ -1,0 +1,23 @@
+<%- include('../partials/header') %>
+
+<h1>Customer Details</h1>
+
+<div style="margin-top:16px; background:#fff; padding:20px; border-radius:8px;">
+    <p><strong>Name:</strong> <%= customer.full_name %></p>
+    <p><strong>Mobile:</strong> <%= customer.mobile %></p>
+    <p><strong>Email:</strong> <%= customer.email || '-' %></p>
+    <p><strong>Address:</strong> <%= customer.address || '-' %></p>
+    <p><strong>Aadhar:</strong> <%= customer.aadhar_number || '-' %></p>
+</div>
+
+<div style="margin-top:16px;">
+    <a href="/customers/<%= customer.id %>/edit">Edit</a> |
+    <a href="/ledger/customer/<%= customer.id %>">View Ledger</a> |
+    <form action="/customers/<%= customer.id %>/delete" method="POST" style="display:inline;">
+        <button type="submit" onclick="return confirm('Are you sure?')" style="background:#c62828; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;">
+            Delete
+        </button>
+    </form>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,38 @@
+<%- include('../partials/header') %>
+
+<h1>Job Details</h1>
+
+<div style="margin-top:16px; background:#fff; padding:20px; border-radius:8px;">
+    <p><strong>Service:</strong> <%= job.service_type %></p>
+    <p><strong>Description:</strong> <%= job.description || '-' %></p>
+    <p><strong>Customer:</strong> <%= job.customer_name %> (<%= job.customer_mobile %>)</p>
+    <p><strong>Vehicle:</strong> <%= job.vehicle_number %></p>
+    <p><strong>Total Amount:</strong> ₹<%= job.total_amount %></p>
+    <p><strong>Paid Amount:</strong> ₹<%= job.paid_amount %></p>
+    <p><strong>Balance:</strong> ₹<%= job.total_amount - job.paid_amount %></p>
+    <p><strong>Status:</strong> <%= job.status %></p>
+    <p><strong>Created By:</strong> <%= job.created_by_name %></p>
+</div>
+
+<% if (job.total_amount - job.paid_amount > 0) { %>
+<div style="margin-top:16px; background:#fff3e0; padding:16px; border-radius:8px;">
+    <h3>Record Payment</h3>
+    <form action="/jobs/<%= job.id %>/payment" method="POST" style="display:flex; gap:8px; align-items:center; margin-top:8px;">
+        <input type="number" name="amount" step="0.01" max="<%= job.total_amount - job.paid_amount %>" required placeholder="Amount" style="padding:8px;">
+        <button type="submit" style="padding:8px 16px; background:#2e7d32; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+            Record Payment
+        </button>
+    </form>
+</div>
+<% } %>
+
+<div style="margin-top:16px;">
+    <a href="/jobs/<%= job.id %>/edit">Edit</a> |
+    <form action="/jobs/<%= job.id %>/delete" method="POST" style="display:inline;">
+        <button type="submit" onclick="return confirm('Are you sure?')" style="background:#c62828; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;">
+            Delete
+        </button>
+    </form>
+</div>
+
+<%- include('../partials/footer') %>
