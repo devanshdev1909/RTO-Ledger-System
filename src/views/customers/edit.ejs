@@ -1,115 +1,54 @@
 <%- include("../partials/header") %>
 
 <div class="container">
-
     <%- include("../partials/sidebar") %>
 
     <div class="main-content">
-
         <%- include("../partials/navbar") %>
 
-        <div class="customer-header">
+        <div class="content">
 
-            <h2>Customers</h2>
+            <div class="page-header">
+                <h1>Edit Customer</h1>
+                <a href="/customers" class="btn btn-secondary">← Back</a>
+            </div>
 
-            <a href="/customers/new" class="add-btn">
-                + Add Customer
-            </a>
+            <div class="form-card">
+                <form action="/customers/<%= customer ? customer.id : '' %>" method="POST">
+                    <input type="hidden" name="_method" value="PUT">
+
+                    <div class="form-group">
+                        <label for="customer_code">Customer Code</label>
+                        <input type="text" name="customer_code" id="customer_code" value="<%= customer ? customer.customer_code : '' %>">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" name="name" id="name" value="<%= customer ? customer.name : '' %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mobile">Mobile Number</label>
+                        <input type="text" name="mobile" id="mobile" value="<%= customer ? customer.mobile : '' %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" name="email" id="email" value="<%= customer ? customer.email : '' %>">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <textarea name="address" id="address" rows="3"><%= customer ? customer.address : '' %></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Update Customer</button>
+
+                </form>
+            </div>
 
         </div>
-
-        <div class="search-box">
-
-            <input
-                type="text"
-                placeholder="Search Customer..."
-            >
-
-        </div>
-
-        <table class="customer-table">
-
-            <thead>
-
-                <tr>
-
-                    <th>ID</th>
-                    <th>Customer Code</th>
-                    <th>Name</th>
-                    <th>Mobile</th>
-                    <th>Email</th>
-                    <th>Address</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                <% customers.forEach(customer => { %>
-
-                    <tr>
-
-                        <td><%= customer.id %></td>
-
-                        <td>
-                            <%= customer.customer_code %>
-                        </td>
-
-                        <td>
-                            <%= customer.name %>
-                        </td>
-
-                        <td>
-                            <%= customer.mobile %>
-                        </td>
-
-                        <td>
-                            <%= customer.email %>
-                        </td>
-
-                        <td>
-                            <%= customer.address %>
-                        </td>
-
-                        <td>
-
-                            <span class="status-active">
-                                Active
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <a
-                                href="/customers/<%= customer.id %>/edit"
-                                class="edit-btn"
-                            >
-                                Edit
-                            </a>
-
-                            <a
-                                href="#"
-                                class="delete-btn"
-                            >
-                                Delete
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-                <% }) %>
-
-            </tbody>
-
-        </table>
-
     </div>
-
 </div>
 
 <%- include("../partials/footer") %>

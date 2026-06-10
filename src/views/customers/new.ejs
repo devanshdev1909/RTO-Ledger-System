@@ -1,33 +1,52 @@
 <%- include("../partials/header") %>
 
 <div class="container">
-
     <%- include("../partials/sidebar") %>
 
     <div class="main-content">
-
         <%- include("../partials/navbar") %>
 
-        <h2>Add New Customer</h2>
+        <div class="content">
 
-        <form action="/customers" method="POST">
+            <div class="page-header">
+                <h1>Add New Customer</h1>
+                <a href="/customers" class="btn btn-secondary">← Back</a>
+            </div>
 
-            <input type="text" name="name" placeholder="Name" required>
-            <br><br>
+            <div class="form-card">
+                <form action="/customers" method="POST">
 
-            <input type="text" name="mobile" placeholder="Mobile" required>
-            <br><br>
+                    <div class="form-group">
+                        <label for="customer_code">Customer Code</label>
+                        <input type="text" name="customer_code" id="customer_code" placeholder="e.g. CUST-001">
+                    </div>
 
-            <input type="email" name="email" placeholder="Email">
-            <br><br>
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" name="name" id="name" placeholder="John Doe" required>
+                    </div>
 
-            <textarea name="address" placeholder="Address"></textarea>
-            <br><br>
+                    <div class="form-group">
+                        <label for="mobile">Mobile Number</label>
+                        <input type="text" name="mobile" id="mobile" placeholder="9876543210" required>
+                    </div>
 
-            <button type="submit">Save Customer</button>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" name="email" id="email" placeholder="john@example.com">
+                    </div>
 
-        </form>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <textarea name="address" id="address" placeholder="Full Address" rows="3"></textarea>
+                    </div>
 
+                    <button type="submit" class="btn btn-primary">Save Customer</button>
+
+                </form>
+            </div>
+
+        </div>
     </div>
 </div>
 

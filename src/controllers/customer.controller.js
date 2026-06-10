@@ -1,16 +1,45 @@
-const renderCustomersPage = (req, res) => {
-    const customers = [
-        { name: "Rahul Sharma", phone: "9876543210" },
-        { name: "Amit Verma", phone: "9123456780" },
-        { name: "Neha Singh", phone: "9988776655" }
-    ];
+const pool = require("../config/db");
 
-    res.render("customers/index", {
+const renderCustomersPage = async (req, res) => {
+    try {
+        const result = await pool.query(
+            "SELECT * FROM customers ORDER BY created_at DESC"
+        );
+        res.render("customers/index", {
+            activePage: "customers",
+            customers: result.rows,
+            userName: req.session.userName
+        });
+    } catch (err) {
+        console.log(err);
+        res.send(err.message);
+    }
+};
+
+const showNewCustomerForm = (req, res) => {
+    res.render("customers/new", {
         activePage: "customers",
-        customers
+        userName: req.session.userName
     });
 };
 
-module.exports = {
-    renderCustomersPage
+const createCustomer = async (req, res) => {
+    try {
+        const { customer_code, name, mobile, email, address } = req.body;
+        await pool.query(
+            `INSERT INTO customers (customer_code, name, mobile, email, address, created_by)
+             VALUES ($1, $2, $3, $4, $5, $6)`,
+            [customer_code, name, mobile, email, address, req.session.userId]
+        );
+        res.redirect("/customers");
+    } catch (err) {
+        console.log(err);
+        res.send(err.message);
+    }
 };
+
+module.exports = {
+    renderCustomersPage,
+    showNewCustomerForm,
+    createCustomer
+};
