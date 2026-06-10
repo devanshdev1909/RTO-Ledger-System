@@ -1,44 +1,8 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
 
-module.exports.renderSignup = (req, res) => {
-    res.render("auth/signup");
-};
-
 module.exports.renderLogin = (req, res) => {
     res.render("auth/login");
-};
-
-module.exports.signup = async (req, res) => {
-
-    try {
-
-        const {
-            fullName,
-            email,
-            mobile,
-            password
-        } = req.body;
-
-        const hashedPassword =
-            await bcrypt.hash(password, 10);
-
-        await User.createUser(
-            2, // Operator Role
-            fullName,
-            email,
-            hashedPassword,
-            mobile
-        );
-
-        res.send("User Created Successfully");
-
-    } catch (err) {
-
-        console.log(err);
-
-        res.send(err.message);
-    }
 };
 
 module.exports.login = async (req, res) => {
@@ -59,11 +23,7 @@ module.exports.login = async (req, res) => {
             );
         }
 
-        const isMatch =
-            await bcrypt.compare(
-                password,
-                user.password_hash
-            );
+        const isMatch = password === user.password_hash;
 
         if (!isMatch) {
             return res.send(
@@ -78,7 +38,7 @@ module.exports.login = async (req, res) => {
             user.role_id;
 
         req.session.userName =
-            user.full_name;
+            user.username;
 
         res.redirect("/dashboard");
 

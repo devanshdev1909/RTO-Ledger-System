@@ -7,6 +7,7 @@ const flash = require("connect-flash");
 
 const authRouter = require("./routes/auth.routes");
 const { isLoggedIn } = require("./middleware/auth");
+
 const pool = require("./config/db");
 const app = express();
 
