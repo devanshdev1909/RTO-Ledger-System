@@ -9,6 +9,7 @@ const methodOverride = require("method-override");
 const authRouter = require("./routes/auth.routes");
 const { isLoggedIn } = require("./middleware/auth");
 const customerRouter = require("./routes/customer.routes");
+const vehicleRouter = require("./routes/vehicle.routes");
 
 const pool = require("./config/db");
 const app = express();
@@ -34,6 +35,7 @@ app.use(flash());
 
 // Routes
 app.use("/", authRouter);
+app.use("/vehicles", vehicleRouter);
 app.use("/customers", customerRouter);
 
 // Dashboard
