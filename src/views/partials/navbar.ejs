@@ -3,7 +3,7 @@
     <h2>Dashboard</h2>
 
     <div class="user-info">
-        Welcome <%= userName || "User" %>
+        Welcome <%= typeof userName !== 'undefined' ? userName : "User" %>
     </div>
 
 </div>

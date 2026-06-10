@@ -1,14 +1,16 @@
-const Customer = require("../models/Customer");
-
-// Controller methods will be written here
-
-module.exports.index = async (req, res) => {
-
-    const customers = [];
+const renderCustomersPage = (req, res) => {
+    const customers = [
+        { name: "Rahul Sharma", phone: "9876543210" },
+        { name: "Amit Verma", phone: "9123456780" },
+        { name: "Neha Singh", phone: "9988776655" }
+    ];
 
     res.render("customers/index", {
-        customers,
-        activePage: "customers"
+        activePage: "customers",
+        customers
     });
+};
 
+module.exports = {
+    renderCustomersPage
 };

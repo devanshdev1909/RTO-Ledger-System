@@ -6,19 +6,19 @@
 
     <ul class="menu">
 
-        <li class="<%= (typeof activePage !== 'undefined' && activePage === 'dashboard') ? 'active' : '' %>">
+        <li class="<%= activePage === 'dashboard' ? 'active' : '' %>">
             <a href="/dashboard">Dashboard</a>
         </li>
 
-        <li class="<%= (typeof activePage !== 'undefined' && activePage === 'customers') ? 'active' : '' %>">
+        <li class="<%= activePage === 'customers' ? 'active' : '' %>">
             <a href="/customers">Customers</a>
         </li>
 
-        <li class="<%= (typeof activePage !== 'undefined' && activePage === 'vehicles') ? 'active' : '' %>">
+        <li class="<%= activePage === 'vehicles' ? 'active' : '' %>">
             <a href="/vehicles">Vehicles</a>
         </li>
 
-        <li class="<%= (typeof activePage !== 'undefined' && activePage === 'ledger') ? 'active' : '' %>">
+        <li class="<%= activePage === 'ledger' ? 'active' : '' %>">
             <a href="/ledger">Ledger</a>
         </li>
 

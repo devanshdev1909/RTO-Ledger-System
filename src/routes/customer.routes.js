@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const customerController = require("../controllers/customer.controller");
 
-// Customer routes will be defined here
+// Show customers page
+router.get("/", customerController.renderCustomersPage);
 
 module.exports = router;

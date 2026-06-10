@@ -28,3 +28,13 @@ body{
     width: 100%;
     text-align: center;
 }
+
+.menu li.active {
+    background-color: #2563eb;
+    border-radius: 6px;
+}
+
+.menu li.active a {
+    color: white;
+    font-weight: bold;
+}

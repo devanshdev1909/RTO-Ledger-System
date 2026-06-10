@@ -32,6 +32,12 @@ app.use(
 
 app.use(flash());
 
+
+app.use((req, res, next) => {
+    res.locals.activePage = req.path.split("/")[1] || "dashboard";
+    next();
+});
+
 // Routes
 app.use("/", authRouter);
 app.use("/customers", customerRouter);
