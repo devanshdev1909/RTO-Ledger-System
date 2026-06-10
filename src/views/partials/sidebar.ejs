@@ -1,43 +1,25 @@
 <div class="sidebar">
 
-    <h2>RTO Ledger</h2>
+    <div class="logo">
+        RTO Ledger
+    </div>
 
-    <ul>
+    <ul class="menu">
 
-        <li>
-            <a href="/dashboard">
-                Dashboard
-            </a>
+        <li class="<%= activePage === 'dashboard' ? 'active' : '' %>">
+            <a href="/dashboard">Dashboard</a>
         </li>
 
-        <li>
-            <a href="/customers">
-                Customers
-            </a>
+        <li class="<%= activePage === 'customers' ? 'active' : '' %>">
+            <a href="/customers">Customers</a>
         </li>
 
-        <li>
-            <a href="/vehicles">
-                Vehicles
-            </a>
+        <li class="<%= activePage === 'vehicles' ? 'active' : '' %>">
+            <a href="/vehicles">Vehicles</a>
         </li>
 
-        <li>
-            <a href="/ledger">
-                Ledger
-            </a>
-        </li>
-
-        <li>
-            <a href="/reports">
-                Reports
-            </a>
-        </li>
-
-        <li>
-            <a href="/logout">
-                Logout
-            </a>
+        <li class="<%= activePage === 'ledger' ? 'active' : '' %>">
+            <a href="/ledger">Ledger</a>
         </li>
 
     </ul>

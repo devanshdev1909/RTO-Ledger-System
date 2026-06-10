@@ -5,9 +5,36 @@
 }
 
 body{
-    font-family: Arial, sans-serif;
+    font-family:Arial,sans-serif;
 }
 
 .container{
     display:flex;
+    min-height:100vh;
+}
+
+.main-content{
+    flex:1;
+    background:#f5f7fa;
+}
+
+.footer {
+    background-color: #f1f5f9;
+    border-top: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;   /* optional */
+    width: 100%;
+    text-align: center;
+}
+
+.menu li.active {
+    background-color: #2563eb;
+    border-radius: 6px;
+}
+
+.menu li.active a {
+    color: white;
+    font-weight: bold;
 }

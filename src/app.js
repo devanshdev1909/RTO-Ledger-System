@@ -33,6 +33,12 @@ app.use(
 
 app.use(flash());
 
+
+app.use((req, res, next) => {
+    res.locals.activePage = req.path.split("/")[1] || "dashboard";
+    next();
+});
+
 // Routes
 app.use("/", authRouter);
 app.use("/vehicles", vehicleRouter);
@@ -67,6 +73,15 @@ app.get("/test-db", async (req, res) => {
   }
 });
 
+app.get("/", (req, res) => {
+
+    if (req.session.userId) {
+        return res.redirect("/dashboard");
+    }
+
+    res.redirect("/login");
+
+});
 
 const PORT = process.env.PORT || 5000;
 

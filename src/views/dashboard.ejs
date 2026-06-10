@@ -1,16 +1,53 @@
 <%- include("partials/header") %>
 
-<%- include("partials/sidebar") %>
+<div class="container">
 
-<%- include("partials/navbar") %>
+    <!-- Sidebar -->
+    <%- include("partials/sidebar") %>
 
-<div class="content">
+    <!-- Main Content -->
+    <div class="main-content">
 
-    <h1>Dashboard</h1>
+        <!-- Navbar -->
+        <%- include("partials/navbar") %>
 
-    <h3>
-        Welcome <%= userName %>
-    </h3>
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+
+            <h1>Dashboard</h1>
+
+            <h3>
+                Welcome <%= userName || "User" %>
+            </h3>
+
+            <!-- Dashboard Cards -->
+            <div class="dashboard-cards">
+
+                <div class="card">
+                    <h4>Total Customers</h4>
+                    <p>250</p>
+                </div>
+
+                <div class="card">
+                    <h4>Total Vehicles</h4>
+                    <p>180</p>
+                </div>
+
+                <div class="card">
+                    <h4>Pending Jobs</h4>
+                    <p>35</p>
+                </div>
+
+                <div class="card">
+                    <h4>Total Revenue</h4>
+                    <p>₹2,50,000</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 

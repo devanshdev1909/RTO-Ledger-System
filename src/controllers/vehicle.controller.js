@@ -20,7 +20,6 @@ module.exports.renderNew = async (req, res) => {
     try {
         const customers = await pool.query(
             "SELECT id, name FROM customers ORDER BY name"
-
         );
         res.render("vehicles/new", {
             customers: customers.rows,
@@ -66,7 +65,6 @@ module.exports.renderEdit = async (req, res) => {
         const vehicle = await Vehicle.getById(req.params.id);
         const customers = await pool.query(
             "SELECT id, name FROM customers ORDER BY name"
-
         );
 
         if (!vehicle) {
