@@ -39,7 +39,7 @@ class User {
     static async findByEmail(email) {
 
         const result = await pool.query(
-           `
+            `
             SELECT
                 u.*,
                 r.name AS role_name

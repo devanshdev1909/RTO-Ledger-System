@@ -4,9 +4,11 @@ const express = require("express");
 const path = require("path");
 const session = require("express-session");
 const flash = require("connect-flash");
+const methodOverride = require("method-override");
 
 const authRouter = require("./routes/auth.routes");
 const { isLoggedIn } = require("./middleware/auth");
+const customerRouter = require("./routes/customer.routes");
 
 const pool = require("./config/db");
 const app = express();
@@ -17,6 +19,8 @@ app.set("views", path.join(__dirname, "views"));
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
+app.use(methodOverride("_method"));
 
 app.use(
   session({
@@ -30,6 +34,7 @@ app.use(flash());
 
 // Routes
 app.use("/", authRouter);
+app.use("/customers", customerRouter);
 
 // Dashboard
 app.get("/dashboard", isLoggedIn, (req, res) => {
@@ -59,6 +64,19 @@ app.get("/test-db", async (req, res) => {
     });
   }
 });
+
+app.get("/test-customer", async (req, res) => {
+
+    const Customer =
+        require("./models/Customer");
+
+    const customer =
+        await Customer.getCustomerById(1);
+
+    res.send(customer);
+
+});
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
