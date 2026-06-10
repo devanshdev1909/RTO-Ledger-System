@@ -65,6 +65,15 @@ app.get("/test-db", async (req, res) => {
   }
 });
 
+app.get("/", (req, res) => {
+
+    if (req.session.userId) {
+        return res.redirect("/dashboard");
+    }
+
+    res.redirect("/login");
+
+});
 
 const PORT = process.env.PORT || 5000;
 
