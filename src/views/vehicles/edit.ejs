@@ -1,0 +1,65 @@
+<%- include("../partials/header") %>
+    <%- include("../partials/sidebar") %>
+        <%- include("../partials/navbar") %>
+
+            <div class="content">
+
+                <div class="page-header">
+                    <h1>Edit Vehicle</h1>
+                    <a href="/vehicles" class="btn btn-secondary">← Back</a>
+                </div>
+
+                <div class="form-card">
+                    <form action="/vehicles/<%= vehicle.id %>" method="POST">
+                        <input type="hidden" name="_method" value="PUT">
+
+                        <div class="form-group">
+                            <label for="customer_id">Customer</label>
+                            <select name="customer_id" id="customer_id" required>
+                                <option value="">Select Customer</option>
+                                <% customers.forEach(c=> { %>
+                                    <option value="<%= c.id %>" <%=c.id==vehicle.customer_id ? 'selected' : '' %>><%=
+                                            c.name %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="vehicle_number">Vehicle Number</label>
+                            <input type="text" name="vehicle_number" id="vehicle_number"
+                                value="<%= vehicle.vehicle_number %>" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="vehicle_type">Vehicle Type</label>
+                            <input type="text" name="vehicle_type" id="vehicle_type" value="<%= vehicle.vehicle_type %>"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="chassis_number">Chassis Number</label>
+                            <input type="text" name="chassis_number" id="chassis_number"
+                                value="<%= vehicle.chassis_number %>">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="engine_number">Engine Number</label>
+                            <input type="text" name="engine_number" id="engine_number"
+                                value="<%= vehicle.engine_number %>">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="registration_date">Registration Date</label>
+                            <input type="date" name="registration_date" id="registration_date"
+                                value="<%= vehicle.registration_date ? new Date(vehicle.registration_date).toISOString().split('T')[0] : '' %>">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Update Vehicle</button>
+
+                    </form>
+                </div>
+
+            </div>
+
+            <%- include("../partials/footer") %>
