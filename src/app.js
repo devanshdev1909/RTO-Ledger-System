@@ -65,17 +65,6 @@ app.get("/test-db", async (req, res) => {
   }
 });
 
-app.get("/test-customer", async (req, res) => {
-
-    const Customer =
-        require("./models/Customer");
-
-    const customer =
-        await Customer.getCustomerById(1);
-
-    res.send(customer);
-
-});
 
 const PORT = process.env.PORT || 5000;
 
