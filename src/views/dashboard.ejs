@@ -1,73 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>RTO Ledger Dashboard</title>
+<%- include("partials/header") %>
 
-    <link rel="stylesheet" href="/css/dashboard.css">
-</head>
-<body>
+<%- include("partials/sidebar") %>
 
-    <div class="container">
+<%- include("partials/navbar") %>
 
-        <div class="sidebar">
+<div class="content">
 
-            <h2>RTO Ledger</h2>
+    <h1>Dashboard</h1>
 
-            <ul>
+    <h3>
+        Welcome <%= userName %>
+    </h3>
 
-                <li>
-                    <a href="/dashboard">
-                        Dashboard
-                    </a>
-                </li>
+</div>
 
-                <li>
-                    <a href="/customers">
-                        Customers
-                    </a>
-                </li>
-
-                <li>
-                    <a href="/vehicles">
-                        Vehicles
-                    </a>
-                </li>
-
-                <li>
-                    <a href="/ledger">
-                        Ledger
-                    </a>
-                </li>
-
-                <li>
-                    <a href="/reports">
-                        Reports
-                    </a>
-                </li>
-
-                <li>
-                    <a href="/logout">
-                        Logout
-                    </a>
-                </li>
-
-            </ul>
-
-        </div>
-
-        <div class="content">
-
-            <h1>
-                Welcome <%= userName %>
-            </h1>
-
-            <p>
-                Dashboard Overview
-            </p>
-
-        </div>
-
-    </div>
-
-</body>
-</html>
+<%- include("partials/footer") %>

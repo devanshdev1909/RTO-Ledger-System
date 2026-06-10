@@ -1,1 +1,115 @@
-<!-- Customer Edit View -->
+<%- include("../partials/header") %>
+
+<div class="container">
+
+    <%- include("../partials/sidebar") %>
+
+    <div class="main-content">
+
+        <%- include("../partials/navbar") %>
+
+        <div class="customer-header">
+
+            <h2>Customers</h2>
+
+            <a href="/customers/new" class="add-btn">
+                + Add Customer
+            </a>
+
+        </div>
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                placeholder="Search Customer..."
+            >
+
+        </div>
+
+        <table class="customer-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Customer Code</th>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <% customers.forEach(customer => { %>
+
+                    <tr>
+
+                        <td><%= customer.id %></td>
+
+                        <td>
+                            <%= customer.customer_code %>
+                        </td>
+
+                        <td>
+                            <%= customer.name %>
+                        </td>
+
+                        <td>
+                            <%= customer.mobile %>
+                        </td>
+
+                        <td>
+                            <%= customer.email %>
+                        </td>
+
+                        <td>
+                            <%= customer.address %>
+                        </td>
+
+                        <td>
+
+                            <span class="status-active">
+                                Active
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="/customers/<%= customer.id %>/edit"
+                                class="edit-btn"
+                            >
+                                Edit
+                            </a>
+
+                            <a
+                                href="#"
+                                class="delete-btn"
+                            >
+                                Delete
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                <% }) %>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<%- include("../partials/footer") %>
