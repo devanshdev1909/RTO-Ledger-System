@@ -38,8 +38,54 @@ const createCustomer = async (req, res) => {
     }
 };
 
+const showEditCustomerForm = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await pool.query("SELECT * FROM customers WHERE id = $1", [id]);
+        if (result.rows.length === 0) return res.send("Customer not found");
+        res.render("customers/edit", {
+            activePage: "customers",
+            customer: result.rows[0],
+            userName: req.session.userName
+        });
+    } catch (err) {
+        console.log(err);
+        res.send(err.message);
+    }
+};
+
+const updateCustomer = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { customer_code, name, mobile, email, address } = req.body;
+        await pool.query(
+            `UPDATE customers SET customer_code=$1, name=$2, mobile=$3, email=$4, address=$5 WHERE id=$6`,
+            [customer_code, name, mobile, email, address, id]
+        );
+        res.redirect("/customers");
+    } catch (err) {
+        console.log(err);
+        res.send(err.message);
+    }
+};
+
+const deleteCustomer = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await pool.query("DELETE FROM customers WHERE id = $1", [id]);
+        res.redirect("/customers");
+    } catch (err) {
+        console.log(err);
+        res.send(err.message);
+    }
+};
+
+
 module.exports = {
     renderCustomersPage,
     showNewCustomerForm,
-    createCustomer
-};
+    createCustomer,
+    showEditCustomerForm,
+    updateCustomer,
+    deleteCustomer
+};
