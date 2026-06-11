@@ -37,6 +37,8 @@ app.use(flash());
 
 app.use((req, res, next) => {
   res.locals.activePage = req.path.split("/")[1] || "dashboard";
+  res.locals.permissions = req.session.permissions || [];
+  res.locals.userRole = req.session.userRole || null;
   next();
 });
 
