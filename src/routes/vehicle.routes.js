@@ -1,24 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const vehicleController = require("../controllers/vehicle.controller");
-const { isLoggedIn } = require("../middleware/auth");
+const { isLoggedIn, hasPermission } = require("../middleware/auth");
 
-// List all vehicles
-router.get("/", isLoggedIn, vehicleController.index);
-
-// Show create form
-router.get("/new", isLoggedIn, vehicleController.renderNew);
-
-// Create vehicle
-router.post("/", isLoggedIn, vehicleController.create);
-
-// Show edit form
-router.get("/:id/edit", isLoggedIn, vehicleController.renderEdit);
-
-// Update vehicle
-router.put("/:id", isLoggedIn, vehicleController.update);
-
-// Delete vehicle
-router.delete("/:id", isLoggedIn, vehicleController.delete);
+router.get("/", isLoggedIn, hasPermission('vehicle.view'), vehicleController.index);
+router.get("/new", isLoggedIn, hasPermission('vehicle.create'), vehicleController.renderNew);
+router.post("/", isLoggedIn, hasPermission('vehicle.create'), vehicleController.create);
+router.get("/:id/edit", isLoggedIn, hasPermission('vehicle.create'), vehicleController.renderEdit);
+router.put("/:id", isLoggedIn, hasPermission('vehicle.create'), vehicleController.update);
+router.delete("/:id", isLoggedIn, hasPermission('vehicle.create'), vehicleController.delete);
 
 module.exports = router;
+

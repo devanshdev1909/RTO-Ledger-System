@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
+const pool = require("../config/db");
 
 module.exports.renderLogin = (req, res) => {
     res.render("auth/login");
@@ -39,6 +40,17 @@ module.exports.login = async (req, res) => {
 
         req.session.userName =
             user.username;
+
+        // Load permissions for this user's role from the database
+        const permResult = await pool.query(`
+        SELECT p.code
+        FROM permissions p
+        JOIN role_permissions rp ON p.id = rp.permission_id
+        WHERE rp.role_id = $1
+        `, [user.role_id]);
+
+        req.session.permissions = permResult.rows.map(r => r.code);
+        req.session.userRole = user.role_name;
 
         res.redirect("/dashboard");
 
