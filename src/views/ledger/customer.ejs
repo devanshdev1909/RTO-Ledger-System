@@ -7,8 +7,28 @@
                     <div class="content">
 
                         <div class="page-header">
-                            <h1>Ledger</h1>
-                            <a href="/ledger/new" class="btn btn-primary">+ New Entry</a>
+                            <h1>Ledger — <%= customer.name %>
+                            </h1>
+                            <a href="/ledger" class="btn btn-secondary">← Back</a>
+                        </div>
+
+                        <!-- Summary Cards -->
+                        <div class="ledger-summary">
+                            <div class="card">
+                                <h4>Total Service Fee</h4>
+                                <p>₹<%= totals.totalFee.toLocaleString("en-IN") %>
+                                </p>
+                            </div>
+                            <div class="card">
+                                <h4>Total Paid</h4>
+                                <p>₹<%= totals.totalPaid.toLocaleString("en-IN") %>
+                                </p>
+                            </div>
+                            <div class="card card-warning">
+                                <h4>Total Due</h4>
+                                <p>₹<%= totals.totalDue.toLocaleString("en-IN") %>
+                                </p>
+                            </div>
                         </div>
 
                         <div class="table-container">
@@ -16,7 +36,6 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Customer</th>
                                         <th>Vehicle</th>
                                         <th>Service</th>
                                         <th>Service Fee</th>
@@ -24,26 +43,19 @@
                                         <th>Due Amount</th>
                                         <th>Status</th>
                                         <th>Date</th>
-                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <% if (ledgers.length===0) { %>
                                         <tr>
-                                            <td colspan="9" class="empty-state">No ledger entries found.</td>
+                                            <td colspan="7" class="empty-state">No ledger entries for this customer.
+                                            </td>
                                         </tr>
                                         <% } else { %>
                                             <% ledgers.forEach((l, i)=> { %>
                                                 <tr>
                                                     <td>
                                                         <%= i + 1 %>
-                                                    </td>
-                                                    <td><strong>
-                                                            <%= l.customer_name || "N/A" %>
-                                                        </strong><br>
-                                                        <small>
-                                                            <%= l.customer_code || "" %>
-                                                        </small>
                                                     </td>
                                                     <td>
                                                         <%= l.vehicle_number || "N/A" %>
@@ -55,9 +67,9 @@
                                                     </td>
                                                     <td>₹<%= Number(l.amount_paid).toLocaleString("en-IN") %>
                                                     </td>
-                                                    <% const dueColor=l.due_amount> 0 ? 'amount-due' : 'amount-clear';
+                                                    <% const dueClass=l.due_amount> 0 ? 'amount-due' : 'amount-clear';
                                                         %>
-                                                        <td class="<%= dueColor %>">
+                                                        <td class="<%= dueClass %>">
                                                             ₹<%= Number(l.due_amount).toLocaleString("en-IN") %>
                                                         </td>
                                                         <td>
@@ -69,12 +81,6 @@
                                                         </td>
                                                         <td>
                                                             <%= new Date(l.created_at).toLocaleDateString("en-IN") %>
-                                                        </td>
-                                                        <td>
-                                                            <a href="/ledger/customer/<%= l.customer_id %>"
-                                                                class="btn btn-edit">View</a>
-                                                            <a href="/ledger/<%= l.id %>/edit"
-                                                                class="btn btn-edit">Edit</a>
                                                         </td>
                                                 </tr>
                                                 <% }) %>

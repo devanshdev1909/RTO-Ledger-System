@@ -10,7 +10,7 @@ const authRouter = require("./routes/auth.routes");
 const { isLoggedIn } = require("./middleware/auth");
 const customerRouter = require("./routes/customer.routes");
 const vehicleRouter = require("./routes/vehicle.routes");
-
+const ledgerRouter = require("./routes/ledger.routes");
 const pool = require("./config/db");
 const app = express();
 
@@ -22,7 +22,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(methodOverride("_method"));
-
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "rtoledgersecret",
@@ -35,14 +34,15 @@ app.use(flash());
 
 
 app.use((req, res, next) => {
-    res.locals.activePage = req.path.split("/")[1] || "dashboard";
-    next();
+  res.locals.activePage = req.path.split("/")[1] || "dashboard";
+  next();
 });
 
 // Routes
 app.use("/", authRouter);
 app.use("/vehicles", vehicleRouter);
 app.use("/customers", customerRouter);
+app.use("/ledger", ledgerRouter);
 
 // Dashboard
 app.get("/dashboard", isLoggedIn, (req, res) => {
@@ -75,11 +75,11 @@ app.get("/test-db", async (req, res) => {
 
 app.get("/", (req, res) => {
 
-    if (req.session.userId) {
-        return res.redirect("/dashboard");
-    }
+  if (req.session.userId) {
+    return res.redirect("/dashboard");
+  }
 
-    res.redirect("/login");
+  res.redirect("/login");
 
 });
 

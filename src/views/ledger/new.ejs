@@ -1,0 +1,138 @@
+<%- include("../partials/header") %>
+
+    <div class="container">
+        <%- include("../partials/sidebar") %>
+            <div class="main-content">
+                <%- include("../partials/navbar") %>
+                    <div class="content">
+
+                        <div class="page-header">
+                            <h1>New Ledger Entry</h1>
+                            <a href="/ledger" class="btn btn-secondary">← Back</a>
+                        </div>
+
+                        <div class="form-card">
+                            <form action="/ledger" method="POST">
+
+                                <div class="form-group">
+                                    <label for="customer_id">Customer <span style="color:red">*</span></label>
+                                    <select name="customer_id" id="customer_id" required
+                                        onchange="filterVehicles(this.value)">
+                                        <option value="">Select Customer</option>
+                                        <% customers.forEach(c=> { %>
+                                            <option value="<%= c.id %>">
+                                                <%= c.name %> (<%= c.customer_code || 'No Code' %>)
+                                            </option>
+                                            <% }) %>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="service_select">Select Service (Optional - Auto fills fee)</label>
+                                    <select id="service_select" onchange="autoFillFee(this)">
+                                        <option value="">-- Choose a Service --</option>
+                                        <% services.forEach(s=> { %>
+                                            <option value="<%= s.default_fee %>">
+                                                <%= s.service_name %> (₹<%= s.default_fee %>)
+                                            </option>
+                                            <% }) %>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="vehicle_id">Vehicle</label>
+                                    <select name="vehicle_id" id="vehicle_id">
+                                        <option value="">Select Vehicle (optional)</option>
+                                        <% vehicles.forEach(v=> { %>
+                                            <option value="<%= v.id %>" data-customer="<%= v.customer_id %>">
+                                                <%= v.vehicle_number %>
+                                            </option>
+                                            <% }) %>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="service_fee">Service Fee (₹) <span style="color:red">*</span></label>
+                                    <input type="number" name="service_fee" id="service_fee" min="0" step="0.01"
+                                        placeholder="e.g. 5000" required oninput="calcDue()">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="amount_paid">Amount Paid (₹)</label>
+                                    <input type="number" name="amount_paid" id="amount_paid" min="0" step="0.01"
+                                        placeholder="e.g. 2000" value="0" oninput="calcDue()">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Due Amount (₹)</label>
+                                    <input type="text" id="due_preview" disabled value="0"
+                                        style="background:#f3f4f6; color:#6b7280;">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="status">Status <span style="color:red">*</span></label>
+                                    <select name="status" id="status" required style="pointer-events: none; background: #f3f4f6;" tabindex="-1">
+                                        <option value="Unpaid">Unpaid</option>
+                                        <option value="Partial">Partial</option>
+                                        <option value="Paid">Paid</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Save Ledger Entry</button>
+
+                            </form>
+                        </div>
+
+                    </div>
+            </div>
+    </div>
+
+    <script>
+        // Filter vehicles by selected customer
+        function filterVehicles(customerId) {
+            const select = document.getElementById("vehicle_id");
+            const options = select.querySelectorAll("option");
+            options.forEach(opt => {
+                if (!opt.value || opt.dataset.customer === customerId) {
+                    opt.style.display = "";
+                } else {
+                    opt.style.display = "none";
+                }
+            });
+            select.value = "";
+        }
+
+        // Auto-calculate due amount
+        function calcDue() {
+            const fee = parseFloat(document.getElementById("service_fee").value) || 0;
+            const paid = parseFloat(document.getElementById("amount_paid").value) || 0;
+            const due = fee - paid;
+            document.getElementById("due_preview").value = "₹" + Math.max(0, due).toFixed(2);
+
+            // Auto-select status
+            const statusSelect = document.getElementById("status");
+            if (fee > 0 && paid >= fee) {
+                statusSelect.value = "Paid";
+            } else if (paid > 0 && paid < fee) {
+                statusSelect.value = "Partial";
+            } else {
+                statusSelect.value = "Unpaid";
+            }
+        }
+
+        function autoFillFee(selectElement) {
+            const feeInput = document.getElementById("service_fee");
+            if (selectElement.value) {
+                feeInput.value = selectElement.value;
+                feeInput.readOnly = true;
+                feeInput.style.background = "#f3f4f6";
+            } else {
+                feeInput.value = "";
+                feeInput.readOnly = false;
+                feeInput.style.background = "";
+            }
+            calcDue(); // Recalculate the due amount instantly
+        }
+
+    </script>
+
+    <%- include("../partials/footer") %>
