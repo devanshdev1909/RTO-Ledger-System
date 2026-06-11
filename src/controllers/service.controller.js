@@ -29,10 +29,11 @@ const showNewServiceForm = (req, res) => {
 const createService = async (req, res) => {
     try {
         const { service_name, default_fee, description, is_active } = req.body;
+        const activeValue = is_active === "on" || is_active === "true";
         await db.query(`
             INSERT INTO services (service_name, default_fee, description, is_active)
             VALUES ($1, $2, $3, $4)
-        `, [service_name, default_fee, description, is_active === "on"]);
+        `, [service_name, default_fee, description, activeValue]);
         res.redirect("/services");
     } catch (err) {
         console.log(err);
@@ -61,6 +62,7 @@ const updateService = async (req, res) => {
     try {
         const { id } = req.params;
         const { service_name, default_fee, description, is_active } = req.body;
+        const activeValue = is_active === "on" || is_active === "true";
         await db.query(`
             UPDATE services
             SET service_name = $1,
@@ -68,7 +70,7 @@ const updateService = async (req, res) => {
                 description = $3,
                 is_active = $4
             WHERE id = $5
-        `, [service_name, default_fee, description, is_active === "on", id]);
+        `, [service_name, default_fee, description, activeValue, id]);
         res.redirect("/services");
     } catch (err) {
         console.log(err);
@@ -138,6 +140,7 @@ const showNewRequestForm = async (req, res) => {
                 service_name,
                 default_fee
             FROM services
+            WHERE is_active = true
             ORDER BY service_name
         `);
 
@@ -258,6 +261,7 @@ const showEditRequestForm = async (req, res) => {
         const services = await db.query(`
             SELECT id, service_name, default_fee
             FROM services
+            WHERE is_active = true
             ORDER BY service_name
         `);
 
