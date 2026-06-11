@@ -10,6 +10,7 @@ const authRouter = require("./routes/auth.routes");
 const { isLoggedIn } = require("./middleware/auth");
 const customerRouter = require("./routes/customer.routes");
 const vehicleRouter = require("./routes/vehicle.routes");
+const serviceRoutes = require("./routes/service.routes");
 
 const pool = require("./config/db");
 const app = express();
@@ -43,6 +44,7 @@ app.use((req, res, next) => {
 app.use("/", authRouter);
 app.use("/vehicles", vehicleRouter);
 app.use("/customers", customerRouter);
+app.use("/services", serviceRoutes);
 
 // Dashboard
 app.get("/dashboard", isLoggedIn, (req, res) => {

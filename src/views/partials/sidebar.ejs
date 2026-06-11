@@ -18,6 +18,20 @@
             <a href="/vehicles">Vehicles</a>
         </li>
 
+        <li class="menu-item service-menu <%= (activePage === 'services' || activePage === 'service_requests') ? 'active' : '' %>">
+            <a href="#" class="menu-toggle" onclick="toggleServiceMenu(event)">
+                Services ▼
+            </a>
+            <ul class="submenu">
+                <li class="<%= activePage === 'services' ? 'active' : '' %>">
+                    <a href="/services">Service List</a>
+                </li>
+                <li class="<%= activePage === 'service_requests' ? 'active' : '' %>">
+                    <a href="/services/requests">Service Requests</a>
+                </li>
+            </ul>
+        </li>
+
         <li class="<%= activePage === 'ledger' ? 'active' : '' %>">
             <a href="/ledger">Ledger</a>
         </li>
@@ -25,3 +39,17 @@
     </ul>
 
 </div>
+
+<script>
+
+function toggleServiceMenu(event){
+
+    event.preventDefault();
+
+    const menu = event.target.closest(".service-menu");
+
+    menu.classList.toggle("active");
+
+}
+
+</script>
