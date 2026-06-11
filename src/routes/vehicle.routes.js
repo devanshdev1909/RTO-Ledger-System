@@ -21,7 +21,4 @@ router.put("/:id", isLoggedIn, vehicleController.update);
 // Delete vehicle
 router.delete("/:id", isLoggedIn, vehicleController.delete);
 
-// POST-based delete fallback (for method-override compatibility)
-router.post("/:id/delete", isLoggedIn, vehicleController.delete);
-
 module.exports = router;
