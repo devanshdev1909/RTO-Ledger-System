@@ -1,6 +1,8 @@
-app.get("/dashboard", (req, res) => {
-    res.render("dashboard", {
-        userName: req.session.userName,
-        activePage: "dashboard"
-    });
-});
+const express = require("express");
+const router = express.Router();
+
+const dashboardController = require("../controllers/dashboard.controller");
+
+router.get("/", dashboardController.renderDashboard);
+
+module.exports = router;
