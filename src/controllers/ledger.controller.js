@@ -79,17 +79,29 @@ module.exports.customerLedger = async (req, res) => {
 // Render new ledger entry form
 module.exports.renderNew = async (req, res) => {
     try {
-        const customers = await pool.query("SELECT id, name, customer_code FROM customers ORDER BY name");
-        const vehicles = await pool.query("SELECT id, vehicle_number, customer_id FROM vehicles ORDER BY vehicle_number");
-        // Add this line to fetch services:
-        const services = await pool.query("SELECT id, service_name, default_fee FROM services WHERE is_active = true ORDER BY service_name");
+        const availableRequests = await pool.query(`
+            SELECT 
+                sr.id,
+                sr.request_no,
+                sr.customer_id,
+                sr.vehicle_id,
+                sr.amount,
+                c.name AS customer_name,
+                v.vehicle_number,
+                s.service_name
+            FROM service_requests sr
+            LEFT JOIN ledgers l ON sr.id = l.service_request_id
+            JOIN customers c ON sr.customer_id = c.id
+            LEFT JOIN vehicles v ON sr.vehicle_id = v.id
+            JOIN services s ON sr.service_id = s.id
+            WHERE l.id IS NULL AND sr.status = 'Pending'
+            ORDER BY sr.created_at DESC
+        `);
 
         res.render("ledger/new", {
             activePage: "ledger",
             userName: req.session.userName,
-            customers: customers.rows,
-            vehicles: vehicles.rows,
-            services: services.rows // Add this line
+            requests: availableRequests.rows
         });
     } catch (err) {
         console.log(err);
@@ -98,33 +110,48 @@ module.exports.renderNew = async (req, res) => {
 };
 
 
+
+
 // Create new ledger entry
 module.exports.create = async (req, res) => {
     try {
-        const { customer_id, vehicle_id, service_fee, amount_paid, status } = req.body;
+        const { service_request_id, customer_id, vehicle_id, service_fee, amount_paid, status } = req.body;
 
-        if (!customer_id || !service_fee) {
-            return res.send("Customer and Service Fee are required");
+        if (!customer_id || !service_fee || !service_request_id) {
+            return res.send("Customer, Service Fee, and Service Request are required");
         }
 
         const fee = parseFloat(service_fee) || 0;
         const paid = parseFloat(amount_paid) || 0;
-        const due = fee - paid;
 
+        // Start transaction
+        await pool.query('BEGIN');
+
+        // Insert ledger
         await pool.query(`
-            INSERT INTO ledgers (customer_id, vehicle_id, service_fee, amount_paid, due_amount, status)
+            INSERT INTO ledgers (customer_id, vehicle_id, service_request_id, service_fee, amount_paid, status)
             VALUES ($1, $2, $3, $4, $5, $6)
         `, [
             customer_id,
             vehicle_id || null,
+            service_request_id,
             fee,
             paid,
-            due,
             status || "Unpaid"
         ]);
 
+        // Mark service request as Completed
+        await pool.query(`
+            UPDATE service_requests
+            SET status = 'Completed'
+            WHERE id = $1
+        `, [service_request_id]);
+
+        await pool.query('COMMIT');
+
         res.redirect("/ledger");
     } catch (err) {
+        await pool.query('ROLLBACK');
         console.log(err);
         res.send(err.message);
     }
@@ -163,20 +190,19 @@ module.exports.renderEdit = async (req, res) => {
 };
 
 // Update ledger entry
+// Update ledger entry
 module.exports.update = async (req, res) => {
     try {
         const { id } = req.params;
-        const { vehicle_id, service_fee, amount_paid, status } = req.body;
+        const { amount_paid, status } = req.body;
 
-        const fee = parseFloat(service_fee) || 0;
         const paid = parseFloat(amount_paid) || 0;
-        const due = fee - paid;
 
         await pool.query(`
             UPDATE ledgers
-            SET vehicle_id = $1, service_fee = $2, amount_paid = $3, due_amount = $4, status = $5
-            WHERE id = $6
-        `, [vehicle_id || null, fee, paid, due, status, id]);
+            SET amount_paid = $1, status = $2
+            WHERE id = $3
+        `, [paid, status, id]);
 
         res.redirect("/ledger");
     } catch (err) {

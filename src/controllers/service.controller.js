@@ -290,6 +290,10 @@ const updateRequest = async (req, res) => {
             remarks
         } = req.body;
 
+        // Start transaction
+        await db.query('BEGIN');
+
+        // 1. Update the service request itself
         await db.query(`
             UPDATE service_requests
             SET customer_id = $1,
@@ -299,14 +303,47 @@ const updateRequest = async (req, res) => {
                 status = $5,
                 remarks = $6
             WHERE id = $7
-        `, [customer_id, vehicle_id, service_id, amount, status, remarks, id]);
+        `, [customer_id, vehicle_id || null, service_id, amount, status, remarks, id]);
+
+        // 2. Fetch the corresponding ledger entry (if it exists) to get the amount paid
+        const ledgerRes = await db.query(
+            "SELECT amount_paid FROM ledgers WHERE service_request_id = $1",
+            [id]
+        );
+
+        if (ledgerRes.rows.length > 0) {
+            const paid = parseFloat(ledgerRes.rows[0].amount_paid) || 0;
+            const fee = parseFloat(amount) || 0;
+
+            // Recalculate the status for the ledger based on the new fee
+            let newLedgerStatus = "Unpaid";
+            if (fee > 0 && paid >= fee) {
+                newLedgerStatus = "Paid";
+            } else if (paid > 0 && paid < fee) {
+                newLedgerStatus = "Partial";
+            }
+
+            // Update the ledger entry with new details
+            await db.query(`
+                UPDATE ledgers
+                SET customer_id = $1,
+                    vehicle_id = $2,
+                    service_fee = $3,
+                    status = $4
+                WHERE service_request_id = $5
+            `, [customer_id, vehicle_id || null, fee, newLedgerStatus, id]);
+        }
+
+        await db.query('COMMIT');
 
         res.redirect("/services/requests");
     } catch (err) {
+        await db.query('ROLLBACK');
         console.log(err);
         res.status(500).send("Server Error");
     }
 };
+
 
 const deleteRequest = async (req, res) => {
     try {

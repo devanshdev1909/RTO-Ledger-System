@@ -14,51 +14,36 @@
                         <div class="form-card">
                             <form action="/ledger/<%= ledger.id %>?_method=PUT" method="POST">
 
-                                <!-- Customer (read-only, cannot be changed) -->
+                                <!-- Customer (read-only) -->
                                 <div class="form-group">
                                     <label>Customer</label>
                                     <input type="text" value="<%= ledger.customer_name %>" disabled
                                         style="background:#f3f4f6; color:#6b7280;">
                                 </div>
 
+                                <!-- Vehicle (read-only) -->
                                 <div class="form-group">
-                                    <label for="vehicle_id">Vehicle</label>
-                                    <select name="vehicle_id" id="vehicle_id">
-                                        <option value="">No Vehicle</option>
-                                        <% vehicles.forEach(v=> { %>
-                                            <option value="<%= v.id %>" <%=v.id==ledger.vehicle_id ? 'selected' : '' %>>
-                                                <%= v.vehicle_number %>
-                                            </option>
-                                            <% }) %>
-                                    </select>
+                                    <label>Vehicle</label>
+                                    <input type="text" value="<%= ledger.vehicle_number || 'No Vehicle' %>" disabled
+                                        style="background:#f3f4f6; color:#6b7280;">
                                 </div>
 
-                                <!-- The new dropdown you are pasting in -->
+                                <!-- Service Fee (read-only) -->
                                 <div class="form-group">
-                                    <label for="service_select">Select Service (Optional - Auto fills fee)</label>
-                                    <select id="service_select" onchange="autoFillFee(this)">
-                                        <option value="">-- Choose a Service --</option>
-                                        <% services.forEach(s=> { %>
-                                            <option value="<%= s.default_fee %>">
-                                                <%= s.service_name %> (₹<%= s.default_fee %>)
-                                            </option>
-                                            <% }) %>
-                                    </select>
+                                    <label for="service_fee">Service Fee (₹)</label>
+                                    <input type="number" id="service_fee" min="0" step="0.01"
+                                        value="<%= ledger.service_fee %>" readonly
+                                        style="background:#f3f4f6; color:#6b7280;">
                                 </div>
 
-                                <!-- Your existing Service Fee field -->
+                                <!-- Amount Paid (editable) -->
                                 <div class="form-group">
-                                    <label for="service_fee">Service Fee (₹) <span style="color:red">*</span></label>
-                                    <input type="number" name="service_fee" id="service_fee" min="0" step="0.01"
-                                        value="<%= ledger.service_fee %>" required oninput="calcDue()">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="amount_paid">Amount Paid (₹)</label>
+                                    <label for="amount_paid">Amount Paid (₹) <span style="color:red">*</span></label>
                                     <input type="number" name="amount_paid" id="amount_paid" min="0" step="0.01"
-                                        value="<%= ledger.amount_paid %>" oninput="calcDue()">
+                                        value="<%= ledger.amount_paid %>" required oninput="calcDue()" autofocus>
                                 </div>
 
+                                <!-- Due Amount (read-only) -->
                                 <div class="form-group">
                                     <label>Due Amount (₹)</label>
                                     <input type="text" id="due_preview" disabled
@@ -66,9 +51,11 @@
                                         style="background:#f3f4f6; color:#6b7280;">
                                 </div>
 
+                                <!-- Status (read-only, auto-calculated) -->
                                 <div class="form-group">
                                     <label for="status">Status <span style="color:red">*</span></label>
-                                    <select name="status" id="status" required style="pointer-events: none; background: #f3f4f6;" tabindex="-1">
+                                    <select name="status" id="status" required
+                                        style="pointer-events: none; background: #f3f4f6;" tabindex="-1">
                                         <option value="Unpaid" <%=ledger.status==='Unpaid' ? 'selected' : '' %>>Unpaid
                                         </option>
                                         <option value="Partial" <%=ledger.status==='Partial' ? 'selected' : '' %>
@@ -92,7 +79,7 @@
             const fee = parseFloat(document.getElementById("service_fee").value) || 0;
             const paid = parseFloat(document.getElementById("amount_paid").value) || 0;
             const due = fee - paid;
-            document.getElementById("due_preview").value = "₹" + Math.max(0, due).toFixed(2);
+            document.getElementById("due_preview").value = "₹ " + Math.max(0, due).toFixed(2);
 
             // Auto-select status
             const statusSelect = document.getElementById("status");
@@ -103,21 +90,6 @@
             } else {
                 statusSelect.value = "Unpaid";
             }
-        }
-
-        // The new function you are pasting in
-        function autoFillFee(selectElement) {
-            const feeInput = document.getElementById("service_fee");
-            if (selectElement.value) {
-                feeInput.value = selectElement.value;
-                feeInput.readOnly = true;
-                feeInput.style.background = "#f3f4f6";
-            } else {
-                feeInput.value = "";
-                feeInput.readOnly = false;
-                feeInput.style.background = "";
-            }
-            calcDue(); // Recalculate the due amount instantly
         }
     </script>
 
