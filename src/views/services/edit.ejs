@@ -1,0 +1,54 @@
+<%- include("../partials/header") %>
+
+<div class="container">
+    <%- include("../partials/sidebar") %>
+
+    <div class="main-content">
+        <%- include("../partials/navbar") %>
+
+        <div class="content">
+
+            <div class="page-header">
+                <h1>Edit Service</h1>
+                <a href="/services" class="btn btn-secondary">Back</a>
+            </div>
+
+            <div class="form-container">
+                <form action="/services/<%= service.id %>?_method=PUT" method="POST">
+
+                    <div class="form-group">
+                        <label>Service Name *</label>
+                        <input type="text" name="service_name" value="<%= service.service_name %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Default Fee *</label>
+                        <input type="number" name="default_fee" value="<%= service.default_fee %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea name="description" rows="4"><%= service.description %></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Status *</label>
+                        <select name="is_active" required>
+                            <option value="true" <%= service.is_active ? 'selected' : '' %>>Active</option>
+                            <option value="false" <%= !service.is_active ? 'selected' : '' %>>Inactive</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Update Service</button>
+                        <a href="/services" class="btn btn-secondary">Cancel</a>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<%- include("../partials/footer") %>

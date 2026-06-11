@@ -1,0 +1,120 @@
+<%- include("../partials/header") %>
+
+<div class="container">
+    <%- include("../partials/sidebar") %>
+
+    <div class="main-content">
+        <%- include("../partials/navbar") %>
+
+        <div class="content">
+
+            <div class="page-header">
+                <h1>Edit Service Request</h1>
+                <a href="/services/requests" class="btn btn-secondary">
+                    Back
+                </a>
+            </div>
+
+            <div class="form-container">
+                <form action="/services/requests/<%= request.id %>?_method=PUT" method="POST">
+
+                    <div class="form-group">
+                        <label>Customer *</label>
+                        <select name="customer_id" required>
+                            <option value="">Select Customer</option>
+                            <% customers.forEach(customer => { %>
+                                <option value="<%= customer.id %>"
+                                    <%= customer.id === request.customer_id ? 'selected' : '' %>>
+                                    <%= customer.name %>
+                                </option>
+                            <% }) %>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Vehicle *</label>
+                        <select name="vehicle_id" required>
+                            <option value="">Select Vehicle</option>
+                            <% vehicles.forEach(vehicle => { %>
+                                <option value="<%= vehicle.id %>"
+                                    <%= vehicle.id === request.vehicle_id ? 'selected' : '' %>>
+                                    <%= vehicle.vehicle_number %>
+                                </option>
+                            <% }) %>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Service *</label>
+                        <select id="serviceSelect" name="service_id" required>
+                            <option value="" data-fee="">Select Service</option>
+                            <% services.forEach(service => { %>
+                                <option value="<%= service.id %>"
+                                    data-fee="<%= service.default_fee %>"
+                                    <%= service.id === request.service_id ? 'selected' : '' %>>
+                                    <%= service.service_name %> (₹<%= service.default_fee %>)
+                                </option>
+                            <% }) %>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Amount *</label>
+                        <input
+                            type="number"
+                            id="amountInput"
+                            name="amount"
+                            value="<%= request.amount %>"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Status *</label>
+                        <select name="status" required>
+                            <option value="Pending" <%= request.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                            <option value="Completed" <%= request.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+                            <option value="Cancelled" <%= request.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Remarks</label>
+                        <textarea name="remarks" rows="4" placeholder="Enter remarks..."><%= request.remarks %></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Update Request</button>
+                        <a href="/services/requests" class="btn btn-secondary">Cancel</a>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const serviceSelect = document.getElementById("serviceSelect");
+        const amountInput = document.getElementById("amountInput");
+
+        if (!serviceSelect || !amountInput) {
+            return;
+        }
+
+        serviceSelect.addEventListener("change", function() {
+            const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
+            const fee = selectedOption.getAttribute("data-fee");
+
+            if (fee) {
+                amountInput.value = fee;
+            } else {
+                amountInput.value = "";
+            }
+        });
+    });
+</script>
+
+<%- include("../partials/footer") %>
