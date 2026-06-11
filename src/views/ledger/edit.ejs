@@ -36,12 +36,24 @@
                                         style="background:#f3f4f6; color:#6b7280;">
                                 </div>
 
-                                <!-- Amount Paid (editable) -->
+                                <!-- Amount Paid -->
                                 <div class="form-group">
                                     <label for="amount_paid">Amount Paid (₹) <span style="color:red">*</span></label>
                                     <input type="number" name="amount_paid" id="amount_paid" min="0" step="0.01"
                                         value="<%= ledger.amount_paid %>" required oninput="calcDue()" autofocus>
                                 </div>
+
+                                <!-- Payment Mode -->
+                                <div class="form-group">
+                                    <label for="payment_mode">Payment Mode <span style="color:red">*</span></label>
+                                    <select name="payment_mode" id="payment_mode" required>
+                                        <option value="UPI" selected>UPI</option>
+                                        <option value="Cash">Cash</option>
+                                        <option value="Bank Transfer">Bank Transfer</option>
+                                        <option value="Card">Card</option>
+                                    </select>
+                                </div>
+
 
                                 <!-- Due Amount (read-only) -->
                                 <div class="form-group">

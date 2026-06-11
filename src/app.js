@@ -12,6 +12,7 @@ const customerRouter = require("./routes/customer.routes");
 const vehicleRouter = require("./routes/vehicle.routes");
 const ledgerRouter = require("./routes/ledger.routes");
 const serviceRoutes = require("./routes/service.routes");
+const receiptRouter = require("./routes/receipt.routes");
 const pool = require("./config/db");
 const app = express();
 
@@ -45,6 +46,7 @@ app.use("/vehicles", vehicleRouter);
 app.use("/customers", customerRouter);
 app.use("/ledger", ledgerRouter);
 app.use("/services", serviceRoutes);
+app.use("/receipts", receiptRouter);
 
 // Dashboard
 app.get("/dashboard", isLoggedIn, (req, res) => {
