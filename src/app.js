@@ -13,6 +13,7 @@ const vehicleRouter = require("./routes/vehicle.routes");
 const ledgerRouter = require("./routes/ledger.routes");
 const serviceRoutes = require("./routes/service.routes");
 const receiptRouter = require("./routes/receipt.routes");
+const dashboardRouter = require("./routes/dashboard.routes");
 const pool = require("./config/db");
 const app = express();
 
@@ -49,7 +50,7 @@ app.use("/customers", customerRouter);
 app.use("/ledger", ledgerRouter);
 app.use("/services", serviceRoutes);
 app.use("/receipts", receiptRouter);
-
+app.use("/dashboard", dashboardRouter);
 // Dashboard
 app.get("/dashboard", isLoggedIn, (req, res) => {
   res.render("dashboard", { userName: req.session.userName });
