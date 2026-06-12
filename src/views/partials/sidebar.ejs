@@ -1,7 +1,5 @@
 <div class="sidebar">
 
-    <!-- Logo moved to header -->
-
     <ul class="menu">
 
         <li class="<%= activePage === 'dashboard' ? 'active' : '' %>">
@@ -16,7 +14,8 @@
             <a href="/vehicles">Vehicles</a>
         </li>
 
-        <li class="menu-item service-menu <%= (activePage === 'services' || activePage === 'service_requests') ? 'active' : '' %>">
+        <li
+            class="menu-item service-menu <%= (activePage === 'services' || activePage === 'service_requests') ? 'active' : '' %>">
             <a href="#" class="menu-toggle" onclick="toggleServiceMenu(event)">
                 Services ▼
             </a>
@@ -44,14 +43,14 @@
 
 <script>
 
-function toggleServiceMenu(event){
+    function toggleServiceMenu(event) {
 
-    event.preventDefault();
+        event.preventDefault();
 
-    const menu = event.target.closest(".service-menu");
+        const menu = event.target.closest(".service-menu");
 
-    menu.classList.toggle("active");
+        menu.classList.toggle("active");
 
-}
+    }
 
 </script>
