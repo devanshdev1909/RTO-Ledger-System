@@ -4,29 +4,85 @@
     box-sizing:border-box;
 }
 
-body{
-    font-family:Arial,sans-serif;
+:root{
+    --header-height:60px;
+    --navbar-height:64px;
+    --footer-height:44px;
+    --sidebar-width:250px;
 }
 
-.container{
+/* Top site header (logo area) - use .site-header to avoid colliding with per-page .page-header blocks */
+.site-header{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    height:var(--header-height);
     display:flex;
+    align-items:center;
+    padding:0 20px;
+    background:#ffffff;
+    border-bottom:1px solid #e6eef8;
+    z-index:30;
+}
+
+.site-logo{
+    max-height:40px;
+}
+
+html,
+body{
+    min-height:100%;
+    height:100%;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    display:block;
     min-height:100vh;
 }
 
+.container{
+    display:block;
+    margin-top: calc(var(--header-height) + var(--navbar-height));
+    margin-left: var(--sidebar-width);
+    padding-bottom: var(--footer-height);
+}
+
 .main-content{
-    flex:1;
     background:#f5f7fa;
+    min-height: calc(100vh - (var(--header-height) + var(--navbar-height) + var(--footer-height)));
+    display:flex;
+    flex-direction:column;
+}
+
+.content {
+    flex:1;
+    min-height:0;
+    padding: 20px;
 }
 
 .footer {
-    background-color: #f1f5f9;
-    border-top: 1px solid black;
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 30px;   /* optional */
+    padding: 10px 20px;
+    height: 44px;
     width: 100%;
     text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+}
+
+.footer p {
+    margin: 0;
+    color: #475569;
+    font-size: 0.95rem;
 }
 
 .menu li.active {
@@ -37,4 +93,77 @@ body{
 .menu li.active a {
     color: white;
     font-weight: bold;
+}
+
+:root.dark-theme {
+    color-scheme: dark;
+    background: #0f172a;
+    color: #e2e8f0;
+}
+
+:root.dark-theme body {
+    background: #0f172a;
+    color: #e2e8f0;
+}
+
+:root.dark-theme .navbar,
+:root.dark-theme .footer,
+:root.dark-theme .site-header {
+    background: #111827;
+    border-color: #334155;
+}
+
+:root.dark-theme .page-header h1,
+:root.dark-theme .page-header h2 {
+    color: #f8fafc;
+}
+
+:root.dark-theme .footer p {
+    color: #f8fafc;
+}
+
+:root.dark-theme .navbar-search {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+:root.dark-theme .navbar-search input,
+:root.dark-theme .navbar-search button,
+:root.dark-theme .action-btn,
+:root.dark-theme .user-trigger,
+:root.dark-theme .navbar-title h2,
+:root.dark-theme .navbar-breadcrumb,
+:root.dark-theme .theme-toggle,
+:root.dark-theme .user-dropdown a,
+:root.dark-theme .user-avatar {
+    background: #1e293b;
+    color: #e2e8f0;
+    border-color: #334155;
+}
+
+:root.dark-theme .navbar-title h2,
+:root.dark-theme .navbar-breadcrumb,
+:root.dark-theme .navbar-search input,
+:root.dark-theme .navbar-search button,
+:root.dark-theme .action-btn,
+:root.dark-theme .user-trigger,
+:root.dark-theme .user-dropdown a,
+:root.dark-theme .theme-toggle,
+:root.dark-theme .user-avatar,
+:root.dark-theme .navbar-toggle span {
+    color: #f8fafc;
+}
+
+:root.dark-theme .navbar-search input::placeholder {
+    color: #94a3b8;
+}
+
+:root.dark-theme .action-btn:hover,
+:root.dark-theme .user-dropdown a:hover {
+    background: #334155;
+}
+
+:root.dark-theme .user-dropdown {
+    background: #111827;
+    border-color: #334155;
 }

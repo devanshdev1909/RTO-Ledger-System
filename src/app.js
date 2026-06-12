@@ -45,6 +45,67 @@ app.use((req, res, next) => {
 
 // Routes
 app.use("/", authRouter);
+
+app.get("/search", isLoggedIn, async (req, res) => {
+  const query = (req.query.q || "").trim();
+  const results = {
+    customers: [],
+    vehicles: [],
+    receipts: []
+  };
+
+  if (query) {
+    const searchTerm = `%${query}%`;
+
+    try {
+      const customerResult = await pool.query(
+        `SELECT * FROM customers
+         WHERE customer_code ILIKE $1 OR name ILIKE $1 OR mobile ILIKE $1 OR email ILIKE $1 OR address ILIKE $1
+         ORDER BY created_at DESC`,
+        [searchTerm]
+      );
+      results.customers = customerResult.rows;
+    } catch (err) {
+      console.error("Search customers error:", err.message);
+    }
+
+    try {
+      const vehicleResult = await pool.query(
+        `SELECT v.*, c.name AS customer_name
+         FROM vehicles v
+         LEFT JOIN customers c ON v.customer_id = c.id
+         WHERE v.vehicle_number ILIKE $1 OR v.chassis_number ILIKE $1 OR v.engine_number ILIKE $1 OR v.vehicle_type ILIKE $1 OR c.name ILIKE $1
+         ORDER BY v.created_at DESC`,
+        [searchTerm]
+      );
+      results.vehicles = vehicleResult.rows;
+    } catch (err) {
+      console.error("Search vehicles error:", err.message);
+    }
+
+    try {
+      const receiptResult = await pool.query(
+        `SELECT id, receipt_no, customer_name, service_name, amount_received, payment_mode, received_at
+         FROM receipts
+         WHERE receipt_no ILIKE $1 OR customer_name ILIKE $1 OR service_name ILIKE $1 OR payment_mode ILIKE $1
+         ORDER BY received_at DESC`,
+        [searchTerm]
+      );
+      results.receipts = receiptResult.rows;
+    } catch (err) {
+      console.error("Search receipts error:", err.message);
+      results.receipts = [];
+    }
+  }
+
+  res.render("search", {
+    activePage: "search",
+    query,
+    results,
+    userName: req.session.userName
+  });
+});
+
 app.use("/vehicles", vehicleRouter);
 app.use("/customers", customerRouter);
 app.use("/ledger", ledgerRouter);
