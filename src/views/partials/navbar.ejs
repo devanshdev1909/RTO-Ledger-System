@@ -1,5 +1,8 @@
 <div class="navbar">
     <div class="navbar-left">
+        <h1 class="navbar-logo"
+            style="margin: 0; padding-right: 20px; font-size: 1.25rem; font-weight: bold; color: #1e40af;">RTO LEDGER
+        </h1>
         <button type="button" class="navbar-toggle" id="navbarToggle" aria-label="Open menu">
             <span></span>
             <span></span>
@@ -7,14 +10,19 @@
         </button>
 
         <div class="navbar-title">
-            <h2><%= typeof pageTitle !== 'undefined' ? pageTitle : (activePage || 'dashboard').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) %></h2>
-            <p class="navbar-breadcrumb">Home / <%= typeof activePage !== 'undefined' ? activePage : 'dashboard' %></p>
+            <h2>
+                <%= typeof pageTitle !=='undefined' ? pageTitle : (activePage || 'dashboard' ).replace(/-/g, ' '
+                    ).replace(/\b\w/g, c=> c.toUpperCase()) %>
+            </h2>
+            <p class="navbar-breadcrumb">Home / <%= typeof activePage !=='undefined' ? activePage : 'dashboard' %>
+            </p>
         </div>
     </div>
 
     <div class="navbar-center">
         <form action="/search" method="GET" class="navbar-search">
-            <input type="search" name="q" placeholder="Search customers, vehicles, receipts..." aria-label="Search" value="<%= typeof query !== 'undefined' ? query : '' %>">
+            <input type="search" name="q" placeholder="Search customers, vehicles, receipts..." aria-label="Search"
+                value="<%= typeof query !== 'undefined' ? query : '' %>">
             <button type="submit" class="active">Search</button>
         </form>
     </div>
@@ -30,7 +38,7 @@
 
         <div class="user-menu">
             <button type="button" class="user-trigger" id="userMenuButton" aria-expanded="false" aria-haspopup="true">
-                <span class="user-greet">Hi, <%= typeof userName !== 'undefined' ? userName : 'User' %></span>
+                <span class="user-greet">Hi, <%= typeof userName !=='undefined' ? userName : 'User' %></span>
                 <span class="user-avatar">👤</span>
             </button>
             <div class="user-dropdown" id="userDropdown">

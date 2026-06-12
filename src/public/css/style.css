@@ -5,7 +5,7 @@
 }
 
 :root{
-    --header-height:60px;
+    --header-height:0px;
     --navbar-height:64px;
     --footer-height:44px;
     --sidebar-width:250px;

@@ -1,5 +1,5 @@
 .navbar{
-    width:calc(100% - var(--sidebar-width));
+    width: 100%;
     height:var(--navbar-height);
     background:#fff;
     border-bottom:1px solid #e2e8f0;
@@ -11,7 +11,7 @@
     flex-wrap:wrap;
     position:fixed;
     top: var(--header-height);
-    left: var(--sidebar-width);
+    left: 0;
     right:0;
     z-index:25;
 }
@@ -194,6 +194,7 @@
     border-color:#334155;
 }
 
+:root.dark-theme .navbar-logo,
 :root.dark-theme .navbar-title h2,
 :root.dark-theme .navbar-breadcrumb,
 :root.dark-theme .navbar-search input,
