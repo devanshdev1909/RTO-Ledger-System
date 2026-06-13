@@ -124,6 +124,10 @@ module.exports.create = async (req, res) => {
         const fee = parseFloat(service_fee) || 0;
         const paid = parseFloat(amount_paid) || 0;
 
+        if (paid > fee) {
+            return res.status(400).send("Amount paid cannot be greater than the service fee");
+        }
+
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
@@ -228,12 +232,17 @@ module.exports.update = async (req, res) => {
         try {
             await client.query('BEGIN');
 
-            // Fetch original ledger record to calculate payment difference
-            const originalRes = await client.query("SELECT amount_paid FROM ledgers WHERE id = $1", [id]);
+            // Fetch original ledger record to calculate payment difference and validate fee
+            const originalRes = await client.query("SELECT amount_paid, service_fee FROM ledgers WHERE id = $1", [id]);
             if (originalRes.rows.length === 0) {
                 throw new Error("Ledger entry not found");
             }
             const oldPaid = parseFloat(originalRes.rows[0].amount_paid) || 0;
+            const fee = parseFloat(originalRes.rows[0].service_fee) || 0;
+
+            if (paid > fee) {
+                throw new Error("Amount paid cannot be greater than the service fee");
+            }
 
             // Update ledger record
             await client.query(`

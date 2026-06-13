@@ -89,7 +89,15 @@
     <script>
         function calcDue() {
             const fee = parseFloat(document.getElementById("service_fee").value) || 0;
-            const paid = parseFloat(document.getElementById("amount_paid").value) || 0;
+            const paidInput = document.getElementById("amount_paid");
+            paidInput.max = fee;
+            let paid = parseFloat(paidInput.value) || 0;
+
+            if (paid > fee) {
+                paidInput.value = fee;
+                paid = fee;
+            }
+
             const due = fee - paid;
             document.getElementById("due_preview").value = "₹ " + Math.max(0, due).toFixed(2);
 
@@ -103,6 +111,9 @@
                 statusSelect.value = "Unpaid";
             }
         }
+
+        // Initialize max attribute and status representation on page load
+        window.addEventListener('DOMContentLoaded', calcDue);
     </script>
 
     <%- include("../partials/footer") %>
