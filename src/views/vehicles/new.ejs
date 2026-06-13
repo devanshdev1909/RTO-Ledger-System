@@ -29,7 +29,14 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="vehicle_number">Vehicle Number</label>
+                                    <label for="vehicle_number">Vehicle Number
+                                        <span class="tooltip">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span class="tooltiptext">Format: AB 12 CD 1234 (e.g. MH 12 AB 1234)</span>
+                                        </span>
+                                    </label>
                                     <input type="text" name="vehicle_number" id="vehicle_number"
                                         placeholder="AB 12 CD 1234"
                                         value="<%= typeof vehicle !== 'undefined' ? vehicle.vehicle_number : '' %>"
@@ -55,7 +62,14 @@
 
 
                                 <div class="form-group">
-                                    <label for="chassis_number">Chassis Number</label>
+                                    <label for="chassis_number">Chassis Number
+                                        <span class="tooltip">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span class="tooltiptext">Starts with CH, followed by 10 alphanumeric characters (12 total)</span>
+                                        </span>
+                                    </label>
                                     <input type="text" name="chassis_number" id="chassis_number"
                                         placeholder="CH1234567890"
                                         value="<%= typeof vehicle !== 'undefined' ? (vehicle.chassis_number ? vehicle.chassis_number : 'CH') : 'CH' %>"
@@ -65,7 +79,14 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="engine_number">Engine Number</label>
+                                    <label for="engine_number">Engine Number
+                                        <span class="tooltip">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span class="tooltiptext">Starts with EN, followed by 10 alphanumeric characters (12 total)</span>
+                                        </span>
+                                    </label>
                                     <input type="text" name="engine_number" id="engine_number"
                                         placeholder="EN1234567890"
                                         value="<%= typeof vehicle !== 'undefined' ? (vehicle.engine_number ? vehicle.engine_number : 'EN') : 'EN' %>"

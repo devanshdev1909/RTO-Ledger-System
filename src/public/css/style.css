@@ -283,3 +283,61 @@ input:checked+.slider:before {
     color: #991b1b;
     /* dark red */
 }
+
+/* Tooltip wrapper */
+.tooltip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 6px;
+    cursor: help;
+    color: #9ca3af; /* Light gray */
+    vertical-align: middle;
+}
+
+/* Help icon size */
+.tooltip svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* Tooltip text container */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 220px;
+    background-color: #1f2937; /* Dark Slate gray background */
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 12px;
+    position: absolute;
+    z-index: 10;
+    bottom: 125%; /* Position above the icon */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.4;
+    text-transform: none; /* Keep original casing */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Bottom arrow indicator */
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #1f2937 transparent transparent transparent;
+}
+
+/* Show the tooltip text when hovering */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
