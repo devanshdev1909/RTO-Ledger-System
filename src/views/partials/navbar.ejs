@@ -9,7 +9,14 @@
             <span></span>
         </button>
 
-        
+        <div class="navbar-title">
+            <h2>
+                <%= typeof pageTitle !=='undefined' ? pageTitle : (activePage || 'dashboard' ).replace(/-/g, ' '
+                    ).replace(/\b\w/g, c=> c.toUpperCase()) %>
+            </h2>
+            <p class="navbar-breadcrumb">Home / <%= typeof activePage !=='undefined' ? activePage : 'dashboard' %>
+            </p>
+        </div>
     </div>
 
     <div class="navbar-center">
