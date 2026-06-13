@@ -102,6 +102,19 @@ class Vehicle {
             [id]
         );
     }
+    static async toggleStatus(id, isActive) {
+        const result = await pool.query(
+            `
+            UPDATE vehicles 
+            SET is_active = $1 
+            WHERE id = $2 
+            RETURNING *
+            `,
+            [isActive, id]
+        );
+        return result.rows[0];
+    }
+
 
 }
 

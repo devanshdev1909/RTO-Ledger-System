@@ -26,6 +26,7 @@
                                         <th>Chassis No.</th>
                                         <th>Engine No.</th>
                                         <th>Reg. Date</th>
+                                        <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -62,6 +63,21 @@
                                                             Date(v.registration_date).toLocaleDateString("en-IN")
                                                             : "N/A" %>
                                                     </td>
+                                                    <td>
+                                                        <div class="status-container">
+                                                            <span
+                                                                class="status-text <%= v.is_active !== false ? 'active' : 'inactive' %>">
+                                                                <%= v.is_active !==false ? 'Active' : 'Inactive' %>
+                                                            </span>
+                                                            <label class="switch">
+                                                                <input type="checkbox" class="status-toggle"
+                                                                    data-id="<%= v.id %>" <%=v.is_active !==false
+                                                                    ? 'checked' : '' %>>
+                                                                <span class="slider"></span>
+                                                            </label>
+                                                        </div>
+                                                    </td>
+
                                                     <td class="actions">
                                                         <% if (permissions.includes('vehicle.create')) { %>
                                                             <a href="/vehicles/<%= v.id %>/edit"
@@ -85,5 +101,45 @@
                     </div>
             </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".status-toggle").forEach(checkbox => {
+                checkbox.addEventListener("change", async (e) => {
+                    const vehicleId = e.target.getAttribute("data-id");
+                    const isActive = e.target.checked;
+                    const statusText = e.target.closest(".status-container").querySelector(".status-text");
+
+                    try {
+                        const response = await fetch(`/vehicles/${vehicleId}/toggle-status`, {
+                            method: "PATCH",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({ is_active: isActive })
+                        });
+
+                        if (!response.ok) {
+                            throw new Error("Failed to update status");
+                        }
+
+                        const data = await response.json();
+
+                        // Update text and class color
+                        if (isActive) {
+                            statusText.textContent = "Active";
+                            statusText.className = "status-text active";
+                        } else {
+                            statusText.textContent = "Inactive";
+                            statusText.className = "status-text inactive";
+                        }
+                    } catch (err) {
+                        console.error("Error toggling status:", err);
+                        alert("Error updating status: " + err.message);
+                        e.target.checked = !isActive;
+                    }
+                });
+            });
+        });
+    </script>
 
     <%- include("../partials/footer") %>

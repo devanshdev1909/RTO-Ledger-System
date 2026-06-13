@@ -121,3 +121,17 @@ module.exports.delete = async (req, res) => {
         res.send(err.message);
     }
 };
+
+// Toggle vehicle active status
+module.exports.toggleStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { is_active } = req.body;
+        await Vehicle.toggleStatus(id, is_active);
+        res.json({ success: true, message: "Vehicle status updated successfully" });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+};
+

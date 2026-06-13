@@ -355,6 +355,21 @@ const deleteRequest = async (req, res) => {
         res.status(500).send("Server Error");
     }
 };
+const toggleServiceStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { is_active } = req.body;
+        await db.query(
+            "UPDATE services SET is_active = $1 WHERE id = $2",
+            [is_active, id]
+        );
+        res.json({ success: true, message: "Service status updated successfully" });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+};
+
 
 module.exports = {
     showServices,
@@ -369,5 +384,6 @@ module.exports = {
     showRequestDetails,
     showEditRequestForm,
     updateRequest,
-    deleteRequest
+    deleteRequest,
+    toggleServiceStatus
 };

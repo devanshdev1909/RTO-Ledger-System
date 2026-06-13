@@ -9,6 +9,7 @@ router.post("/", isLoggedIn, hasPermission('vehicle.create'), vehicleController.
 router.get("/:id/edit", isLoggedIn, hasPermission('vehicle.create'), vehicleController.renderEdit);
 router.put("/:id", isLoggedIn, hasPermission('vehicle.create'), vehicleController.update);
 router.delete("/:id", isLoggedIn, hasPermission('vehicle.create'), vehicleController.delete);
+router.patch("/:id/toggle-status", isLoggedIn, hasPermission('vehicle.create'), vehicleController.toggleStatus);
 
 module.exports = router;
 

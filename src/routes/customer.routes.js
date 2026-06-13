@@ -9,5 +9,6 @@ router.post("/", isLoggedIn, hasPermission('customer.create'), customerControlle
 router.get("/:id/edit", isLoggedIn, hasPermission('customer.edit'), customerController.showEditCustomerForm);
 router.put("/:id", isLoggedIn, hasPermission('customer.edit'), customerController.updateCustomer);
 router.delete("/:id", isLoggedIn, hasPermission('customer.edit'), customerController.deleteCustomer);
+router.patch("/:id/toggle-status", isLoggedIn, hasPermission('customer.edit'), customerController.toggleCustomerStatus);
 
 module.exports = router;

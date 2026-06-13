@@ -1,131 +1,159 @@
 <%- include("../partials/header") %>
 
-<div class="container">
+    <div class="container">
 
-    <%- include("../partials/sidebar") %>
+        <%- include("../partials/sidebar") %>
 
-    <div class="main-content">
+            <div class="main-content">
 
-        <%- include("../partials/navbar") %>
+                <%- include("../partials/navbar") %>
 
-        <div class="content">
+                    <div class="content">
 
-            <div class="page-header">
-                <h1>Services</h1>
+                        <div class="page-header">
+                            <h1>Services</h1>
 
-                <a href="/services/new" class="btn btn-primary">
-                    + Add Service
-                </a>
-            </div>
+                            <a href="/services/new" class="btn btn-primary">
+                                + Add Service
+                            </a>
+                        </div>
 
-            <div class="table-container">
+                        <div class="table-container">
 
-                <table class="data-table">
+                            <table class="data-table">
 
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Service Name</th>
-                            <th>Default Fee</th>
-                            <th>Description</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Service Name</th>
+                                        <th>Default Fee</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
 
-                    <tbody>
+                                <tbody>
 
-                        <% if (services.length === 0) { %>
+                                    <% if (services.length===0) { %>
 
-                            <tr>
-                                <td colspan="6" class="empty-state">
-                                    No services found.
-                                </td>
-                            </tr>
-
-                        <% } else { %>
-
-                            <% services.forEach((service, i) => { %>
-
-                                <tr>
-
-                                    <td>
-                                        <%= i + 1 %>
-                                    </td>
-
-                                    <td>
-                                        <strong>
-                                            <%= service.service_name %>
-                                        </strong>
-                                    </td>
-
-                                    <td>
-                                        ₹ <%= service.default_fee %>
-                                    </td>
-
-                                    <td>
-                                        <%= service.description || "N/A" %>
-                                    </td>
-
-                                    <td>
-
-                                        <% if(service.is_active){ %>
-
-                                            <span class="status-active">
-                                                Active
-                                            </span>
+                                        <tr>
+                                            <td colspan="6" class="empty-state">
+                                                No services found.
+                                            </td>
+                                        </tr>
 
                                         <% } else { %>
 
-                                            <span class="status-inactive">
-                                                Inactive
-                                            </span>
+                                            <% services.forEach((service, i)=> { %>
 
-                                        <% } %>
+                                                <tr>
 
-                                    </td>
+                                                    <td>
+                                                        <%= i + 1 %>
+                                                    </td>
 
-                                    <td class="actions">
+                                                    <td>
+                                                        <strong>
+                                                            <%= service.service_name %>
+                                                        </strong>
+                                                    </td>
 
-                                        <a href="/services/<%= service.id %>/edit"
-                                            class="btn btn-edit">
-                                            Edit
-                                        </a>
+                                                    <td>
+                                                        ₹ <%= service.default_fee %>
+                                                    </td>
 
-                                        <form
-                                            action="/services/<%= service.id %>?_method=DELETE"
-                                            method="POST"
-                                            style="display:inline;"
-                                        >
+                                                    <td>
+                                                        <%= service.description || "N/A" %>
+                                                    </td>
 
-                                            <button
-                                                type="submit"
-                                                class="btn btn-delete"
-                                                onclick="return confirm('Delete this service?')"
-                                            >
-                                                Delete
-                                            </button>
+                                                    <td>
+                                                        <div class="status-container">
+                                                            <span
+                                                                class="status-text <%= service.is_active ? 'active' : 'inactive' %>">
+                                                                <%= service.is_active ? 'Active' : 'Inactive' %>
+                                                            </span>
+                                                            <label class="switch">
+                                                                <input type="checkbox" class="status-toggle"
+                                                                    data-id="<%= service.id %>" <%=service.is_active
+                                                                    ? 'checked' : '' %>>
+                                                                <span class="slider"></span>
+                                                            </label>
+                                                        </div>
+                                                    </td>
 
-                                        </form>
 
-                                    </td>
+                                                    <td class="actions">
 
-                                </tr>
+                                                        <a href="/services/<%= service.id %>/edit" class="btn btn-edit">
+                                                            Edit
+                                                        </a>
 
-                            <% }) %>
+                                                        <form action="/services/<%= service.id %>?_method=DELETE"
+                                                            method="POST" style="display:inline;">
 
-                        <% } %>
+                                                            <button type="submit" class="btn btn-delete"
+                                                                onclick="return confirm('Delete this service?')">
+                                                                Delete
+                                                            </button>
 
-                    </tbody>
+                                                        </form>
 
-                </table>
+                                                    </td>
+
+                                                </tr>
+
+                                                <% }) %>
+
+                                                    <% } %>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
 
             </div>
 
-        </div>
-
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".status-toggle").forEach(toggle => {
+                toggle.addEventListener("change", async (e) => {
+                    const id = e.target.getAttribute("data-id");
+                    const isChecked = e.target.checked;
+                    const statusText = e.target.closest(".status-container").querySelector(".status-text");
 
-</div>
+                    try {
+                        const response = await fetch(`/services/${id}/toggle-status`, {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ is_active: isChecked })
+                        });
+                        const result = await response.json();
+                        if (!result.success) {
+                            alert("Error updating status: " + result.error);
+                            e.target.checked = !isChecked;
+                        } else {
+                            // Update text and class color
+                            if (isChecked) {
+                                statusText.textContent = "Active";
+                                statusText.className = "status-text active";
+                            } else {
+                                statusText.textContent = "Inactive";
+                                statusText.className = "status-text inactive";
+                            }
+                        }
+                    } catch (error) {
+                        alert("Network error updating status.");
+                        e.target.checked = !isChecked;
+                    }
+                });
+            });
+        });
+    </script>
 
-<%- include("../partials/footer") %>
+
+    <%- include("../partials/footer") %>

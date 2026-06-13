@@ -52,10 +52,18 @@
                                                     <%= customer.address %>
                                                 </td>
                                                 <td>
-                                                    <span
-                                                        style="background:#d1fae5; color:#065f46; padding:4px 8px; border-radius:12px; font-size:0.85rem; font-weight:500;">
-                                                        <%= customer.status || "Active" %>
-                                                    </span>
+                                                    <div class="status-container">
+                                                        <span
+                                                            class="status-text <%= customer.is_active !== false ? 'active' : 'inactive' %>">
+                                                            <%= customer.is_active !==false ? 'Active' : 'Inactive' %>
+                                                        </span>
+                                                        <label class="switch">
+                                                            <input type="checkbox" class="status-toggle"
+                                                                data-id="<%= customer.id %>" <%=customer.is_active
+                                                                !==false ? 'checked' : '' %>>
+                                                            <span class="slider"></span>
+                                                        </label>
+                                                    </div>
                                                 </td>
                                                 <td class="actions">
                                                     <% if (permissions.includes('customer.edit')) { %>
@@ -87,5 +95,43 @@
                     </div>
             </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".status-toggle").forEach(toggle => {
+                toggle.addEventListener("change", async (e) => {
+                    const id = e.target.getAttribute("data-id");
+                    const isChecked = e.target.checked;
+                    const statusText = e.target.closest(".status-container").querySelector(".status-text");
+
+                    try {
+                        const response = await fetch(`/customers/${id}/toggle-status`, {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ is_active: isChecked })
+                        });
+                        const result = await response.json();
+                        if (!result.success) {
+                            alert("Error updating status: " + result.error);
+                            e.target.checked = !isChecked;
+                        } else {
+                            // Update text and class color
+                            if (isChecked) {
+                                statusText.textContent = "Active";
+                                statusText.className = "status-text active";
+                            } else {
+                                statusText.textContent = "Inactive";
+                                statusText.className = "status-text inactive";
+                            }
+                        }
+                    } catch (error) {
+                        alert("Network error updating status.");
+                        e.target.checked = !isChecked;
+                    }
+                });
+            });
+        });
+    </script>
+
 
     <%- include("../partials/footer") %>

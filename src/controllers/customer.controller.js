@@ -80,6 +80,20 @@ const deleteCustomer = async (req, res) => {
     }
 };
 
+const toggleCustomerStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { is_active } = req.body;
+        await pool.query(
+            "UPDATE customers SET is_active = $1 WHERE id = $2",
+            [is_active, id]
+        );
+        res.json({ success: true, message: "Customer status updated successfully" });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+};
 
 module.exports = {
     renderCustomersPage,
@@ -87,5 +101,6 @@ module.exports = {
     createCustomer,
     showEditCustomerForm,
     updateCustomer,
-    deleteCustomer
+    deleteCustomer,
+    toggleCustomerStatus
 };
