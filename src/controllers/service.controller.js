@@ -369,6 +369,27 @@ const toggleServiceStatus = async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 };
+const updateRequestStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        // Validate status input
+        if (!["Pending", "Completed", "Cancelled"].includes(status)) {
+            return res.status(400).json({ success: false, error: "Invalid status value" });
+        }
+
+        await db.query(
+            "UPDATE service_requests SET status = $1 WHERE id = $2",
+            [status, id]
+        );
+
+        res.json({ success: true, message: "Status updated successfully" });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+};
 
 
 module.exports = {
@@ -385,5 +406,6 @@ module.exports = {
     showEditRequestForm,
     updateRequest,
     deleteRequest,
-    toggleServiceStatus
+    toggleServiceStatus,
+    updateRequestStatus
 };

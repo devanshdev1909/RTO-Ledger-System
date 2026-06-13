@@ -250,3 +250,36 @@ input:checked+.slider:before {
     align-items: center;
     gap: 4px;
 }
+
+/* Dropdown status selector styling */
+.status-select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.status-select.pending {
+    background-color: #fef3c7;
+    /* light yellow */
+    color: #b45309;
+    /* dark amber */
+}
+
+.status-select.completed {
+    background-color: #d1fae5;
+    /* light green */
+    color: #065f46;
+    /* dark green */
+}
+
+.status-select.cancelled {
+    background-color: #fee2e2;
+    /* light red */
+    color: #991b1b;
+    /* dark red */
+}
