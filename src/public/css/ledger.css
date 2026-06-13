@@ -121,3 +121,22 @@
     text-align: center;
     vertical-align: middle;
 }
+
+
+/* =========================
+   LEDGER BADGES - DARK MODE FIX
+========================= */
+:root.dark-theme .badge-paid {
+    background: #14532d;
+    color: #86efac;
+}
+
+:root.dark-theme .badge-unpaid {
+    background: #7f1d1d;
+    color: #fecaca;
+}
+
+:root.dark-theme .badge-partial {
+    background: #78350f;
+    color: #fde68a;
+}
