@@ -88,3 +88,51 @@
         grid-template-columns: 1fr;
     }
 }
+
+
+/* =========================
+   DARK MODE VARIABLES OVERRIDE
+========================= */
+:root.dark-theme {
+    --dashboard-bg: #0f172a;
+    --card-bg: #111827;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --card-border: 3px solid rgba(148, 163, 184, 0.15);
+}
+
+/* =========================
+   DASHBOARD BACKGROUND
+========================= */
+:root.dark-theme .dashboard-content {
+    background: var(--dashboard-bg);
+}
+
+/* =========================
+   CARDS FIX
+========================= */
+:root.dark-theme .card {
+    background: var(--card-bg);
+    color: var(--text-primary);
+    border: 1px solid #334155;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+/* =========================
+   TEXT FIX INSIDE CARDS
+========================= */
+:root.dark-theme .card h4 {
+    color: var(--text-secondary);
+}
+
+:root.dark-theme .card p {
+    color: var(--text-primary);
+}
+
+/* =========================
+   PAGE TEXT FIX
+========================= */
+:root.dark-theme .dashboard-content h1,
+:root.dark-theme .dashboard-content h3 {
+    color: var(--text-primary);
+}

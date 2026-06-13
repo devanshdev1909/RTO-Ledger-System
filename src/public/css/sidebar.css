@@ -71,3 +71,30 @@
     text-decoration:none;
     display:block;
 }
+
+
+/* =========================
+   SIDEBAR DARK MODE (LIGHTER SHADE)
+========================= */
+:root.dark-theme .sidebar {
+    background: #1e293b;   /* lighter than body */
+    border-right: 1px solid #334155;
+}
+
+/* sidebar text */
+:root.dark-theme .sidebar a,
+:root.dark-theme .sidebar li {
+    color: #e2e8f0;
+}
+
+/* hover effect */
+:root.dark-theme .sidebar a:hover {
+    background: #334155;
+    color: #ffffff;
+}
+
+/* active menu item */
+:root.dark-theme .sidebar .active {
+    background: #2563eb;
+    color: #ffffff;
+}
