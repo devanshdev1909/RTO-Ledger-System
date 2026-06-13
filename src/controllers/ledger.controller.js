@@ -144,8 +144,8 @@ module.exports.create = async (req, res) => {
 
             const ledgerId = ledgerRes.rows[0].id;
 
-            // Generate receipt automatically if amount paid > 0
-            if (paid > 0) {
+            // Generate receipt automatically if amount paid >= 0
+            if (paid >= 0) {
                 const nextIdRes = await client.query("SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM receipts");
                 const nextId = nextIdRes.rows[0].next_id;
                 const receiptNo = "RCPT" + String(nextId).padStart(3, '0');
@@ -208,7 +208,7 @@ module.exports.renderEdit = async (req, res) => {
             userName: req.session.userName,
             ledger: ledger.rows[0],
             vehicles: vehicles.rows,
-            services: services.rows // Add this line
+            services: services.rows
         });
     } catch (err) {
         console.log(err);
