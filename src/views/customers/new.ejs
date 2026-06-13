@@ -1,53 +1,63 @@
 <%- include("../partials/header") %>
 
-<div class="container">
-    <%- include("../partials/sidebar") %>
+    <div class="container">
+        <%- include("../partials/sidebar") %>
 
-    <div class="main-content">
-        <%- include("../partials/navbar") %>
+            <div class="main-content">
+                <%- include("../partials/navbar") %>
 
-        <div class="content">
+                    <div class="content">
 
-            <div class="page-header">
-                <h1>Add New Customer</h1>
-                <a href="/customers" class="btn btn-secondary">← Back</a>
+                        <div class="page-header">
+                            <h1>Add New Customer</h1>
+                            <a href="/customers" class="btn btn-secondary">← Back</a>
+                        </div>
+
+                        <div class="form-card">
+                            <form action="/customers" method="POST">
+
+                                <div class="form-group">
+                                    <label for="customer_code">Customer Code</label>
+                                    <input type="text" name="customer_code" id="customer_code" placeholder="CUST-001"
+                                        value="<%= typeof customer !== 'undefined' ? customer.customer_code : 'CUST-' %>"
+                                        required
+                                        oninput="if(!this.value.toUpperCase().startsWith('CUST-')) { this.value = 'CUST-' + this.value.toUpperCase().replace(/[^0-9]/g, ''); } else { this.value = 'CUST-' + this.value.substring(5).toUpperCase().replace(/[^0-9]/g, ''); }"
+                                        style="text-transform: uppercase;">
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label for="name">Full Name</label>
+                                    <input type="text" name="name" id="name" placeholder="John Doe" required
+                                        onblur="this.value = this.value.trim().split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="mobile">Mobile Number</label>
+                                    <input type="text" name="mobile" id="mobile" placeholder="9876543210" required
+                                        maxlength="10" pattern="[0-9]{10}"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="email">Email Address</label>
+                                    <input type="email" name="email" id="email" placeholder="[EMAIL_ADDRESS]"
+                                        pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="address">Address</label>
+                                    <textarea name="address" id="address" placeholder="Full Address"
+                                        rows="3"></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Save Customer</button>
+
+                            </form>
+                        </div>
+
+                    </div>
             </div>
-
-            <div class="form-card">
-                <form action="/customers" method="POST">
-
-                    <div class="form-group">
-                        <label for="customer_code">Customer Code</label>
-                        <input type="text" name="customer_code" id="customer_code" placeholder="e.g. CUST-001">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="name">Full Name</label>
-                        <input type="text" name="name" id="name" placeholder="John Doe" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="mobile">Mobile Number</label>
-                        <input type="text" name="mobile" id="mobile" placeholder="9876543210" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" name="email" id="email" placeholder="john@example.com">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="address">Address</label>
-                        <textarea name="address" id="address" placeholder="Full Address" rows="3"></textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Save Customer</button>
-
-                </form>
-            </div>
-
-        </div>
     </div>
-</div>
 
-<%- include("../partials/footer") %>
+    <%- include("../partials/footer") %>
