@@ -17,7 +17,7 @@ router.post("/", isLoggedIn, hasPermission('user.manage'), serviceController.cre
 router.get("/:id/edit", isLoggedIn, hasPermission('user.manage'), serviceController.showEditServiceForm);
 router.put("/:id", isLoggedIn, hasPermission('user.manage'), serviceController.updateService);
 router.delete("/:id", isLoggedIn, hasPermission('user.manage'), serviceController.deleteService);
-router.patch("/:id/toggle-status", isLoggedIn, hasPermission('service.edit'), serviceController.toggleServiceStatus);
+router.patch("/:id/toggle-status", isLoggedIn, hasPermission('user.manage'), serviceController.toggleServiceStatus);
 router.patch("/requests/:id/status", isLoggedIn, hasPermission('service.create'), serviceController.updateRequestStatus);
 
 module.exports = router;
