@@ -129,7 +129,7 @@ const showNewRequestForm = async (req, res) => {
         `);
 
         const vehicles = await db.query(`
-            SELECT id, vehicle_number
+            SELECT id, vehicle_number, customer_id
             FROM vehicles
             ORDER BY vehicle_number
         `);
@@ -253,7 +253,7 @@ const showEditRequestForm = async (req, res) => {
         `);
 
         const vehicles = await db.query(`
-            SELECT id, vehicle_number
+            SELECT id, vehicle_number, customer_id
             FROM vehicles
             ORDER BY vehicle_number
         `);
