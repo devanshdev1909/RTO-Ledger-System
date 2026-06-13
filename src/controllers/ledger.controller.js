@@ -15,7 +15,7 @@ module.exports.index = async (req, res) => {
             LEFT JOIN vehicles v ON l.vehicle_id = v.id
             LEFT JOIN service_requests sr ON l.service_request_id = sr.id
             LEFT JOIN services s ON sr.service_id = s.id
-            ORDER BY l.created_at DESC
+            ORDER BY l.id DESC
 `);
 
 
@@ -145,7 +145,7 @@ module.exports.create = async (req, res) => {
             const ledgerId = ledgerRes.rows[0].id;
 
             // Generate receipt automatically if amount paid > 0
-            if (paid > 0) {
+            if (paid >= 0) {
                 const nextIdRes = await client.query("SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM receipts");
                 const nextId = nextIdRes.rows[0].next_id;
                 const receiptNo = "RCPT" + String(nextId).padStart(3, '0');
