@@ -1,4 +1,8 @@
-/* Vehicle Page Styles */
+
+/* =========================
+   PAGE HEADER
+========================= */
+
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -11,6 +15,10 @@
     font-size: 1.8rem;
     color: #1f2937;
 }
+
+/* =========================
+   BUTTONS
+========================= */
 
 .btn-primary {
     background: #4f46e5;
@@ -43,7 +51,10 @@
     background: #f3f4f6;
 }
 
-/* Table */
+/* =========================
+   TABLE WRAPPER
+========================= */
+
 .table-container {
     background: white;
     border: 1px solid #e5e7eb;
@@ -52,6 +63,10 @@
     margin: 0 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
+
+/* =========================
+   TABLE
+========================= */
 
 .data-table {
     width: 100%;
@@ -77,15 +92,20 @@
     padding: 14px 16px;
     border-top: 1px solid #f3f4f6;
     color: #1f2937;
+    vertical-align: middle;   /* ⭐ MAIN CENTER FIX */
 }
 
-.data-table tbody tr {
-    transition: all 0.2s ease;
-}
+/* =========================
+   ROW HOVER
+========================= */
 
 .data-table tbody tr:hover {
     background: #f9fafb;
 }
+
+/* =========================
+   EMPTY STATE
+========================= */
 
 .empty-state {
     text-align: center;
@@ -94,45 +114,99 @@
     font-size: 1.1rem;
 }
 
-/* Actions */
+/* =========================
+   ACTIONS COLUMN FIX (IMPORTANT)
+========================= */
+
 .actions {
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+/* IMPORTANT: keep inline layout stable */
+.actions a,
+.actions form {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    margin: 0 4px;
+}
+
+/* =========================
+   ICON BUTTON (OLD STYLE KEPT)
+========================= */
+
+.btn-icon {
+    width: 46px;
+    height: 46px;
+
     display: flex;
-    gap: 8px;
-}
+    align-items: center;
+    justify-content: center;
 
-.btn-edit {
-    background: #3b82f6;
-    color: white;
-    padding: 6px 14px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: 0.85rem;
-    transition: all 0.2s ease;
-}
-
-.btn-edit:hover {
-    background: #2563eb;
-}
-
-.btn-delete {
-    background: #ef4444;
-    color: white;
-    padding: 6px 14px;
-    border-radius: 6px;
     border: none;
-    font-size: 0.85rem;
+    border-radius: 10px;
+
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: none;
+    text-decoration: none;
+
+    padding: 0;
+    margin: 0;
+
+    line-height: 1; /* ⭐ FIX SHIFT */
 }
 
-.btn-delete:hover {
-    background: #dc2626;
-    transform: none;
-    box-shadow: none;
+/* SVG CENTER FIX */
+.btn-icon svg {
+    width: 26px;
+    height: 26px;
+    display: block;
 }
 
-/* Form Card */
+/* =========================
+   EDIT ICON
+========================= */
+
+.edit-icon {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.edit-icon:hover {
+    background: #dbeafe;
+    transform: translateY(-2px);
+}
+
+/* =========================
+   DELETE ICON
+========================= */
+
+.delete-icon {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.delete-icon:hover {
+    background: #fee2e2;
+    transform: translateY(-2px);
+}
+
+/* =========================
+   DELETE FORM RESET
+========================= */
+
+.delete-form {
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* =========================
+   FORM CARD (UNCHANGED)
+========================= */
+
 .form-card {
     background: white;
     border: 1px solid #e5e7eb;
@@ -174,4 +248,63 @@
 .form-group textarea:focus {
     border-color: #4f46e5;
     box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+
+
+/* =========================
+   ACTION COLUMN HEADER + CELL CENTER
+========================= */
+
+.data-table th:last-child,
+.data-table td:last-child{
+    text-align: center;      /* horizontal center */
+    vertical-align: middle;  /* vertical center */
+}
+
+/* =========================
+   ACTIONS WRAPPER ALIGNMENT
+========================= */
+
+.actions{
+    display: flex;
+    justify-content: center;
+    align-items: center;   /* ⭐ TOP-BOTTOM CENTER */
+    gap: 12px;
+    height: 100%;
+}
+
+/* =========================
+   ICON BUTTON CENTER FIX
+========================= */
+
+.btn-icon{
+    width: 46px;
+    height: 46px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    line-height: 1;
+}
+
+/* =========================
+   SVG CENTER FIX
+========================= */
+
+.btn-icon svg{
+    width: 26px;
+    height: 26px;
+    display: block;
+}
+
+/* =========================
+   FORM FIX
+========================= */
+
+.delete-form{
+    margin: 0;
+    display: flex;
+    align-items: center;
 }
