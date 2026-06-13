@@ -217,6 +217,53 @@
             margin-top: 20px;
         }
 
+        /* =========================
+           DARK MODE - RECEIPT DOCKET
+           Keep same look as light mode
+        ========================= */
+        :root.dark-theme .receipt-docket {
+            background: #ffffff;
+            color: #1a202c;
+            border-color: #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        :root.dark-theme .docket-header h2 {
+            color: #1a202c;
+        }
+
+        :root.dark-theme .docket-header .subtitle {
+            color: #718096;
+        }
+
+        :root.dark-theme .docket-divider {
+            border-color: #cbd5e1;
+        }
+
+        :root.dark-theme .docket-label {
+            color: #4a5568;
+        }
+
+        :root.dark-theme .docket-value {
+            color: #1a202c;
+        }
+
+        :root.dark-theme .docket-value.highlight {
+            color: #2b6cb0;
+        }
+
+        :root.dark-theme .docket-value.highlight-mode {
+            color: #2f855a;
+        }
+
+        :root.dark-theme .docket-value.text-red {
+            color: #c53030;
+        }
+
+        :root.dark-theme .docket-footer {
+            color: #718096;
+        }
+
         @media print {
 
             /* Hide all layout elements of the website */
