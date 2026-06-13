@@ -72,14 +72,39 @@
                                                         <td>
                                                             <%= new Date(l.created_at).toLocaleDateString("en-IN") %>
                                                         </td>
-                                                        <td>
-                                                            <a href="/ledger/customer/<%= l.customer_id %>"
-                                                                class="btn btn-edit">View</a>
-                                                            <% if (permissions.includes('ledger.create')) { %>
-                                                                <a href="/ledger/<%= l.id %>/edit"
-                                                                    class="btn btn-edit">Edit</a>
-                                                                <% } %>
-                                                        </td>
+                                                        <td class="actions">
+
+    <!-- VIEW -->
+    <a href="/ledger/customer/<%= l.customer_id %>"
+       class="btn-icon view-icon"
+       title="View">
+
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+            <circle cx="12" cy="12" r="3"/>
+        </svg>
+
+    </a>
+
+    <% if (permissions.includes('ledger.create')) { %>
+
+        <!-- EDIT -->
+        <a href="/ledger/<%= l.id %>/edit"
+           class="btn-icon edit-icon"
+           title="Edit">
+
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 7h-1a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1"/>
+                <path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97l-8.415 8.385v3h3l8.385-8.415"/>
+            </svg>
+
+        </a>
+
+    <% } %>
+
+</td>
                                                 </tr>
                                                 <% }) %>
                                                     <% } %>

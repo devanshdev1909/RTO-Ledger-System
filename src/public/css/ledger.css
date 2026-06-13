@@ -84,3 +84,40 @@
     margin-top: -8px;
     margin-bottom: 20px;
 }
+
+.actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    margin: auto;
+}
+
+.btn-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.view-icon {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+.edit-icon {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.data-table td:last-child {
+    text-align: center;
+    vertical-align: middle;
+}
