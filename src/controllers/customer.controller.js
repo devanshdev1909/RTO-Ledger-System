@@ -16,16 +16,43 @@ const renderCustomersPage = async (req, res) => {
     }
 };
 
-const showNewCustomerForm = (req, res) => {
-    res.render("customers/new", {
-        activePage: "customers",
-        userName: req.session.userName
+const getNextCustomerCode = async () => {
+    const result = await pool.query(
+        "SELECT customer_code FROM customers WHERE customer_code LIKE 'CUST-%'"
+    );
+    let maxNum = 0;
+    result.rows.forEach(row => {
+        const match = row.customer_code.match(/^CUST-(\d+)$/i);
+        if (match) {
+            const num = parseInt(match[1], 10);
+            if (num > maxNum) {
+                maxNum = num;
+            }
+        }
     });
+    return `CUST-${String(maxNum + 1).padStart(3, '0')}`;
+};
+
+const showNewCustomerForm = async (req, res) => {
+    try {
+        const nextCustomerCode = await getNextCustomerCode();
+        res.render("customers/new", {
+            activePage: "customers",
+            userName: req.session.userName,
+            nextCustomerCode
+        });
+    } catch (err) {
+        console.log(err);
+        res.send(err.message);
+    }
 };
 
 const createCustomer = async (req, res) => {
     try {
-        const { customer_code, name, mobile, email, address } = req.body;
+        let { customer_code, name, mobile, email, address } = req.body;
+        if (!customer_code || customer_code === "CUST-") {
+            customer_code = await getNextCustomerCode();
+        }
         await pool.query(
             `INSERT INTO customers (customer_code, name, mobile, email, address, created_by)
              VALUES ($1, $2, $3, $4, $5, $6)`,

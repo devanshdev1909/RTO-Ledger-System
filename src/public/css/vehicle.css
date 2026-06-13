@@ -250,6 +250,19 @@
     box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
 }
 
+.form-group input[readonly] {
+    background-color: #f3f4f6;
+    color: #6b7280;
+    cursor: not-allowed;
+    border-color: #e5e7eb;
+}
+
+:root.dark-theme .form-group input[readonly] {
+    background-color: #1e293b;
+    color: #94a3b8;
+    border-color: #334155;
+}
+
 
 
 /* =========================

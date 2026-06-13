@@ -19,9 +19,8 @@
                                 <div class="form-group">
                                     <label for="customer_code">Customer Code</label>
                                     <input type="text" name="customer_code" id="customer_code" placeholder="CUST-001"
-                                        value="<%= typeof customer !== 'undefined' ? customer.customer_code : 'CUST-' %>"
-                                        required
-                                        oninput="if(!this.value.toUpperCase().startsWith('CUST-')) { this.value = 'CUST-' + this.value.toUpperCase().replace(/[^0-9]/g, ''); } else { this.value = 'CUST-' + this.value.substring(5).toUpperCase().replace(/[^0-9]/g, ''); }"
+                                        value="<%= typeof customer !== 'undefined' ? customer.customer_code : (typeof nextCustomerCode !== 'undefined' ? nextCustomerCode : 'CUST-') %>"
+                                        required readonly
                                         style="text-transform: uppercase;">
                                 </div>
 
