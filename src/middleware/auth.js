@@ -18,3 +18,10 @@ module.exports.hasPermission = (permissionCode) => {
         });
     };
 };
+
+module.exports.isCustomerLoggedIn = (req, res, next) => {
+    if (!req.session.customerId) {
+        return res.redirect("/customer/login");
+    }
+    next();
+};

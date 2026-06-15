@@ -1,0 +1,41 @@
+<%- include("../partials/header") %>
+<div class="container">
+    <%- include("../partials/sidebar") %>
+    <div class="main-content">
+        <%- include("../partials/navbar") %>
+        <div class="content">
+            <div class="page-header">
+                <h1>User Management (RBAC)</h1>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% users.forEach(u => { %>
+                        <tr>
+                            <td><%= u.username %></td>
+                            <td><%= u.email %></td>
+                            <td><%= u.role_name %></td>
+                            <td>
+                                <span class="status-badge"><%= u.is_active ? 'Active' : 'Inactive' %></span>
+                            </td>
+                            <td>
+                                <a href="/admin/users/<%= u.id %>/permissions" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.85rem; text-decoration: none;">Manage Permissions</a>
+                            </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include("../partials/footer") %>

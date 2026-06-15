@@ -7,6 +7,7 @@ const flash = require("connect-flash");
 const methodOverride = require("method-override");
 
 const authRouter = require("./routes/auth.routes");
+const userRouter = require("./routes/user.routes");
 const { isLoggedIn } = require("./middleware/auth");
 const customerRouter = require("./routes/customer.routes");
 const vehicleRouter = require("./routes/vehicle.routes");
@@ -32,6 +33,7 @@ app.use(
     saveUninitialized: false,
   })
 );
+app.use("/admin", userRouter);
 
 app.use(flash());
 
