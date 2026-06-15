@@ -1,62 +1,101 @@
-<%- include("../partials/header") %>
+<div id="customerModal" class="modal">
 
-    <div class="container">
-        <%- include("../partials/sidebar") %>
+    <div class="modal-content">
 
-            <div class="main-content">
-                <%- include("../partials/navbar") %>
+        <div class="modal-header">
+            <h2>Add New Customer</h2>
+            <span class="close-modal">&times;</span>
+        </div>
 
-                    <div class="content">
+        <form action="/customers" method="POST">
 
-                        <div class="page-header">
-                            <h1>Add New Customer</h1>
-                            <a href="/customers" class="btn btn-secondary">← Back</a>
-                        </div>
+            <div class="form-row">
 
-                        <div class="form-card">
-                            <form action="/customers" method="POST">
+                <div class="form-group">
+                    <label>Customer Code</label>
 
-                                <div class="form-group">
-                                    <label for="customer_code">Customer Code</label>
-                                    <input type="text" name="customer_code" id="customer_code" placeholder="CUST-001"
-                                        value="<%= typeof customer !== 'undefined' ? customer.customer_code : (typeof nextCustomerCode !== 'undefined' ? nextCustomerCode : 'CUST-') %>"
-                                        required readonly
-                                        style="text-transform: uppercase;">
-                                </div>
+                    <input
+                        type="text"
+                        name="customer_code"
+                        value="<%= nextCustomerCode %>"
+                        readonly
+                        required>
+                </div>
 
+                <div class="form-group">
+                    <label>Full Name</label>
 
-                                <div class="form-group">
-                                    <label for="name">Full Name</label>
-                                    <input type="text" name="name" id="name" placeholder="John Doe" required
-                                        onblur="this.value = this.value.trim().split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')">
-                                </div>
+                    <input
+                        type="text"
+                        placeholder="Enter Customer Name"
+                        name="name"
+                        required>
+                </div>
 
-                                <div class="form-group">
-                                    <label for="mobile">Mobile Number</label>
-                                    <input type="text" name="mobile" id="mobile" placeholder="9876543210" required
-                                        maxlength="10" pattern="[0-9]{10}"
-                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="email">Email Address</label>
-                                    <input type="email" name="email" id="email" placeholder="[EMAIL_ADDRESS]"
-                                        pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="address">Address</label>
-                                    <textarea name="address" id="address" placeholder="Full Address"
-                                        rows="3"></textarea>
-                                </div>
-
-                                <button type="submit" class="btn btn-primary">Save Customer</button>
-
-                            </form>
-                        </div>
-
-                    </div>
             </div>
+
+            <div class="form-row">
+
+                <div class="form-group">
+                    <label>Mobile Number</label>
+
+                    <input
+                        type="text"
+                        name="mobile"
+                        maxlength="10"
+                        pattern="[0-9]{10}"
+                        oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+
+                    <input
+                        type="email"
+                        placeholder="Enter Email"
+                        name="email">
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label>Address</label>
+
+                <textarea
+                    name="address"
+                    rows="3"
+                    placeholder="Enter Address"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Save Customer
+            </button>
+
+        </form>
+
     </div>
 
-    <%- include("../partials/footer") %>
+</div>
+
+<script>
+
+const modal = document.getElementById("customerModal");
+
+document.getElementById("openCustomerModal")
+?.addEventListener("click", () => {
+    modal.classList.add("active");
+});
+
+document.querySelector(".close-modal")
+?.addEventListener("click", () => {
+    modal.classList.remove("active");
+});
+
+window.addEventListener("click", (e) => {
+    if (e.target === modal) {
+        modal.classList.remove("active");
+    }
+});
+
+</script>
