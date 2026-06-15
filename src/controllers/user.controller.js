@@ -149,3 +149,38 @@ module.exports.toggleUserStatus = async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 };
+
+// Delete a user
+module.exports.deleteUser = async (req, res) => {
+    const client = await pool.connect();
+    try {
+        const { id } = req.params;
+        
+        // Prevent user from deleting themselves
+        if (req.session.userId == id) {
+            return res.redirect("/admin/users?error=CannotDeleteSelf");
+        }
+
+        await client.query("BEGIN");
+        
+        // Delete related user_permissions first
+        await client.query("DELETE FROM user_permissions WHERE user_id = $1", [id]);
+        
+        // Then delete the user
+        await client.query("DELETE FROM users WHERE id = $1", [id]);
+        
+        await client.query("COMMIT");
+        res.redirect("/admin/users");
+    } catch (err) {
+        await client.query("ROLLBACK");
+        console.error("Delete user error:", err);
+        // Provide user-friendly error message if foreign key constraint is violated
+        if (err.code === '23503') {
+            res.redirect("/admin/users?error=CannotDeleteUserInUse");
+        } else {
+            res.redirect("/admin/users?error=FailedToDeleteUser");
+        }
+    } finally {
+        client.release();
+    }
+};
