@@ -5,10 +5,13 @@ const renderCustomersPage = async (req, res) => {
         const result = await pool.query(
             "SELECT * FROM customers ORDER BY created_at DESC"
         );
+        const nextCustomerCode = await getNextCustomerCode();
+
         res.render("customers/staff/index", {
             activePage: "customers",
             customers: result.rows,
-            userName: req.session.userName
+            userName: req.session.userName,
+            nextCustomerCode
         });
     } catch (err) {
         console.log(err);
