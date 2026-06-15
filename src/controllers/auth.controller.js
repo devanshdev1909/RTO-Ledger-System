@@ -3,7 +3,7 @@ const User = require("../models/User");
 const pool = require("../config/db");
 
 module.exports.renderLogin = (req, res) => {
-    res.render("auth/login");
+    res.render("auth/login", { activeTab: 'staff', error: null });
 };
 
 module.exports.login = async (req, res) => {
@@ -19,17 +19,13 @@ module.exports.login = async (req, res) => {
             await User.findByEmail(email);
 
         if (!user) {
-            return res.send(
-                "User Not Found"
-            );
+            return res.render("auth/login", { activeTab: 'staff', error: "User Not Found" });
         }
 
         const isMatch = password === user.password_hash;
 
         if (!isMatch) {
-            return res.send(
-                "Invalid Password"
-            );
+            return res.render("auth/login", { activeTab: 'staff', error: "Invalid Password" });
         }
 
         req.session.userId =
@@ -68,9 +64,7 @@ module.exports.login = async (req, res) => {
     } catch (err) {
 
         console.log(err);
-
-        res.send(err.message);
-
+        res.render("auth/login", { activeTab: 'staff', error: "Server Error" });
     }
 
 };

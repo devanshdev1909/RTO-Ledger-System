@@ -10,6 +10,7 @@ const authRouter = require("./routes/auth.routes");
 const userRouter = require("./routes/user.routes");
 const { isLoggedIn } = require("./middleware/auth");
 const customerRouter = require("./routes/customer.routes");
+const customerPortalRoutes = require('./routes/customerPortal.routes');
 const vehicleRouter = require("./routes/vehicle.routes");
 const ledgerRouter = require("./routes/ledger.routes");
 const serviceRoutes = require("./routes/service.routes");
@@ -110,6 +111,7 @@ app.get("/search", isLoggedIn, async (req, res) => {
 
 app.use("/vehicles", vehicleRouter);
 app.use("/customers", customerRouter);
+app.use('/portal', customerPortalRoutes);
 app.use("/ledger", ledgerRouter);
 app.use("/services", serviceRoutes);
 app.use("/receipts", receiptRouter);
