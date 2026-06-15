@@ -1,0 +1,17 @@
+.env
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# VS Code Settings
+.vscode/
+
+# Temporary Files
+temp/
+tmp/

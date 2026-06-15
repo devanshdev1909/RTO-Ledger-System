@@ -1,0 +1,119 @@
+<%- include("../partials/header") %>
+
+    <div class="container">
+        <%- include("../partials/sidebar") %>
+            <div class="main-content">
+                <%- include("../partials/navbar") %>
+                    <div class="content">
+
+                        <div class="page-header">
+                            <h1>Ledger</h1>
+                            <% if (permissions.includes('ledger.create')) { %>
+                                <a href="/ledger/new" class="btn btn-primary">+ New Entry</a>
+                                <% } %>
+                        </div>
+
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Customer</th>
+                                        <th>Vehicle</th>
+                                        <th>Service</th>
+                                        <th>Service Fee</th>
+                                        <th>Amount Paid</th>
+                                        <th>Due Amount</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (ledgers.length===0) { %>
+                                        <tr>
+                                            <td colspan="9" class="empty-state">No ledger entries found.</td>
+                                        </tr>
+                                        <% } else { %>
+                                            <% ledgers.forEach((l, i)=> { %>
+                                                <tr>
+                                                    <td>
+                                                        <%= i + 1 %>
+                                                    </td>
+                                                    <td><strong>
+                                                            <%= l.customer_name || "N/A" %>
+                                                        </strong><br>
+                                                        <small>
+                                                            <%= l.customer_code || "" %>
+                                                        </small>
+                                                    </td>
+                                                    <td>
+                                                        <%= l.vehicle_number || "N/A" %>
+                                                    </td>
+                                                    <td>
+                                                        <%= l.service_name || "Manual Entry" %>
+                                                    </td>
+                                                    <td>₹<%= Number(l.service_fee).toLocaleString("en-IN") %>
+                                                    </td>
+                                                    <td>₹<%= Number(l.amount_paid).toLocaleString("en-IN") %>
+                                                    </td>
+                                                    <% const dueColor=l.due_amount> 0 ? 'amount-due' : 'amount-clear';
+                                                        %>
+                                                        <td class="<%= dueColor %>">
+                                                            ₹<%= Number(l.due_amount).toLocaleString("en-IN") %>
+                                                        </td>
+                                                        <td>
+                                                            <% const badgeClass=l.status==='Paid' ? 'badge badge-paid'
+                                                                : 'badge badge-unpaid' ; %>
+                                                                <span class="<%= badgeClass %>">
+                                                                    <%= l.status %>
+                                                                </span>
+                                                        </td>
+                                                        <td>
+                                                            <%= new Date(l.created_at).toLocaleDateString("en-IN") %>
+                                                        </td>
+                                                        <td class="actions">
+
+    <!-- VIEW -->
+    <a href="/ledger/customer/<%= l.customer_id %>"
+       class="btn-icon view-icon"
+       title="View">
+
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+            <circle cx="12" cy="12" r="3"/>
+        </svg>
+
+    </a>
+
+    <% if (permissions.includes('ledger.create')) { %>
+
+        <!-- EDIT -->
+        <a href="/ledger/<%= l.id %>/edit"
+           class="btn-icon edit-icon"
+           title="Edit">
+
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 7h-1a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1"/>
+                <path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97l-8.415 8.385v3h3l8.385-8.415"/>
+            </svg>
+
+        </a>
+
+    <% } %>
+
+</td>
+                                                </tr>
+                                                <% }) %>
+                                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+            </div>
+    </div>
+
+    <%- include("../partials/footer") %>

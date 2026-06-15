@@ -1,0 +1,78 @@
+<%- include("partials/header") %>
+
+<div class="container">
+
+    <%- include("partials/sidebar") %>
+
+    <div class="main-content">
+
+        <%- include("partials/navbar") %>
+
+        <div class="dashboard-content">
+
+            <h1>Dashboard</h1>
+
+            <h3>
+                Welcome <%= userName %>
+            </h3>
+
+            <div class="dashboard-cards">
+
+                <div class="card">
+                    <h4>Total Customers</h4>
+                    <p><%= stats.customers %></p>
+                </div>
+
+                <div class="card">
+                    <h4>Total Vehicles</h4>
+                    <p><%= stats.vehicles %></p>
+                </div>
+
+                <div class="card">
+                    <h4>Total Services</h4>
+                    <p><%= stats.services %></p>
+                </div>
+
+                <div class="card">
+                    <h4>Total Requests</h4>
+                    <p><%= stats.requests %></p>
+                </div>
+
+                <div class="card">
+                    <h4>Pending Jobs</h4>
+                    <p><%= stats.pendingJobs %></p>
+                </div>
+
+                <div class="card">
+                    <h4>Completed Jobs</h4>
+                    <p><%= stats.completedJobs %></p>
+                </div>
+
+                <div class="card">
+                    <h4>Today's Requests</h4>
+                    <p><%= stats.todayRequests %></p>
+                </div>
+
+                <div class="card">
+                    <h4>Total Revenue</h4>
+                    <p>
+                        ₹<%= Number(stats.revenue).toLocaleString("en-IN") %>
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h4>Total Due Amount</h4>
+                    <p>
+                        ₹<%= Number(stats.dueAmount).toLocaleString("en-IN") %>
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<%- include("partials/footer") %>

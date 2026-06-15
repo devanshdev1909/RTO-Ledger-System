@@ -1,0 +1,58 @@
+<%- include("../../partials/header") %>
+
+<div class="container">
+
+    <!-- Customer Sidebar -->
+    <%- include("partials/sidebar") %>
+
+    <div class="main-content">
+
+        <%- include("partials/navbar") %>
+
+        <div class="content">
+
+            <% if (locals.error) { %>
+                <div style="background-color: #ffdddd; color: #d8000c; padding: 12px 20px; margin-bottom: 20px; border-radius: 6px; font-size: 14px;">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <!-- Dashboard Cards -->
+            <div class="dashboard-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <h1>Dashboard</h1>
+                        <h3>Welcome <%= customerName %></h3>
+                    </div>
+                    <div class="quick-actions">
+                        <a href="/portal/vehicle/add" style="background-color: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-left: 10px; display: inline-block;">+ Add Vehicle</a>
+                        <a href="/portal/request/create" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-left: 10px; display: inline-block;">+ Request Service</a>
+                    </div>
+                </div>
+
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <h4>My Vehicles</h4>
+                        <p><%= vehiclesCount %></p>
+                    </div>
+                    <div class="card">
+                        <h4>Total Requests</h4>
+                        <p><%= totalRequests %></p>
+                    </div>
+                    <div class="card">
+                        <h4>Pending Requests</h4>
+                        <p><%= pendingRequests %></p>
+                    </div>
+                    <div class="card">
+                        <h4>Completed Requests</h4>
+                        <p><%= completedRequests %></p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<%- include("../../partials/footer") %>
