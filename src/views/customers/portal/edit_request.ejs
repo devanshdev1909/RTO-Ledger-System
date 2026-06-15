@@ -1,4 +1,4 @@
-<%- include("../partials/header") %>
+<%- include("../../partials/header") %>
 
 <div class="container">
 
@@ -18,19 +18,19 @@
             <% } %>
 
             <div class="page-header" style="margin-top: 10px;">
-                <h1>Request a Service</h1>
+                <h1>Edit Service Request</h1>
                 <a href="/portal/my-requests" class="btn btn-secondary">← Back</a>
             </div>
 
             <div class="form-container">
-                <form action="/portal/request/create" method="POST">
+                <form action="/portal/request/<%= request.id %>/edit" method="POST">
 
                     <div class="form-group">
                         <label>Vehicle *</label>
                         <select name="vehicle_id" required>
                             <option value="">Select Vehicle</option>
                             <% vehicles.forEach(v => { %>
-                                <option value="<%= v.id %>">
+                                <option value="<%= v.id %>" <%= request.vehicle_id == v.id ? 'selected' : '' %>>
                                     <%= v.vehicle_number %> (<%= v.vehicle_type || 'Unknown' %>)
                                 </option>
                             <% }) %>
@@ -42,7 +42,7 @@
                         <select id="serviceSelect" name="service_id" required>
                             <option value="" data-fee="">Select Service</option>
                             <% services.forEach(service => { %>
-                                <option value="<%= service.id %>" data-fee="<%= service.default_fee %>">
+                                <option value="<%= service.id %>" data-fee="<%= service.default_fee %>" <%= request.service_id == service.id ? 'selected' : '' %>>
                                     <%= service.service_name %> (₹<%= service.default_fee %>)
                                 </option>
                             <% }) %>
@@ -51,17 +51,17 @@
 
                     <div class="form-group">
                         <label>Amount *</label>
-                        <input type="number" id="amountInput" name="amount" min="0" required>
+                        <input type="number" id="amountInput" name="amount" min="0" value="<%= request.amount %>" required>
                     </div>
 
                     <div class="form-group">
                         <label>Remarks</label>
-                        <textarea name="remarks" rows="4" placeholder="Enter remarks..."></textarea>
+                        <textarea name="remarks" rows="4" placeholder="Enter remarks..."><%= request.remarks || '' %></textarea>
                     </div>
 
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">
-                            Submit Request
+                            Save Changes
                         </button>
                     </div>
 
@@ -89,4 +89,4 @@
     });
 </script>
 
-<%- include("../partials/footer") %>
+<%- include("../../partials/footer") %>

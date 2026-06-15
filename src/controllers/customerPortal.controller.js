@@ -18,7 +18,7 @@ exports.getDashboard = async (req, res) => {
             if (r.status === 'Completed') completedRequests += count;
         });
 
-        res.render('customers/dashboard', {
+        res.render('customers/portal/dashboard', {
             vehiclesCount: parseInt(vehiclesCount.rows[0].count, 10),
             totalRequests,
             pendingRequests,
@@ -36,7 +36,7 @@ exports.getMyVehicles = async (req, res) => {
     const customerId = req.session.customerId;
     try {
         const vehicles = await pool.query('SELECT * FROM vehicles WHERE customer_id = $1 ORDER BY created_at DESC', [customerId]);
-        res.render('customers/vehicles', {
+        res.render('customers/portal/vehicles', {
             vehicles: vehicles.rows,
             activePage: 'vehicles',
             error: req.query.error || null
@@ -48,7 +48,7 @@ exports.getMyVehicles = async (req, res) => {
 };
 
 exports.getAddVehicle = async (req, res) => {
-    res.render('customers/new_vehicle', {
+    res.render('customers/portal/new_vehicle', {
         activePage: 'vehicles',
         error: req.query.error || null
     });
@@ -64,7 +64,7 @@ exports.getMyRequests = async (req, res) => {
             WHERE sr.customer_id = $1
             ORDER BY sr.created_at DESC
         `, [customerId]);
-        res.render('customers/requests', {
+        res.render('customers/portal/requests', {
             requests: requests.rows,
             activePage: 'requests',
             error: req.query.error || null
@@ -80,7 +80,7 @@ exports.getCreateRequest = async (req, res) => {
     try {
         const vehicles = await pool.query('SELECT * FROM vehicles WHERE customer_id = $1', [customerId]);
         const services = await pool.query('SELECT * FROM services WHERE is_active = true');
-        res.render('customers/new_request', {
+        res.render('customers/portal/new_request', {
             vehicles: vehicles.rows,
             services: services.rows,
             activePage: 'requests',
@@ -140,7 +140,7 @@ exports.getEditVehicle = async (req, res) => {
         if (result.rows.length === 0) {
             return res.redirect('/portal/my-vehicles?error=VehicleNotFound');
         }
-        res.render('customers/edit_vehicle', {
+        res.render('customers/portal/edit_vehicle', {
             vehicle: result.rows[0],
             activePage: 'vehicles',
             error: req.query.error || null
@@ -217,7 +217,7 @@ exports.getEditRequest = async (req, res) => {
         const vehicles = await pool.query('SELECT * FROM vehicles WHERE customer_id = $1', [customerId]);
         const services = await pool.query('SELECT * FROM services WHERE is_active = true');
 
-        res.render('customers/edit_request', {
+        res.render('customers/portal/edit_request', {
             request,
             vehicles: vehicles.rows,
             services: services.rows,
@@ -285,7 +285,7 @@ exports.getProfile = async (req, res) => {
         if (result.rows.length === 0) {
             return res.redirect('/portal/logout');
         }
-        res.render('customers/profile', {
+        res.render('customers/portal/profile', {
             profile: result.rows[0],
             activePage: 'profile',
             error: req.query.error || null

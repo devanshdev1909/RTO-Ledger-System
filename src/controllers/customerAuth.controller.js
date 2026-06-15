@@ -9,7 +9,7 @@ exports.getLogin = (req, res) => {
 
 // Show register page
 exports.getRegister = (req, res) => {
-    res.render('customers/register', { error: null });
+    res.render('customers/portal/register', { error: null });
 };
 
 // Handle Registration (Direct Account Creation)
@@ -30,7 +30,7 @@ exports.postRegister = async (req, res) => {
         res.redirect('/login');
     } catch (err) {
         console.error(err);
-        res.render('customers/register', { error: 'Registration failed. Try again.' });
+        res.render('customers/portal/register', { error: 'Registration failed. Try again.' });
     }
 };
 

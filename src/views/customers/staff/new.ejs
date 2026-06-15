@@ -1,25 +1,25 @@
-<%- include("../partials/header") %>
+<%- include("../../partials/header") %>
 
     <div class="container">
-        <%- include("../partials/sidebar") %>
+        <%- include("../../partials/sidebar") %>
 
             <div class="main-content">
-                <%- include("../partials/navbar") %>
+                <%- include("../../partials/navbar") %>
 
                     <div class="content">
 
                         <div class="page-header">
-                            <h1>Edit Customer</h1>
+                            <h1>Add New Customer</h1>
                             <a href="/customers" class="btn btn-secondary">← Back</a>
                         </div>
 
                         <div class="form-card">
-                            <form action="/customers/<%= customer.id %>?_method=PUT" method="POST">
+                            <form action="/customers" method="POST">
 
                                 <div class="form-group">
                                     <label for="customer_code">Customer Code</label>
                                     <input type="text" name="customer_code" id="customer_code" placeholder="CUST-001"
-                                        value="<%= typeof customer !== 'undefined' ? customer.customer_code : 'CUST-' %>"
+                                        value="<%= typeof customer !== 'undefined' ? customer.customer_code : (typeof nextCustomerCode !== 'undefined' ? nextCustomerCode : 'CUST-') %>"
                                         required readonly
                                         style="text-transform: uppercase;">
                                 </div>
@@ -36,14 +36,12 @@
                                     <input type="text" name="mobile" id="mobile" placeholder="9876543210" required
                                         maxlength="10" pattern="[0-9]{10}"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-
                                 </div>
 
                                 <div class="form-group">
                                     <label for="email">Email Address</label>
                                     <input type="email" name="email" id="email" placeholder="[EMAIL_ADDRESS]"
-                                        pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-                                        oninput="this.value = this.value.trim().toLowerCase()">
+                                        pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
                                 </div>
 
                                 <div class="form-group">
@@ -52,7 +50,7 @@
                                         rows="3"></textarea>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary">Update Customer</button>
+                                <button type="submit" class="btn btn-primary">Save Customer</button>
 
                             </form>
                         </div>
@@ -61,4 +59,4 @@
             </div>
     </div>
 
-    <%- include("../partials/footer") %>
+    <%- include("../../partials/footer") %>

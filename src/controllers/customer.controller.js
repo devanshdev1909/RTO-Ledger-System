@@ -5,7 +5,7 @@ const renderCustomersPage = async (req, res) => {
         const result = await pool.query(
             "SELECT * FROM customers ORDER BY created_at DESC"
         );
-        res.render("customers/index", {
+        res.render("customers/staff/index", {
             activePage: "customers",
             customers: result.rows,
             userName: req.session.userName
@@ -36,7 +36,7 @@ const getNextCustomerCode = async () => {
 const showNewCustomerForm = async (req, res) => {
     try {
         const nextCustomerCode = await getNextCustomerCode();
-        res.render("customers/new", {
+        res.render("customers/staff/new", {
             activePage: "customers",
             userName: req.session.userName,
             nextCustomerCode
@@ -70,7 +70,7 @@ const showEditCustomerForm = async (req, res) => {
         const { id } = req.params;
         const result = await pool.query("SELECT * FROM customers WHERE id = $1", [id]);
         if (result.rows.length === 0) return res.send("Customer not found");
-        res.render("customers/edit", {
+        res.render("customers/staff/edit", {
             activePage: "customers",
             customer: result.rows[0],
             userName: req.session.userName
