@@ -1,4 +1,3 @@
-
 /* =========================
    PAGE HEADER
 ========================= */
@@ -92,7 +91,8 @@
     padding: 14px 16px;
     border-top: 1px solid #f3f4f6;
     color: #1f2937;
-    vertical-align: middle;   /* ⭐ MAIN CENTER FIX */
+    vertical-align: middle;
+    /* ⭐ MAIN CENTER FIX */
 }
 
 /* =========================
@@ -154,7 +154,8 @@
     padding: 0;
     margin: 0;
 
-    line-height: 1; /* ⭐ FIX SHIFT */
+    line-height: 1;
+    /* ⭐ FIX SHIFT */
 }
 
 /* SVG CENTER FIX */
@@ -270,19 +271,22 @@
 ========================= */
 
 .data-table th:last-child,
-.data-table td:last-child{
-    text-align: center;      /* horizontal center */
-    vertical-align: middle;  /* vertical center */
+.data-table td:last-child {
+    text-align: center;
+    /* horizontal center */
+    vertical-align: middle;
+    /* vertical center */
 }
 
 /* =========================
    ACTIONS WRAPPER ALIGNMENT
 ========================= */
 
-.actions{
+.actions {
     display: flex;
     justify-content: center;
-    align-items: center;   /* ⭐ TOP-BOTTOM CENTER */
+    align-items: center;
+    /* ⭐ TOP-BOTTOM CENTER */
     gap: 12px;
     height: 100%;
 }
@@ -291,7 +295,7 @@
    ICON BUTTON CENTER FIX
 ========================= */
 
-.btn-icon{
+.btn-icon {
     width: 46px;
     height: 46px;
 
@@ -306,7 +310,7 @@
    SVG CENTER FIX
 ========================= */
 
-.btn-icon svg{
+.btn-icon svg {
     width: 26px;
     height: 26px;
     display: block;
@@ -316,7 +320,7 @@
    FORM FIX
 ========================= */
 
-.delete-form{
+.delete-form {
     margin: 0;
     display: flex;
     align-items: center;
