@@ -209,8 +209,8 @@ exports.getEditRequest = async (req, res) => {
         }
         
         const request = result.rows[0];
-        // Only allow editing if Requested or Pending
-        if (request.status !== 'Requested' && request.status !== 'Pending') {
+        // Only allow editing if Requested
+        if (request.status !== 'Requested') {
             return res.redirect('/portal/my-requests?error=CannotEditProcessedRequest');
         }
 
@@ -240,7 +240,7 @@ exports.postEditRequest = async (req, res) => {
         if (verify.rows.length === 0) {
             return res.redirect('/portal/my-requests?error=Unauthorized');
         }
-        if (verify.rows[0].status !== 'Requested' && verify.rows[0].status !== 'Pending') {
+        if (verify.rows[0].status !== 'Requested') {
             return res.redirect('/portal/my-requests?error=CannotEditProcessedRequest');
         }
 
@@ -266,7 +266,7 @@ exports.postDeleteRequest = async (req, res) => {
         if (verify.rows.length === 0) {
             return res.redirect('/portal/my-requests?error=Unauthorized');
         }
-        if (verify.rows[0].status !== 'Requested' && verify.rows[0].status !== 'Pending') {
+        if (verify.rows[0].status !== 'Requested') {
             return res.redirect('/portal/my-requests?error=CannotDeleteProcessedRequest');
         }
 
