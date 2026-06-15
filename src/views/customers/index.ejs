@@ -12,7 +12,7 @@
                             <h1>Customers</h1>
 
                             <% if (permissions.includes('customer.create')) { %>
-                                <a href="/customers/new" class="btn btn-primary">+ Add Customer</a>
+                                <button id="openCustomerModal" class="btn btn-primary">+ Add Customer</button>
                                 <% } %>
                         </div>
 
@@ -182,5 +182,10 @@
             });
         });
     </script>
+
+
+<%- include("new", { nextCustomerCode }) %>
+
+
 
     <%- include("../partials/footer") %>
