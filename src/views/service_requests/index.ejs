@@ -60,8 +60,9 @@
                                     <td>₹ <%= r.amount %></td>
 
                                     <td>
-                                        <select class="status-select <%= r.status === 'Pending' ? 'pending' : r.status === 'Completed' ? 'completed' : r.status === 'Cancelled' ? 'cancelled' : '' %>" data-id="<%= r.id %>">
-                                            <option value="Pending" <%= r.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                        <select class="status-select <%= r.status === 'Requested' ? 'requested' : r.status === 'Pending' ? 'pending' : r.status === 'Completed' ? 'completed' : r.status === 'Cancelled' ? 'cancelled' : '' %>" data-id="<%= r.id %>">
+                                            <option value="Requested" <%= r.status === 'Requested' ? 'selected' : '' %>>Requested (Wait)</option>
+                                            <option value="Pending" <%= r.status === 'Pending' ? 'selected' : '' %>>Pending (Started)</option>
                                             <option value="Completed" <%= r.status === 'Completed' ? 'selected' : '' %>>Completed</option>
                                             <option value="Cancelled" <%= r.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
                                         </select>
@@ -155,8 +156,9 @@
 
             // Color updating helper
             function updateSelectColor(selectElement, status) {
-                selectElement.classList.remove("pending", "completed", "cancelled");
-                if (status === "Pending") selectElement.classList.add("pending");
+                selectElement.classList.remove("requested", "pending", "completed", "cancelled");
+                if (status === "Requested") selectElement.classList.add("requested");
+                else if (status === "Pending") selectElement.classList.add("pending");
                 else if (status === "Completed") selectElement.classList.add("completed");
                 else if (status === "Cancelled") selectElement.classList.add("cancelled");
             }

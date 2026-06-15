@@ -119,10 +119,10 @@ exports.postCreateRequest = async (req, res) => {
     const requestNo = 'REQ-' + Date.now();
 
     try {
-        // Service Request goes in as 'Pending' status, awaiting admin approval
+        // Service Request goes in as 'Requested' status, awaiting admin approval
         await pool.query(
             `INSERT INTO service_requests (request_no, customer_id, vehicle_id, service_id, amount, status, remarks, created_at)
-             VALUES ($1, $2, $3, $4, $5, 'Pending', $6, NOW())`,
+             VALUES ($1, $2, $3, $4, $5, 'Requested', $6, NOW())`,
             [requestNo, customerId, vehicle_id, service_id, amount, remarks]
         );
         res.redirect('/portal/my-requests');
@@ -209,9 +209,9 @@ exports.getEditRequest = async (req, res) => {
         }
         
         const request = result.rows[0];
-        // Only allow editing if Pending
-        if (request.status !== 'Pending') {
-            return res.redirect('/portal/my-requests?error=CannotEditNonPendingRequest');
+        // Only allow editing if Requested or Pending
+        if (request.status !== 'Requested' && request.status !== 'Pending') {
+            return res.redirect('/portal/my-requests?error=CannotEditProcessedRequest');
         }
 
         const vehicles = await pool.query('SELECT * FROM vehicles WHERE customer_id = $1', [customerId]);
@@ -240,8 +240,8 @@ exports.postEditRequest = async (req, res) => {
         if (verify.rows.length === 0) {
             return res.redirect('/portal/my-requests?error=Unauthorized');
         }
-        if (verify.rows[0].status !== 'Pending') {
-            return res.redirect('/portal/my-requests?error=CannotEditNonPendingRequest');
+        if (verify.rows[0].status !== 'Requested' && verify.rows[0].status !== 'Pending') {
+            return res.redirect('/portal/my-requests?error=CannotEditProcessedRequest');
         }
 
         await pool.query(
@@ -266,8 +266,8 @@ exports.postDeleteRequest = async (req, res) => {
         if (verify.rows.length === 0) {
             return res.redirect('/portal/my-requests?error=Unauthorized');
         }
-        if (verify.rows[0].status !== 'Pending') {
-            return res.redirect('/portal/my-requests?error=CannotDeleteNonPendingRequest');
+        if (verify.rows[0].status !== 'Requested' && verify.rows[0].status !== 'Pending') {
+            return res.redirect('/portal/my-requests?error=CannotDeleteProcessedRequest');
         }
 
         await pool.query('DELETE FROM service_requests WHERE id = $1', [requestId]);

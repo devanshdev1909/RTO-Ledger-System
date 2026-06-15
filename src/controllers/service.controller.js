@@ -375,7 +375,7 @@ const updateRequestStatus = async (req, res) => {
         const { status } = req.body;
 
         // Validate status input
-        if (!["Pending", "Completed", "Cancelled"].includes(status)) {
+        if (!["Requested", "Pending", "Completed", "Cancelled"].includes(status)) {
             return res.status(400).json({ success: false, error: "Invalid status value" });
         }
 

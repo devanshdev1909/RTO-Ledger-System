@@ -66,8 +66,10 @@
                                 <div class="form-group">
                                     <label>Status *</label>
                                     <select name="status" required>
+                                        <option value="Requested" <%=request.status==='Requested' ? 'selected' : '' %>
+                                            >Requested (Wait)</option>
                                         <option value="Pending" <%=request.status==='Pending' ? 'selected' : '' %>
-                                            >Pending</option>
+                                            >Pending (Started)</option>
                                         <option value="Completed" <%=request.status==='Completed' ? 'selected' : '' %>
                                             >Completed</option>
                                         <option value="Cancelled" <%=request.status==='Cancelled' ? 'selected' : '' %>
