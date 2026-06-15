@@ -7,12 +7,16 @@ module.exports.listUsers = async (req, res) => {
             SELECT u.id, u.username, u.email, u.is_active, r.name as role_name 
             FROM users u
             JOIN roles r ON u.role_id = r.id
+            WHERE r.name != 'Admin'
             ORDER BY u.id ASC
         `);
+        const rolesRes = await pool.query("SELECT * FROM roles ORDER BY name ASC");
         res.render("admin/users", {
             activePage: "admin",
             userName: req.session.userName,
-            users: usersRes.rows
+            users: usersRes.rows,
+            roles: rolesRes.rows,
+            error: req.query.error || null
         });
     } catch (err) {
         console.error(err);
@@ -91,5 +95,57 @@ module.exports.updatePermissions = async (req, res) => {
         res.status(500).send(err.message);
     } finally {
         client.release();
+    }
+};
+
+// Create a new user
+const bcrypt = require("bcrypt");
+
+module.exports.createUser = async (req, res) => {
+    const { username, email, password, role_id } = req.body;
+
+    try {
+        // Check if username or email already exists
+        const checkUser = await pool.query("SELECT id FROM users WHERE username = $1 OR email = $2", [username, email]);
+        if (checkUser.rows.length > 0) {
+            return res.redirect("/admin/users?error=UsernameOrEmailExists");
+        }
+
+        // Hash the password
+        const salt = await bcrypt.genSalt(10);
+        const password_hash = await bcrypt.hash(password, salt);
+
+        // Insert new user
+        await pool.query(
+            "INSERT INTO users (username, email, password_hash, role_id) VALUES ($1, $2, $3, $4)",
+            [username, email, password_hash, role_id]
+        );
+
+        res.redirect("/admin/users");
+    } catch (err) {
+        console.error(err);
+        res.redirect("/admin/users?error=FailedToCreateUser");
+    }
+};
+
+// Toggle user status
+module.exports.toggleUserStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { is_active } = req.body;
+        
+        // Prevent user from deactivating themselves
+        if (req.session.userId == id && !is_active) {
+            return res.status(400).json({ success: false, error: "You cannot deactivate your own account" });
+        }
+
+        await pool.query(
+            "UPDATE users SET is_active = $1 WHERE id = $2",
+            [is_active, id]
+        );
+        res.json({ success: true, message: "User status updated successfully" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: err.message });
     }
 };

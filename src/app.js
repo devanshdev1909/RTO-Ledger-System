@@ -14,6 +14,7 @@ const customerPortalRoutes = require('./routes/customerPortal.routes');
 const vehicleRouter = require("./routes/vehicle.routes");
 const ledgerRouter = require("./routes/ledger.routes");
 const serviceRoutes = require("./routes/service.routes");
+const roleRoutes = require("./routes/role.routes");
 const receiptRouter = require("./routes/receipt.routes");
 const dashboardRouter = require("./routes/dashboard.routes");
 const pool = require("./config/db");
@@ -34,10 +35,6 @@ app.use(
     saveUninitialized: false,
   })
 );
-app.use("/admin", userRouter);
-
-app.use(flash());
-
 
 app.use((req, res, next) => {
   res.locals.activePage = req.path.split("/")[1] || "dashboard";
@@ -45,9 +42,15 @@ app.use((req, res, next) => {
   res.locals.userRole = req.session.userRole || null;
   next();
 });
+app.use("/admin", userRouter);
 
-// Routes
+app.use(flash());
+
+
+
+
 app.use("/", authRouter);
+app.use("/admin/roles", roleRoutes);
 
 app.get("/search", isLoggedIn, async (req, res) => {
   const query = (req.query.q || "").trim();
