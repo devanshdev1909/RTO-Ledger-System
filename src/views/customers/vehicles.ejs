@@ -1,0 +1,74 @@
+<%- include("../partials/header") %>
+
+<div class="container">
+
+    <!-- Customer Sidebar -->
+    <%- include("partials/sidebar") %>
+
+    <div class="main-content">
+
+        <%- include("partials/navbar") %>
+
+        <div class="content">
+
+            <% if (locals.error) { %>
+                <div style="background-color: #ffdddd; color: #d8000c; padding: 12px 20px; margin-bottom: 20px; border-radius: 6px; font-size: 14px;">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <div class="page-header" style="margin-top: 10px;">
+                <h1>My Vehicles</h1>
+                <a href="/portal/vehicle/add" class="btn btn-primary">+ Add Vehicle</a>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Vehicle Number</th>
+                            <th>Type</th>
+                            <th>Chassis No.</th>
+                            <th>Engine No.</th>
+                            <th>Added On</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (vehicles.length === 0) { %>
+                            <tr>
+                                <td colspan="7" class="empty-state">
+                                    No vehicles found. Add your first vehicle!
+                                </td>
+                            </tr>
+                        <% } else { %>
+                            <% vehicles.forEach((v, i) => { %>
+                                <tr>
+                                    <td><%= i + 1 %></td>
+                                    <td><strong><%= v.vehicle_number %></strong></td>
+                                    <td><%= v.vehicle_type || 'N/A' %></td>
+                                    <td><%= v.chassis_number || 'N/A' %></td>
+                                    <td><%= v.engine_number || 'N/A' %></td>
+                                    <td><%= new Date(v.created_at).toLocaleDateString() %></td>
+                                    <td>
+                                        <div style="display: flex; gap: 5px;">
+                                            <a href="/portal/vehicle/<%= v.id %>/edit" class="btn btn-sm btn-secondary" style="padding: 4px 8px; font-size: 0.85rem;">Edit</a>
+                                            <form action="/portal/vehicle/<%= v.id %>/delete" method="POST" style="margin: 0;" onsubmit="return confirm('Are you sure you want to delete this vehicle?');">
+                                                <button type="submit" class="btn btn-sm" style="background-color: #dc3545; color: white; padding: 4px 8px; font-size: 0.85rem; border: none;">Delete</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<%- include("../partials/footer") %>

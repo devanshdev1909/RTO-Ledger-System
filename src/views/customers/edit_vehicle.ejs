@@ -1,0 +1,101 @@
+<%- include("../partials/header") %>
+
+<div class="container">
+
+    <!-- Customer Sidebar -->
+    <%- include("partials/sidebar") %>
+
+    <div class="main-content">
+
+        <%- include("partials/navbar") %>
+
+        <div class="content">
+
+            <% if (locals.error) { %>
+                <div style="background-color: #ffdddd; color: #d8000c; padding: 12px 20px; margin-bottom: 20px; border-radius: 6px; font-size: 14px;">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <div class="page-header" style="margin-top: 10px;">
+                <h1>Edit Vehicle</h1>
+                <a href="/portal/my-vehicles" class="btn btn-secondary">← Back</a>
+            </div>
+
+            <div class="form-card">
+                <form action="/portal/vehicle/<%= vehicle.id %>/edit" method="POST">
+
+                    <div class="form-group">
+                        <label for="vehicle_number">Vehicle Number
+                            <span class="tooltip">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span class="tooltiptext">Format: AB 12 CD 1234 (e.g. MH 12 AB 1234)</span>
+                            </span>
+                        </label>
+                        <input type="text" name="vehicle_number" id="vehicle_number"
+                            placeholder="AB 12 CD 1234"
+                            value="<%= vehicle.vehicle_number %>"
+                            required maxlength="13" pattern="^[A-Z]{2}\s[0-9]{2}\s[A-Z]{2}\s[0-9]{4}$"
+                            oninput="let v = this.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); if (v.length > 2) v = v.slice(0,2) + ' ' + v.slice(2); if (v.length > 5) v = v.slice(0,5) + ' ' + v.slice(5); if (v.length > 8) v = v.slice(0,8) + ' ' + v.slice(8,12); this.value = v.slice(0, 13);"
+                            style="text-transform: uppercase;">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vehicle_type">Vehicle Type</label>
+                        <select name="vehicle_type" id="vehicle_type" required>
+                            <option value="">Select Vehicle Type</option>
+                            <option value="Motor Cycle Without Gear(MCWOG)" <%= vehicle.vehicle_type === 'Motor Cycle Without Gear(MCWOG)' ? 'selected' : '' %>>Motor Cycle Without Gear (MCWOG)</option>
+                            <option value="Motor Cycle With Gear(MCWG)" <%= vehicle.vehicle_type === 'Motor Cycle With Gear(MCWG)' ? 'selected' : '' %>>Motor Cycle With Gear (MCWG)</option>
+                            <option value="Light Motor Vehicle(LMV)" <%= vehicle.vehicle_type === 'Light Motor Vehicle(LMV)' ? 'selected' : '' %>>Light Motor Vehicle (LMV)</option>
+                            <option value="Medium Goods Vehicle(MGV)" <%= vehicle.vehicle_type === 'Medium Goods Vehicle(MGV)' ? 'selected' : '' %>>Medium Goods Vehicle (MGV)</option>
+                            <option value="Heavy Goods Vehicle(HGV)" <%= vehicle.vehicle_type === 'Heavy Goods Vehicle(HGV)' ? 'selected' : '' %>>Heavy Goods Vehicle (HGV)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="chassis_number">Chassis Number
+                            <span class="tooltip">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span class="tooltiptext">Starts with CH, followed by 10 alphanumeric characters (12 total)</span>
+                            </span>
+                        </label>
+                        <input type="text" name="chassis_number" id="chassis_number"
+                            placeholder="CH1234567890"
+                            value="<%= vehicle.chassis_number || 'CH' %>"
+                            maxlength="12" minlength="12" pattern="^CH[A-Z0-9]{10}$"
+                            oninput="if(!this.value.toUpperCase().startsWith('CH')) { this.value = 'CH' + this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10); } else { this.value = 'CH' + this.value.substring(2).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10); }"
+                            style="text-transform: uppercase;" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="engine_number">Engine Number
+                            <span class="tooltip">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span class="tooltiptext">Starts with EN, followed by 10 alphanumeric characters (12 total)</span>
+                            </span>
+                        </label>
+                        <input type="text" name="engine_number" id="engine_number"
+                            placeholder="EN1234567890"
+                            value="<%= vehicle.engine_number || 'EN' %>"
+                            maxlength="12" minlength="12" pattern="^EN[A-Z0-9]{10}$"
+                            oninput="if(!this.value.toUpperCase().startsWith('EN')) { this.value = 'EN' + this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10); } else { this.value = 'EN' + this.value.substring(2).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10); }"
+                            style="text-transform: uppercase;" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<%- include("../partials/footer") %>
