@@ -38,7 +38,7 @@ module.exports.listUsers = async (req, res) => {
             userName: req.session.userName,
             users: users,
             roles: rolesRes.rows,
-            permissions: allPermissionsRes.rows, // Pass permissions to view
+            allPermissions: allPermissionsRes.rows, // Pass permissions to view
             error: req.query.error || null
         });
     } catch (err) {
@@ -79,7 +79,7 @@ module.exports.renderEditPermissions = async (req, res) => {
             activePage: "admin",
             userName: req.session.userName,
             user: userRes.rows[0],
-            permissions: allPermissionsRes.rows,
+            allPermissions: allPermissionsRes.rows,
             checkedPermissionIds
         });
     } catch (err) {

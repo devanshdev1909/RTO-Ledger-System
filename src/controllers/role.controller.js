@@ -18,7 +18,7 @@ exports.getRoles = async (req, res) => {
 
         res.render("admin/roles/index", {
             roles: roles,
-            permissions: allPermissionsRes.rows,
+            allPermissions: allPermissionsRes.rows,
             activePage: "roles",
             error: req.query.error || null
         });
@@ -81,7 +81,7 @@ exports.getRolePermissions = async (req, res) => {
 
         res.render("admin/roles/permissions", {
             role: roleRes.rows[0],
-            permissions: allPermissionsRes.rows,
+            allPermissions: allPermissionsRes.rows,
             currentPermissions,
             activePage: "roles"
         });
