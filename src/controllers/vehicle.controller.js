@@ -5,8 +5,10 @@ const pool = require("../config/db");
 module.exports.index = async (req, res) => {
     try {
         const vehicles = await Vehicle.getAll();
+        const customers = await pool.query("SELECT id, name FROM customers ORDER BY name");
         res.render("vehicles/index", {
             vehicles,
+            customers: customers.rows,
             userName: req.session.userName
         });
     } catch (err) {

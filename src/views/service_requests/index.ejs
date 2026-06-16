@@ -217,8 +217,7 @@
 
                 <div class="form-group" style="margin-top: 15px;">
                     <label>Customer *</label>
-                    <select id="req_customer" name="customer_id" required
-                        style="width: 100%; padding: 8px; margin-top: 5px;">
+                    <select id="req_customer" name="customer_id" required>
                         <option value="">Select Customer</option>
                         <% customers.forEach(c=> { %>
                             <option value="<%= c.id %>">
@@ -230,8 +229,7 @@
 
                 <div class="form-group" style="margin-top: 15px;">
                     <label>Vehicle *</label>
-                    <select id="req_vehicle" name="vehicle_id" required
-                        style="width: 100%; padding: 8px; margin-top: 5px;">
+                    <select id="req_vehicle" name="vehicle_id" required>
                         <option value="">Select Vehicle</option>
                         <% vehicles.forEach(v=> { %>
                             <option value="<%= v.id %>">
@@ -243,8 +241,7 @@
 
                 <div class="form-group" style="margin-top: 15px;">
                     <label>Service *</label>
-                    <select id="req_service" name="service_id" required
-                        style="width: 100%; padding: 8px; margin-top: 5px;">
+                    <select id="req_service" name="service_id" required>
                         <option value="">Select Service</option>
                         <% services.forEach(s=> { %>
                             <option value="<%= s.id %>">
@@ -256,13 +253,12 @@
 
                 <div class="form-group" style="margin-top: 15px;">
                     <label>Amount (₹) *</label>
-                    <input type="number" id="req_amount" name="amount" required
-                        style="width: 100%; padding: 8px; margin-top: 5px;">
+                    <input type="number" id="req_amount" name="amount" required>
                 </div>
 
                 <div class="form-group" style="margin-top: 15px;">
                     <label>Status</label>
-                    <select id="req_status" name="status" style="width: 100%; padding: 8px; margin-top: 5px;">
+                    <select id="req_status" name="status">
                         <option value="Requested">Requested (Wait)</option>
                         <option value="Pending">Pending (Started)</option>
                         <option value="Completed">Completed</option>
@@ -272,8 +268,7 @@
 
                 <div class="form-group" style="margin-top: 15px;">
                     <label>Remarks</label>
-                    <textarea id="req_remarks" name="remarks" rows="3"
-                        style="width: 100%; padding: 8px; margin-top: 5px;"></textarea>
+                    <textarea id="req_remarks" name="remarks" rows="3"></textarea>
                 </div>
 
                 <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
