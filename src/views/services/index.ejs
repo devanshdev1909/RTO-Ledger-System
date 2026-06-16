@@ -11,9 +11,8 @@
                         <div class="page-header">
                             <h1>Services</h1>
 
-                            <a href="/services/new" class="btn btn-primary">
-                                + Add Service
-                            </a>
+                            <button onclick="openAddServiceModal()" class="btn btn-primary">+ Add Service</button>
+
                         </div>
 
                         <div class="table-container">
@@ -73,8 +72,10 @@
 
                                                     <td class="actions">
                                                         <!-- EDIT ICON -->
-                                                        <a href="/services/<%= service.id %>/edit"
+                                                        <button type="button"
+                                                            onclick="openEditServiceModal('<%= service.id %>', '<%= service.service_name %>', '<%= service.default_fee %>', `<%= service.description || '' %>`, '<%= service.is_active %>')"
                                                             class="btn-icon edit-icon" title="Edit Service">
+                                                            <!-- Keep your existing SVG icon here -->
                                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                                                                 fill="none" stroke="currentColor" stroke-width="2"
                                                                 stroke-linecap="round" stroke-linejoin="round">
@@ -85,7 +86,7 @@
                                                                     d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97l-8.415 8.385v3h3l8.385-8.415" />
                                                                 <path d="M16 5l3 3" />
                                                             </svg>
-                                                        </a>
+                                                        </button>
 
                                                         <!-- DELETE ICON -->
                                                         <form action="/services/<%= service.id %>?_method=DELETE"
@@ -163,6 +164,71 @@
             });
 
         });
+    </script>
+
+    <!-- Service Modal -->
+    <div id="serviceModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; overflow-y: auto; padding: 20px; box-sizing: border-box;">
+        <div style="background:white; max-width:500px; margin: 5vh auto; padding: 20px; border-radius: 8px;">
+            <h2 id="modalTitle">Add Service</h2>
+            <form id="serviceForm" action="/services" method="POST">
+                <!-- This hidden input is for method-override during Edit (PUT request) -->
+                <input type="hidden" id="methodOverride" name="_method" value="PUT" disabled>
+
+                <div class="form-group" style="margin-top: 15px;">
+                    <label>Service Name *</label>
+                    <input type="text" id="service_name" name="service_name" required
+                        style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+
+                <div class="form-group" style="margin-top: 15px;">
+                    <label>Default Fee *</label>
+                    <input type="number" id="default_fee" name="default_fee" required
+                        style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+
+                <div class="form-group" style="margin-top: 15px;">
+                    <label>Description</label>
+                    <textarea id="description" name="description" rows="3"
+                        style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+                </div>
+
+                <div class="form-group" style="margin-top: 15px;">
+                    <label>
+                        <input type="checkbox" id="is_active" name="is_active" checked> Active
+                    </label>
+                </div>
+
+                <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" onclick="document.getElementById('serviceModal').style.display='none'"
+                        class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Service</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openAddServiceModal() {
+            document.getElementById('serviceModal').style.display = 'block';
+            document.getElementById('modalTitle').innerText = 'Add Service';
+            document.getElementById('serviceForm').action = '/services';
+            document.getElementById('methodOverride').disabled = true; // Use normal POST
+            document.getElementById('serviceForm').reset();
+            document.getElementById('is_active').checked = true;
+        }
+
+        function openEditServiceModal(id, name, fee, desc, isActive) {
+            document.getElementById('serviceModal').style.display = 'block';
+            document.getElementById('modalTitle').innerText = 'Edit Service';
+            document.getElementById('serviceForm').action = '/services/' + id + '?_method=PUT';
+            document.getElementById('methodOverride').disabled = false; // Enable method override for PUT
+
+            document.getElementById('service_name').value = name;
+            document.getElementById('default_fee').value = fee;
+            document.getElementById('description').value = desc;
+            document.getElementById('is_active').checked = (isActive === 'true');
+        }
     </script>
 
     <%- include("../partials/footer") %>

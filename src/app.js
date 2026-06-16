@@ -36,10 +36,39 @@ app.use(
   })
 );
 
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
   res.locals.activePage = req.path.split("/")[1] || "dashboard";
+
+  // Fetch real-time permissions
+  if (req.session.userId) {
+    try {
+      // 1. Try to load user-specific custom permissions
+      let permResult = await pool.query(`
+        SELECT p.code
+        FROM permissions p
+        JOIN user_permissions up ON p.id = up.permission_id
+        WHERE up.user_id = $1
+      `, [req.session.userId]);
+
+      // 2. Complete Override Fallback: If no custom permissions, load their role defaults
+      if (permResult.rows.length === 0 && req.session.roleId) {
+        permResult = await pool.query(`
+          SELECT p.code
+          FROM permissions p
+          JOIN role_permissions rp ON p.id = rp.permission_id
+          WHERE rp.role_id = $1
+        `, [req.session.roleId]);
+      }
+
+      req.session.permissions = permResult.rows.map(r => r.code);
+    } catch (err) {
+      console.error("Error fetching real-time permissions:", err);
+    }
+  }
+
   res.locals.permissions = req.session.permissions || [];
   res.locals.userRole = req.session.userRole || null;
+  res.locals.userName = req.session.userName || null;
   next();
 });
 app.use("/admin", userRouter);

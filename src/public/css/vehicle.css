@@ -77,7 +77,7 @@
 }
 
 .data-table th {
-    padding: 14px 16px;
+    padding: 16px 24px;
     text-align: left;
     font-weight: 600;
     color: #6b7280;
@@ -88,7 +88,7 @@
 }
 
 .data-table td {
-    padding: 14px 16px;
+    padding: 16px 24px;
     border-top: 1px solid #f3f4f6;
     color: #1f2937;
     vertical-align: middle;

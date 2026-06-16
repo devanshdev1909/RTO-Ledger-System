@@ -83,6 +83,10 @@ exports.postUpdateRolePermissions = async (req, res) => {
     const roleId = req.params.id;
     const { permissions } = req.body; // Array of permission IDs
 
+    console.log("Updating role permissions for role:", roleId);
+    console.log("req.body:", req.body);
+    console.log("permissions:", permissions);
+
     const client = await pool.connect();
     try {
         await client.query("BEGIN");

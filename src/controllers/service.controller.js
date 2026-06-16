@@ -93,24 +93,25 @@ const deleteService = async (req, res) => {
 const showRequests = async (req, res) => {
     try {
         const result = await db.query(`
-            SELECT
-                sr.*,
-                c.name AS customer_name,
-                v.vehicle_number,
-                s.service_name
+            SELECT sr.*, c.name AS customer_name, v.vehicle_number, s.service_name
             FROM service_requests sr
-            LEFT JOIN customers c
-                ON sr.customer_id = c.id
-            LEFT JOIN vehicles v
-                ON sr.vehicle_id = v.id
-            LEFT JOIN services s
-                ON sr.service_id = s.id
+            LEFT JOIN customers c ON sr.customer_id = c.id
+            LEFT JOIN vehicles v ON sr.vehicle_id = v.id
+            LEFT JOIN services s ON sr.service_id = s.id
             ORDER BY sr.id DESC
         `);
 
+        // Fetch data needed for the Modal dropdowns
+        const customers = await db.query(`SELECT id, name FROM customers ORDER BY name`);
+        const vehicles = await db.query(`SELECT id, vehicle_number, customer_id FROM vehicles ORDER BY vehicle_number`);
+        const services = await db.query(`SELECT id, service_name, default_fee FROM services WHERE is_active = true ORDER BY service_name`);
+
         res.render("service_requests/index", {
             activePage: "service_requests",
-            requests: result.rows
+            requests: result.rows,
+            customers: customers.rows,
+            vehicles: vehicles.rows,
+            services: services.rows
         });
 
     } catch (err) {
@@ -118,6 +119,7 @@ const showRequests = async (req, res) => {
         res.status(500).send("Server Error");
     }
 };
+
 
 // NEW REQUEST FORM
 const showNewRequestForm = async (req, res) => {

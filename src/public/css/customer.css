@@ -42,7 +42,7 @@
 
 .data-table th {
     background: #f9fafb;
-    padding: 14px;
+    padding: 16px 24px;
     text-align: left;
     font-size: 0.85rem;
     text-transform: uppercase;
@@ -51,7 +51,7 @@
 }
 
 .data-table td {
-    padding: 14px;
+    padding: 16px 24px;
     border-top: 1px solid #f3f4f6;
     vertical-align: middle;
 }

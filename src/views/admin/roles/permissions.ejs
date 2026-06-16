@@ -23,7 +23,7 @@
                                     <% permissions.forEach(p=> { %>
                                         <div
                                             style="border: 1px solid #eaeaea; padding: 15px; border-radius: 6px; display: flex; align-items: flex-start; gap: 10px;">
-                                            <input type="checkbox" id="perm_<%= p.id %>" name="permissions[]"
+                                            <input type="checkbox" id="perm_<%= p.id %>" name="permissions"
                                                 value="<%= p.id %>" <%=currentPermissions.includes(parseInt(p.id))
                                                 ? 'checked' : '' %>
                                             style="margin-top: 4px; transform: scale(1.2);"

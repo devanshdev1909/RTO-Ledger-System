@@ -37,25 +37,6 @@ module.exports.login = async (req, res) => {
         req.session.userName =
             user.username;
 
-        // Load permissions from user_permissions
-        let permResult = await pool.query(`
-        SELECT p.code
-        FROM permissions p
-        JOIN user_permissions up ON p.id = up.permission_id
-        WHERE up.user_id = $1
-        `, [user.id]);
-
-        // Fallback: If user has no custom permissions, load their role defaults
-        if (permResult.rows.length === 0) {
-            permResult = await pool.query(`
-            SELECT p.code
-            FROM permissions p
-            JOIN role_permissions rp ON p.id = rp.permission_id
-            WHERE rp.role_id = $1
-            `, [user.role_id]);
-        }
-
-        req.session.permissions = permResult.rows.map(r => r.code);
         req.session.userRole = user.role_name;
 
 
