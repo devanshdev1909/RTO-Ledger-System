@@ -6,9 +6,11 @@
             <a href="/dashboard">Dashboard</a>
         </li>
 
+        <% if (typeof permissions !== 'undefined' && permissions.some(p => p.startsWith('customer.'))) { %>
         <li class="<%= activePage === 'customers' ? 'active' : '' %>">
             <a href="/customers">Customers</a>
         </li>
+        <% } %>
 
         <% if (typeof permissions !=='undefined' && permissions.includes('role.manage')) { %>
             <li class="<%= activePage === 'roles' ? 'active' : '' %>">
@@ -22,6 +24,7 @@
                     </li>
                     <% } %>
 
+<<<<<<< HEAD
                         <li class="<%= activePage === 'vehicles' ? 'active' : '' %>">
                             <a href="/vehicles">Vehicles</a>
                         </li>
@@ -48,6 +51,42 @@
                         <li class="<%= activePage === 'receipts' ? 'active' : '' %>">
                             <a href="/receipts">Receipts</a>
                         </li>
+=======
+        <% if (typeof permissions !== 'undefined' && permissions.some(p => p.startsWith('vehicle.'))) { %>
+        <li class="<%= activePage === 'vehicles' ? 'active' : '' %>">
+            <a href="/vehicles">Vehicles</a>
+        </li>
+        <% } %>
+
+        <% if (typeof permissions !== 'undefined' && permissions.some(p => p.startsWith('service.'))) { %>
+        <li
+            class="menu-item service-menu <%= (activePage === 'services' || activePage === 'service_requests') ? 'active' : '' %>">
+            <a href="#" class="menu-toggle" onclick="toggleServiceMenu(event)">
+                Services ▼
+            </a>
+            <ul class="submenu">
+                <li class="<%= activePage === 'services' ? 'active' : '' %>">
+                    <a href="/services">Service List</a>
+                </li>
+                <li class="<%= activePage === 'service_requests' ? 'active' : '' %>">
+                    <a href="/services/requests">Service Requests</a>
+                </li>
+            </ul>
+        </li>
+        <% } %>
+
+        <% if (typeof permissions !== 'undefined' && permissions.some(p => p.startsWith('ledger.'))) { %>
+        <li class="<%= activePage === 'ledger' ? 'active' : '' %>">
+            <a href="/ledger">Ledger</a>
+        </li>
+        <% } %>
+
+        <% if (typeof permissions !== 'undefined' && permissions.some(p => p.startsWith('receipt.'))) { %>
+        <li class="<%= activePage === 'receipts' ? 'active' : '' %>">
+            <a href="/receipts">Receipts</a>
+        </li>
+        <% } %>
+>>>>>>> dev
 
     </ul>
 
