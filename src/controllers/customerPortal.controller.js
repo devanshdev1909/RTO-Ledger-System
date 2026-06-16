@@ -18,11 +18,16 @@ exports.getDashboard = async (req, res) => {
             if (r.status === 'Completed') completedRequests += count;
         });
 
+        const vehicles = await pool.query('SELECT * FROM vehicles WHERE customer_id = $1', [customerId]);
+        const services = await pool.query('SELECT * FROM services WHERE is_active = true');
+
         res.render('customers/portal/dashboard', {
             vehiclesCount: parseInt(vehiclesCount.rows[0].count, 10),
             totalRequests,
             pendingRequests,
             completedRequests,
+            vehicles: vehicles.rows,
+            services: services.rows,
             activePage: 'dashboard',
             error: req.query.error || null
         });

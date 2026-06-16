@@ -13,7 +13,7 @@
 
       <div class="page-header">
         <h1>My Service Requests</h1>
-        <button class="btn btn-primary" onclick="openCreateModal()">+ Request Service</button>
+        <button class="btn btn-primary" onclick="openRequestCreateModal()">+ Request Service</button>
       </div>
 
       <% if (locals.error) { %>
@@ -66,7 +66,7 @@
                 <% if (r.status === 'Requested') { %>
                 
                   <!-- EDIT -->
-                  <button type="button" class="btn-icon edit-icon" title="Edit Request" onclick="openEditModal('<%= r.id %>', '<%= r.vehicle_id %>', '<%= r.service_id %>', '<%= r.amount %>', '<%= r.remarks ? r.remarks.replace(/'/g, '\\\'') : '' %>')">
+                  <button type="button" class="btn-icon edit-icon" title="Edit Request" onclick="openRequestEditModal('<%= r.id %>', '<%= r.vehicle_id %>', '<%= r.service_id %>', '<%= r.amount %>', '<%= r.remarks ? r.remarks.replace(/'/g, '\\\'') : '' %>')">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                       <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
@@ -105,113 +105,6 @@
   </div>
 </div>
 
-<!-- REQUEST MODAL -->
-<div id="requestModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; overflow-y: auto;">
-  <div style="background:white; max-width:500px; margin: 10vh auto; padding: 25px; border-radius: 8px; position: relative;">
-
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-      <h2 id="modalTitle" style="margin: 0;">Request Service</h2>
-      <button type="button" onclick="closeModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #888;">&times;</button>
-    </div>
-
-    <form id="requestForm" action="/portal/request/create" method="POST">
-
-      <div class="form-group" style="margin-bottom: 15px;">
-        <label for="r_vehicle_id">Select Vehicle *</label>
-        <select name="vehicle_id" id="r_vehicle_id" required style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
-          <option value="">-- Choose Vehicle --</option>
-          <% vehicles.forEach(v => { %>
-          <option value="<%= v.id %>"><%= v.vehicle_number %></option>
-          <% }) %>
-        </select>
-      </div>
-
-      <div class="form-group" style="margin-bottom: 15px;">
-        <label for="r_service_id">Select Service *</label>
-        <select name="service_id" id="r_service_id" required style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
-          <option value="">-- Choose Service --</option>
-          <% services.forEach(s => { %>
-          <option value="<%= s.id %>"><%= s.service_name %> (₹<%= s.default_fee %>)</option>
-          <% }) %>
-        </select>
-      </div>
-
-      <div class="form-group" style="margin-bottom: 15px;">
-        <label for="r_amount">Amount (₹) *</label>
-        <input type="number" name="amount" id="r_amount" step="0.01" required style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
-      </div>
-
-      <div class="form-group" style="margin-bottom: 15px;">
-        <label for="r_remarks">Remarks / Description</label>
-        <textarea name="remarks" id="r_remarks" rows="3" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
-      </div>
-
-      <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
-        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-        <button type="submit" class="btn btn-primary">Save Request</button>
-      </div>
-
-    </form>
-  </div>
-</div>
-
-<script>
-  function openCreateModal() {
-    document.getElementById('modalTitle').textContent = "Request Service";
-    document.getElementById('requestForm').action = "/portal/request/create";
-    
-    // Clear fields
-    document.getElementById('r_vehicle_id').value = "";
-    document.getElementById('r_service_id').value = "";
-    document.getElementById('r_amount').value = "";
-    document.getElementById('r_remarks').value = "";
-    
-    document.getElementById('requestModal').style.display = 'block';
-  }
-
-  function openEditModal(id, vehicle_id, service_id, amount, remarks) {
-    document.getElementById('modalTitle').textContent = "Edit Request";
-    document.getElementById('requestForm').action = "/portal/request/" + id + "/edit";
-    
-    // Pre-fill fields
-    document.getElementById('r_vehicle_id').value = vehicle_id;
-    document.getElementById('r_service_id').value = service_id;
-    document.getElementById('r_amount').value = amount;
-    document.getElementById('r_remarks').value = remarks || "";
-    
-    document.getElementById('requestModal').style.display = 'block';
-  }
-
-  function closeModal() {
-    document.getElementById('requestModal').style.display = 'none';
-  }
-
-  window.onclick = function(event) {
-    const modal = document.getElementById("requestModal");
-    if (event.target === modal) {
-      closeModal();
-    }
-  }
-
-  // Auto-fill amount based on service selection
-  document.addEventListener("DOMContentLoaded", function() {
-    const serviceSelect = document.getElementById('r_service_id');
-    const amountInput = document.getElementById('r_amount');
-    
-    const serviceFees = {
-      <% services.forEach(s => { %>
-        "<%= s.id %>": <%= s.default_fee %>,
-      <% }) %>
-    };
-
-    serviceSelect.addEventListener('change', function() {
-      if (this.value && serviceFees[this.value]) {
-        amountInput.value = serviceFees[this.value];
-      } else {
-        amountInput.value = "";
-      }
-    });
-  });
-</script>
+<%- include("partials/request_modal") %>
 
 <%- include("../../partials/footer") %>
