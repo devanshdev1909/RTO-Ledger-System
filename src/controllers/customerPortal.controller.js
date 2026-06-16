@@ -221,23 +221,7 @@ exports.postDeleteRequest = async (req, res) => {
     }
 };
 
-exports.getProfile = async (req, res) => {
-    const customerId = req.session.customerId;
-    try {
-        const result = await pool.query('SELECT * FROM customers WHERE id = $1', [customerId]);
-        if (result.rows.length === 0) {
-            return res.redirect('/portal/logout');
-        }
-        res.render('customers/portal/profile', {
-            profile: result.rows[0],
-            activePage: 'profile',
-            error: req.query.error || null
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("Server Error");
-    }
-};
+
 
 exports.postProfile = async (req, res) => {
     const customerId = req.session.customerId;
@@ -253,9 +237,12 @@ exports.postProfile = async (req, res) => {
         // Update session name if it changed
         req.session.customerName = name;
 
-        res.redirect('/portal/profile');
+        // Redirect back to the page they were on
+        res.redirect(req.get('Referrer') || '/portal/dashboard');
     } catch (err) {
         console.error(err);
-        res.redirect('/portal/profile?error=ProfileUpdateFailed');
+        const referrer = req.get('Referrer') || '/portal/dashboard';
+        const separator = referrer.includes('?') ? '&' : '?';
+        res.redirect(referrer + separator + 'error=ProfileUpdateFailed');
     }
 };

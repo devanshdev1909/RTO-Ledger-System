@@ -25,7 +25,7 @@ router.post('/request/create', customerPortal.postCreateRequest);
 router.post('/request/:id/edit', customerPortal.postEditRequest);
 router.post('/request/:id/delete', customerPortal.postDeleteRequest);
 
-router.get('/profile', customerPortal.getProfile);
+
 router.post('/profile', customerPortal.postProfile);
 
 module.exports = router;

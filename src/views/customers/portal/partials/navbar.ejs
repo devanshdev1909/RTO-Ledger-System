@@ -17,7 +17,7 @@
                 <span class="user-avatar">👤</span>
             </button>
             <div class="user-dropdown" id="userDropdown">
-                <a href="/portal/profile">My Profile</a>
+                <a href="#" onclick="openProfileModal(); return false;">My Profile</a>
                 <a href="/portal/my-vehicles">My Vehicles</a>
                 <a href="/portal/my-requests">My Requests</a>
                 <div style="border-top: 1px solid #eee; margin: 5px 0;"></div>
@@ -26,3 +26,5 @@
         </div>
     </div>
 </div>
+
+<%- include("profile_modal") %>
