@@ -131,7 +131,7 @@
         <select name="service_id" id="r_service_id" required style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
           <option value="">-- Choose Service --</option>
           <% services.forEach(s => { %>
-          <option value="<%= s.id %>"><%= s.name %> (₹<%= s.base_fee %>)</option>
+          <option value="<%= s.id %>"><%= s.service_name %> (₹<%= s.default_fee %>)</option>
           <% }) %>
         </select>
       </div>
@@ -200,7 +200,7 @@
     
     const serviceFees = {
       <% services.forEach(s => { %>
-        "<%= s.id %>": <%= s.base_fee %>,
+        "<%= s.id %>": <%= s.default_fee %>,
       <% }) %>
     };
 
