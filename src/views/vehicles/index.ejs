@@ -179,6 +179,7 @@
 
     <form action="/vehicles" method="POST">
 
+    <div class="form-row">
       <div class="form-group">
         <label>Customer</label>
         <select name="customer_id" required>
@@ -193,7 +194,9 @@
         <label>Vehicle Number</label>
         <input type="text" name="vehicle_number" required>
       </div>
+    </div>
 
+    <div class="form-row">
       <div class="form-group">
         <label>Vehicle Type</label>
         <select name="vehicle_type" required>
@@ -210,7 +213,9 @@
         <label>Chassis Number</label>
         <input type="text" name="chassis_number" required>
       </div>
-
+    </div>
+    
+    <div class="form-row">
       <div class="form-group">
         <label>Engine Number</label>
         <input type="text" name="engine_number" required>
@@ -220,82 +225,15 @@
         <label>Registration Date</label>
         <input type="date" name="registration_date">
       </div>
-
-      <button type="submit" class="btn btn-primary">Save Vehicle</button>
-
-    </form>
-
-  </div>
-</div>
-
-
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const modal = document.getElementById("vehicleModal");
-    const openBtn = document.getElementById("openVehicleModal");
-    const closeBtn = document.getElementById("closeVehicleModal");
-
-    openBtn.addEventListener("click", () => {
-      modal.style.display = "flex";
-    });
-
-    closeBtn.addEventListener("click", () => {
-      modal.style.display = "none";
-    });
-
-    window.addEventListener("click", (e) => {
-      if (e.target === modal) {
-        modal.style.display = "none";
-      }
-    });
-  });
-</script>
-
-
-<!-- VEHICLE MODAL -->
-<div id="vehicleModal" class="modal-overlay">
-  <div class="modal-box">
-
-    <div class="modal-header">
-      <h2>Add New Vehicle</h2>
-      <button class="close-modal" id="closeVehicleModal">&times;</button>
     </div>
 
-    <form action="/vehicles" method="POST">
-
-      <div class="form-row">
-        <div class="form-group">
-          <label>Customer</label>
-          <select name="customer_id" required>
-            <option value="">Select Customer</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Vehicle Number</label>
-          <input type="text" name="vehicle_number" required>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label>Vehicle Type</label>
-          <select name="vehicle_type" required>
-            <option value="">Select Type</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Registration Date</label>
-          <input type="date" name="registration_date">
-        </div>
-      </div>
       <button type="submit" class="btn btn-primary">Save Vehicle</button>
 
     </form>
 
   </div>
 </div>
+
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
