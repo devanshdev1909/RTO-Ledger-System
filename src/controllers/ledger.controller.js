@@ -1,6 +1,7 @@
 const pool = require("../config/db");
 
 // List all ledger entries
+// List all ledger entries
 module.exports.index = async (req, res) => {
     try {
         const result = await pool.query(`
@@ -16,19 +17,34 @@ module.exports.index = async (req, res) => {
             LEFT JOIN service_requests sr ON l.service_request_id = sr.id
             LEFT JOIN services s ON sr.service_id = s.id
             ORDER BY l.id DESC
-`);
+        `);
 
+        // ADD THIS NEW QUERY TO FETCH SERVICE REQUESTS
+        const availableRequests = await pool.query(`
+            SELECT 
+                sr.id, sr.request_no, sr.customer_id, sr.vehicle_id, sr.amount,
+                c.name AS customer_name, v.vehicle_number, s.service_name
+            FROM service_requests sr
+            LEFT JOIN ledgers l ON sr.id = l.service_request_id
+            JOIN customers c ON sr.customer_id = c.id
+            LEFT JOIN vehicles v ON sr.vehicle_id = v.id
+            JOIN services s ON sr.service_id = s.id
+            WHERE l.id IS NULL AND sr.status = 'Pending'
+            ORDER BY sr.created_at DESC
+        `);
 
         res.render("ledger/index", {
             activePage: "ledger",
             userName: req.session.userName,
-            ledgers: result.rows
+            ledgers: result.rows,
+            requests: availableRequests.rows // PASS IT TO THE VIEW HERE
         });
     } catch (err) {
         console.log(err);
         res.send(err.message);
     }
 };
+
 
 // Show ledger for a specific customer
 module.exports.customerLedger = async (req, res) => {
