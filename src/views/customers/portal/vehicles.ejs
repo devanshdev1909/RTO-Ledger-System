@@ -87,43 +87,6 @@
 
 <%- include("partials/vehicle_modal") %>
 
-<script>
-  function openVehicleCreateModal() {
-    document.getElementById('modalTitle').textContent = "Add Vehicle";
-    document.getElementById('vehicleForm').action = "/portal/vehicle/add";
-    
-    // Clear fields
-    document.getElementById('v_vehicle_number').value = "";
-    document.getElementById('v_vehicle_type').value = "";
-    document.getElementById('v_chassis_number').value = "CH";
-    document.getElementById('v_engine_number').value = "EN";
-    
-    document.getElementById('vehicleModal').style.display = 'block';
-  }
 
-  function openVehicleEditModal(id, vehicle_number, vehicle_type, chassis_number, engine_number) {
-    document.getElementById('modalTitle').textContent = "Edit Vehicle";
-    document.getElementById('vehicleForm').action = "/portal/vehicle/" + id + "/edit";
-    
-    // Pre-fill fields
-    document.getElementById('v_vehicle_number').value = vehicle_number;
-    document.getElementById('v_vehicle_type').value = vehicle_type || "";
-    document.getElementById('v_chassis_number').value = chassis_number || "CH";
-    document.getElementById('v_engine_number').value = engine_number || "EN";
-    
-    document.getElementById('vehicleModal').style.display = 'block';
-  }
-
-  function closeModal() {
-    document.getElementById('vehicleModal').style.display = 'none';
-  }
-
-  window.onclick = function(event) {
-    const modal = document.getElementById("vehicleModal");
-    if (event.target === modal) {
-      closeModal();
-    }
-  }
-</script>
 
 <%- include("../../partials/footer") %>
