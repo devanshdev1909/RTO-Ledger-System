@@ -1,11 +1,24 @@
 const pool = require("../config/db");
 
+
 // Get all roles
 exports.getRoles = async (req, res) => {
     try {
-        const result = await pool.query("SELECT * FROM roles WHERE name != 'Admin' ORDER BY id ASC");
+        const rolesRes = await pool.query("SELECT * FROM roles WHERE name != 'Admin' ORDER BY id ASC");
+        const allPermissionsRes = await pool.query("SELECT * FROM permissions ORDER BY id ASC");
+        const rolePermsRes = await pool.query("SELECT role_id, permission_id FROM role_permissions");
+
+        // Attach current permissions array to each role
+        const roles = rolesRes.rows.map(role => {
+            const perms = rolePermsRes.rows
+                .filter(rp => rp.role_id === role.id)
+                .map(rp => parseInt(rp.permission_id, 10));
+            return { ...role, currentPermissions: perms };
+        });
+
         res.render("admin/roles/index", {
-            roles: result.rows,
+            roles: roles,
+            permissions: allPermissionsRes.rows,
             activePage: "roles",
             error: req.query.error || null
         });
