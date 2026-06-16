@@ -1,189 +1,322 @@
 <%- include("../partials/header") %>
 
-    <div class="container">
-        <%- include("../partials/sidebar") %>
+<div class="container">
+  <%- include("../partials/sidebar") %>
 
-            <div class="main-content">
-                <%- include("../partials/navbar") %>
+  <div class="main-content">
+    <%- include("../partials/navbar") %>
 
-                    <div class="content">
+    <div class="content">
 
-                        <div class="page-header">
-                            <h1>Vehicles</h1>
-                            <% if (permissions.includes('vehicle.create')) { %>
-                                <a href="/vehicles/new" class="btn btn-primary">+ Add Vehicle</a>
-                                <% } %>
-                        </div>
+      <div class="page-header">
+        <h1>Vehicles</h1>
+        <% if (permissions.includes('vehicle.create')) { %>
+        <button id="openVehicleModal" class="btn btn-primary">+ Add Vehicle</button>
+        <% } %>
+      </div>
 
-                        <div class="table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Vehicle Number</th>
-                                        <th>Type</th>
-                                        <th>Customer</th>
-                                        <th>Chassis No.</th>
-                                        <th>Engine No.</th>
-                                        <th>Reg. Date</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% if (vehicles.length===0) { %>
-                                        <tr>
-                                            <td colspan="8" class="empty-state">
-                                                No vehicles found. Add your first vehicle!
-                                            </td>
-                                        </tr>
-                                        <% } else { %>
-                                            <% vehicles.forEach((v, i)=> { %>
-                                                <tr>
-                                                    <td>
-                                                        <%= i + 1 %>
-                                                    </td>
-                                                    <td><strong>
-                                                            <%= v.vehicle_number %>
-                                                        </strong></td>
-                                                    <td>
-                                                        <%= v.vehicle_type %>
-                                                    </td>
-                                                    <td>
-                                                        <%= v.customer_name || "N/A" %>
-                                                    </td>
-                                                    <td>
-                                                        <%= v.chassis_number %>
-                                                    </td>
-                                                    <td>
-                                                        <%= v.engine_number %>
-                                                    </td>
-                                                    <td>
-                                                        <%= v.registration_date ? new
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Vehicle Number</th>
+              <th>Type</th>
+              <th>Customer</th>
+              <th>Chassis No.</th>
+              <th>Engine No.</th>
+              <th>Reg. Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (vehicles.length===0) { %>
+            <tr>
+              <td colspan="8" class="empty-state">
+                No vehicles found. Add your first vehicle!
+              </td>
+            </tr>
+            <% } else { %>
+            <% vehicles.forEach((v, i)=> { %>
+            <tr>
+              <td>
+                <%= i + 1 %>
+              </td>
+              <td><strong>
+                  <%= v.vehicle_number %>
+                </strong></td>
+              <td>
+                <%= v.vehicle_type %>
+              </td>
+              <td>
+                <%= v.customer_name || "N/A" %>
+              </td>
+              <td>
+                <%= v.chassis_number %>
+              </td>
+              <td>
+                <%= v.engine_number %>
+              </td>
+              <td>
+                <%= v.registration_date ? new
                                                             Date(v.registration_date).toLocaleDateString("en-IN")
                                                             : "N/A" %>
-                                                    </td>
-                                                    <td>
-                                                        <div class="status-container">
-                                                            <span
-                                                                class="status-text <%= v.is_active !== false ? 'active' : 'inactive' %>">
-                                                                <%= v.is_active !==false ? 'Active' : 'Inactive' %>
-                                                            </span>
-                                                            <label class="switch">
-                                                                <input type="checkbox" class="status-toggle"
-                                                                    data-id="<%= v.id %>" <%=v.is_active !==false
+              </td>
+              <td>
+                <div class="status-container">
+                  <span class="status-text <%= v.is_active !== false ? 'active' : 'inactive' %>">
+                    <%= v.is_active !==false ? 'Active' : 'Inactive' %>
+                  </span>
+                  <label class="switch">
+                    <input type="checkbox" class="status-toggle" data-id="<%= v.id %>" <%=v.is_active !==false
                                                                     ? 'checked' : '' %>>
-                                                                <span class="slider"></span>
-                                                            </label>
-                                                        </div>
-                                                    </td>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </td>
 
-                                                    <td class="actions">
+              <td class="actions">
 
-    <% if (permissions.includes('vehicle.create')) { %>
-        <a href="/vehicles/<%= v.id %>/edit"
-           class="btn-icon edit-icon"
-           title="Edit Vehicle">
+                <% if (permissions.includes('vehicle.create')) { %>
+                <a href="/vehicles/<%= v.id %>/edit" class="btn-icon edit-icon" title="Edit Vehicle">
 
-            <svg xmlns="http://www.w3.org/2000/svg"
-                 viewBox="0 0 24 24"
-                 fill="none"
-                 stroke="currentColor"
-                 stroke-width="2"
-                 stroke-linecap="round"
-                 stroke-linejoin="round">
-
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
-                <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415" />
-                <path d="M16 5l3 3" />
-            </svg>
-
-        </a>
-    <% } %>
-
-    <% if (permissions.includes('vehicle.create')) { %>
-        <form action="/vehicles/<%= v.id %>?_method=DELETE"
-              method="POST"
-              class="delete-form">
-
-            <button type="submit"
-                    class="btn-icon delete-icon"
-                    title="Delete Vehicle"
-                    onclick="return confirm('Are you sure?')">
-
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     viewBox="0 0 24 24"
-                     fill="none"
-                     stroke="currentColor"
-                     stroke-width="2"
-                     stroke-linecap="round"
-                     stroke-linejoin="round">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M4 7l16 0" />
-                    <path d="M10 11l0 6" />
-                    <path d="M14 11l0 6" />
-                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                    <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+                    <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415" />
+                    <path d="M16 5l3 3" />
+                  </svg>
 
-                </svg>
+                </a>
+                <% } %>
 
-            </button>
+                <% if (permissions.includes('vehicle.create')) { %>
+                <form action="/vehicles/<%= v.id %>?_method=DELETE" method="POST" class="delete-form">
 
-        </form>
-    <% } %>
+                  <button type="submit" class="btn-icon delete-icon" title="Delete Vehicle" onclick="return confirm('Are you sure?')">
 
-</td>
-                                                </tr>
-                                                <% }) %>
-                                                    <% } %>
-                                </tbody>
-                            </table>
-                        </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 
-                    </div>
-            </div>
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M4 7l16 0" />
+                      <path d="M10 11l0 6" />
+                      <path d="M14 11l0 6" />
+                      <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                      <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+
+                    </svg>
+
+                  </button>
+
+                </form>
+                <% } %>
+
+              </td>
+            </tr>
+            <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll(".status-toggle").forEach(checkbox => {
-                checkbox.addEventListener("change", async (e) => {
-                    const vehicleId = e.target.getAttribute("data-id");
-                    const isActive = e.target.checked;
-                    const statusText = e.target.closest(".status-container").querySelector(".status-text");
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".status-toggle").forEach(checkbox => {
+      checkbox.addEventListener("change", async (e) => {
+        const vehicleId = e.target.getAttribute("data-id");
+        const isActive = e.target.checked;
+        const statusText = e.target.closest(".status-container").querySelector(".status-text");
 
-                    try {
-                        const response = await fetch(`/vehicles/${vehicleId}/toggle-status`, {
-                            method: "PATCH",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify({ is_active: isActive })
-                        });
+        try {
+          const response = await fetch(`/vehicles/${vehicleId}/toggle-status`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              is_active: isActive
+            })
+          });
 
-                        if (!response.ok) {
-                            throw new Error("Failed to update status");
-                        }
+          if (!response.ok) {
+            throw new Error("Failed to update status");
+          }
 
-                        const data = await response.json();
+          const data = await response.json();
 
-                        // Update text and class color
-                        if (isActive) {
-                            statusText.textContent = "Active";
-                            statusText.className = "status-text active";
-                        } else {
-                            statusText.textContent = "Inactive";
-                            statusText.className = "status-text inactive";
-                        }
-                    } catch (err) {
-                        console.error("Error toggling status:", err);
-                        alert("Error updating status: " + err.message);
-                        e.target.checked = !isActive;
-                    }
-                });
-            });
-        });
-    </script>
+          // Update text and class color
+          if (isActive) {
+            statusText.textContent = "Active";
+            statusText.className = "status-text active";
+          } else {
+            statusText.textContent = "Inactive";
+            statusText.className = "status-text inactive";
+          }
+        } catch (err) {
+          console.error("Error toggling status:", err);
+          alert("Error updating status: " + err.message);
+          e.target.checked = !isActive;
+        }
+      });
+    });
+  });
+</script>
 
-    <%- include("../partials/footer") %>
+
+<!-- VEHICLE MODAL -->
+<div id="vehicleModal" class="modal-overlay">
+  <div class="modal-box">
+
+    <div class="modal-header">
+      <h2>Add New Vehicle</h2>
+      <button class="close-modal" id="closeVehicleModal">&times;</button>
+    </div>
+
+    <form action="/vehicles" method="POST">
+
+      <div class="form-group">
+        <label>Customer</label>
+        <select name="customer_id" required>
+          <option value="">Select Customer</option>
+          <% customers.forEach(c => { %>
+          <option value="<%= c.id %>"><%= c.name %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Vehicle Number</label>
+        <input type="text" name="vehicle_number" required>
+      </div>
+
+      <div class="form-group">
+        <label>Vehicle Type</label>
+        <select name="vehicle_type" required>
+          <option value="">Select Type</option>
+          <option value="MCWOG">Motor Cycle Without Gear</option>
+          <option value="MCWG">Motor Cycle With Gear</option>
+          <option value="LMV">Light Motor Vehicle</option>
+          <option value="MGV">Medium Goods Vehicle</option>
+          <option value="HGV">Heavy Goods Vehicle</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Chassis Number</label>
+        <input type="text" name="chassis_number" required>
+      </div>
+
+      <div class="form-group">
+        <label>Engine Number</label>
+        <input type="text" name="engine_number" required>
+      </div>
+
+      <div class="form-group">
+        <label>Registration Date</label>
+        <input type="date" name="registration_date">
+      </div>
+
+      <button type="submit" class="btn btn-primary">Save Vehicle</button>
+
+    </form>
+
+  </div>
+</div>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const modal = document.getElementById("vehicleModal");
+    const openBtn = document.getElementById("openVehicleModal");
+    const closeBtn = document.getElementById("closeVehicleModal");
+
+    openBtn.addEventListener("click", () => {
+      modal.style.display = "flex";
+    });
+
+    closeBtn.addEventListener("click", () => {
+      modal.style.display = "none";
+    });
+
+    window.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.style.display = "none";
+      }
+    });
+  });
+</script>
+
+
+<!-- VEHICLE MODAL -->
+<div id="vehicleModal" class="modal-overlay">
+  <div class="modal-box">
+
+    <div class="modal-header">
+      <h2>Add New Vehicle</h2>
+      <button class="close-modal" id="closeVehicleModal">&times;</button>
+    </div>
+
+    <form action="/vehicles" method="POST">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Customer</label>
+          <select name="customer_id" required>
+            <option value="">Select Customer</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Vehicle Number</label>
+          <input type="text" name="vehicle_number" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Vehicle Type</label>
+          <select name="vehicle_type" required>
+            <option value="">Select Type</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Registration Date</label>
+          <input type="date" name="registration_date">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Save Vehicle</button>
+
+    </form>
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const modal = document.getElementById("vehicleModal");
+    const openBtn = document.getElementById("openVehicleModal");
+    const closeBtn = document.getElementById("closeVehicleModal");
+
+    openBtn.addEventListener("click", () => {
+      modal.style.display = "flex";
+    });
+
+    closeBtn.addEventListener("click", () => {
+      modal.style.display = "none";
+    });
+
+    window.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.style.display = "none";
+      }
+    });
+  });
+</script>
+
+<%- include("../partials/footer") %>
