@@ -16,16 +16,12 @@ router.use(isCustomerAuth);
 router.get('/dashboard', customerPortal.getDashboard);
 
 router.get('/my-vehicles', customerPortal.getMyVehicles);
-router.get('/vehicle/add', customerPortal.getAddVehicle);
 router.post('/vehicle/add', customerPortal.postAddVehicle);
-router.get('/vehicle/:id/edit', customerPortal.getEditVehicle);
 router.post('/vehicle/:id/edit', customerPortal.postEditVehicle);
 router.post('/vehicle/:id/delete', customerPortal.postDeleteVehicle);
 
 router.get('/my-requests', customerPortal.getMyRequests);
-router.get('/request/create', customerPortal.getCreateRequest);
 router.post('/request/create', customerPortal.postCreateRequest);
-router.get('/request/:id/edit', customerPortal.getEditRequest);
 router.post('/request/:id/edit', customerPortal.postEditRequest);
 router.post('/request/:id/delete', customerPortal.postDeleteRequest);
 

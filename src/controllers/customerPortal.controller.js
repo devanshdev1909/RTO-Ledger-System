@@ -47,12 +47,7 @@ exports.getMyVehicles = async (req, res) => {
     }
 };
 
-exports.getAddVehicle = async (req, res) => {
-    res.render('customers/portal/new_vehicle', {
-        activePage: 'vehicles',
-        error: req.query.error || null
-    });
-};
+
 
 exports.getMyRequests = async (req, res) => {
     const customerId = req.session.customerId;
@@ -64,23 +59,10 @@ exports.getMyRequests = async (req, res) => {
             WHERE sr.customer_id = $1
             ORDER BY sr.created_at DESC
         `, [customerId]);
-        res.render('customers/portal/requests', {
-            requests: requests.rows,
-            activePage: 'requests',
-            error: req.query.error || null
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("Server Error");
-    }
-};
-
-exports.getCreateRequest = async (req, res) => {
-    const customerId = req.session.customerId;
-    try {
         const vehicles = await pool.query('SELECT * FROM vehicles WHERE customer_id = $1', [customerId]);
         const services = await pool.query('SELECT * FROM services WHERE is_active = true');
-        res.render('customers/portal/new_request', {
+        res.render('customers/portal/requests', {
+            requests: requests.rows,
             vehicles: vehicles.rows,
             services: services.rows,
             activePage: 'requests',
@@ -91,6 +73,8 @@ exports.getCreateRequest = async (req, res) => {
         res.status(500).send("Server Error");
     }
 };
+
+
 
 // Handle Direct Vehicle Addition
 exports.postAddVehicle = async (req, res) => {
@@ -132,24 +116,7 @@ exports.postCreateRequest = async (req, res) => {
     }
 };
 
-exports.getEditVehicle = async (req, res) => {
-    const customerId = req.session.customerId;
-    const vehicleId = req.params.id;
-    try {
-        const result = await pool.query('SELECT * FROM vehicles WHERE id = $1 AND customer_id = $2', [vehicleId, customerId]);
-        if (result.rows.length === 0) {
-            return res.redirect('/portal/my-vehicles?error=VehicleNotFound');
-        }
-        res.render('customers/portal/edit_vehicle', {
-            vehicle: result.rows[0],
-            activePage: 'vehicles',
-            error: req.query.error || null
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("Server Error");
-    }
-};
+
 
 exports.postEditVehicle = async (req, res) => {
     const customerId = req.session.customerId;
@@ -199,36 +166,7 @@ exports.postDeleteVehicle = async (req, res) => {
     }
 };
 
-exports.getEditRequest = async (req, res) => {
-    const customerId = req.session.customerId;
-    const requestId = req.params.id;
-    try {
-        const result = await pool.query('SELECT * FROM service_requests WHERE id = $1 AND customer_id = $2', [requestId, customerId]);
-        if (result.rows.length === 0) {
-            return res.redirect('/portal/my-requests?error=RequestNotFound');
-        }
-        
-        const request = result.rows[0];
-        // Only allow editing if Requested
-        if (request.status !== 'Requested') {
-            return res.redirect('/portal/my-requests?error=CannotEditProcessedRequest');
-        }
 
-        const vehicles = await pool.query('SELECT * FROM vehicles WHERE customer_id = $1', [customerId]);
-        const services = await pool.query('SELECT * FROM services WHERE is_active = true');
-
-        res.render('customers/portal/edit_request', {
-            request,
-            vehicles: vehicles.rows,
-            services: services.rows,
-            activePage: 'requests',
-            error: req.query.error || null
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("Server Error");
-    }
-};
 
 exports.postEditRequest = async (req, res) => {
     const customerId = req.session.customerId;
