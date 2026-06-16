@@ -11,7 +11,7 @@
       <div class="page-header">
         <h1>Vehicles</h1>
         <% if (permissions.includes('vehicle.create')) { %>
-        <button id="openVehicleModal" class="btn btn-primary">+ Add Vehicle</button>
+        <button id="openVehicleModal" class="btn btn-primary" onclick="openCreateModal()">+ Add Vehicle</button>
         <% } %>
       </div>
 
@@ -33,7 +33,7 @@
           <tbody>
             <% if (vehicles.length===0) { %>
             <tr>
-              <td colspan="8" class="empty-state">
+              <td colspan="9" class="empty-state">
                 No vehicles found. Add your first vehicle!
               </td>
             </tr>
@@ -59,9 +59,7 @@
                 <%= v.engine_number %>
               </td>
               <td>
-                <%= v.registration_date ? new
-                                                            Date(v.registration_date).toLocaleDateString("en-IN")
-                                                            : "N/A" %>
+                <%= v.registration_date ? new Date(v.registration_date).toLocaleDateString("en-IN") : "N/A" %>
               </td>
               <td>
                 <div class="status-container">
@@ -69,8 +67,7 @@
                     <%= v.is_active !==false ? 'Active' : 'Inactive' %>
                   </span>
                   <label class="switch">
-                    <input type="checkbox" class="status-toggle" data-id="<%= v.id %>" <%=v.is_active !==false
-                                                                    ? 'checked' : '' %>>
+                    <input type="checkbox" class="status-toggle" data-id="<%= v.id %>" <%=v.is_active !==false ? 'checked' : '' %>>
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -79,37 +76,28 @@
               <td class="actions">
 
                 <% if (permissions.includes('vehicle.create')) { %>
-                <a href="/vehicles/<%= v.id %>/edit" class="btn-icon edit-icon" title="Edit Vehicle">
-
+                <button type="button" class="btn-icon edit-icon" title="Edit Vehicle" onclick="openEditModal('<%= v.id %>', '<%= v.customer_id %>', '<%= v.vehicle_number %>', '<%= v.vehicle_type %>', '<%= v.chassis_number %>', '<%= v.engine_number %>', '<%= v.registration_date ? new Date(v.registration_date).toISOString().split('T')[0] : '' %>')">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
                     <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415" />
                     <path d="M16 5l3 3" />
                   </svg>
-
-                </a>
+                </button>
                 <% } %>
 
                 <% if (permissions.includes('vehicle.create')) { %>
-                <form action="/vehicles/<%= v.id %>?_method=DELETE" method="POST" class="delete-form">
-
+                <form action="/vehicles/<%= v.id %>?_method=DELETE" method="POST" class="delete-form" style="display:inline;">
                   <button type="submit" class="btn-icon delete-icon" title="Delete Vehicle" onclick="return confirm('Are you sure?')">
-
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-
                       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                       <path d="M4 7l16 0" />
                       <path d="M10 11l0 6" />
                       <path d="M14 11l0 6" />
                       <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
                       <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-
                     </svg>
-
                   </button>
-
                 </form>
                 <% } %>
 
@@ -124,7 +112,109 @@
     </div>
   </div>
 </div>
+
+<!-- VEHICLE MODAL -->
+<div id="vehicleModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; overflow-y: auto;">
+  <div style="background:white; max-width:600px; margin: 10vh auto; padding: 25px; border-radius: 8px; position: relative;">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2 id="modalTitle" style="margin: 0;">Add New Vehicle</h2>
+      <button type="button" onclick="closeModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #888;">&times;</button>
+    </div>
+
+    <form id="vehicleForm" action="/vehicles" method="POST">
+      <input type="hidden" id="methodOverride" name="_method" value="PUT" disabled>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div class="form-group">
+          <label for="v_customer_id">Customer *</label>
+          <select name="customer_id" id="v_customer_id" required style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+            <option value="">Select Customer</option>
+            <% customers.forEach(c => { %>
+            <option value="<%= c.id %>"><%= c.name %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="v_vehicle_number">Vehicle Number *</label>
+          <input type="text" name="vehicle_number" id="v_vehicle_number" placeholder="AB 12 CD 1234" required maxlength="13" pattern="^[A-Z]{2}\s[0-9]{2}\s[A-Z]{2}\s[0-9]{4}$" oninput="let v = this.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); if (v.length > 2) v = v.slice(0,2) + ' ' + v.slice(2); if (v.length > 5) v = v.slice(0,5) + ' ' + v.slice(5); if (v.length > 8) v = v.slice(0,8) + ' ' + v.slice(8,12); this.value = v.slice(0, 13);" style="text-transform: uppercase; width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+
+        <div class="form-group">
+          <label for="v_vehicle_type">Vehicle Type *</label>
+          <select name="vehicle_type" id="v_vehicle_type" required style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+            <option value="">Select Vehicle Type</option>
+            <option value="Motor Cycle Without Gear(MCWOG)">Motor Cycle Without Gear (MCWOG)</option>
+            <option value="Motor Cycle With Gear(MCWG)">Motor Cycle With Gear (MCWG)</option>
+            <option value="Light Motor Vehicle(LMV)">Light Motor Vehicle (LMV)</option>
+            <option value="Medium Goods Vehicle(MGV)">Medium Goods Vehicle (MGV)</option>
+            <option value="Heavy Goods Vehicle(HGV)">Heavy Goods Vehicle (HGV)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="v_chassis_number">Chassis Number *</label>
+          <input type="text" name="chassis_number" id="v_chassis_number" placeholder="CH1234567890" maxlength="12" minlength="12" pattern="^CH[A-Z0-9]{10}$" oninput="if(!this.value.toUpperCase().startsWith('CH')) { this.value = 'CH' + this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10); } else { this.value = 'CH' + this.value.substring(2).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10); }" style="text-transform: uppercase; width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;" required>
+        </div>
+
+        <div class="form-group">
+          <label for="v_engine_number">Engine Number *</label>
+          <input type="text" name="engine_number" id="v_engine_number" placeholder="EN1234567890" maxlength="12" minlength="12" pattern="^EN[A-Z0-9]{10}$" oninput="if(!this.value.toUpperCase().startsWith('EN')) { this.value = 'EN' + this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10); } else { this.value = 'EN' + this.value.substring(2).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10); }" style="text-transform: uppercase; width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;" required>
+        </div>
+
+        <div class="form-group">
+          <label for="v_registration_date">Registration Date</label>
+          <input type="date" name="registration_date" id="v_registration_date" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+      </div>
+
+      <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
 <script>
+  function openCreateModal() {
+    document.getElementById('modalTitle').textContent = "Add Vehicle";
+    document.getElementById('vehicleForm').action = "/vehicles";
+    document.getElementById('methodOverride').disabled = true;
+
+    // Clear fields
+    document.getElementById('v_customer_id').value = "";
+    document.getElementById('v_vehicle_number').value = "";
+    document.getElementById('v_vehicle_type').value = "";
+    document.getElementById('v_chassis_number').value = "CH";
+    document.getElementById('v_engine_number').value = "EN";
+    document.getElementById('v_registration_date').value = "";
+
+    document.getElementById('vehicleModal').style.display = 'block';
+  }
+
+  function openEditModal(id, customer_id, vehicle_number, vehicle_type, chassis_number, engine_number, registration_date) {
+    document.getElementById('modalTitle').textContent = "Edit Vehicle";
+    document.getElementById('vehicleForm').action = "/vehicles/" + id;
+    document.getElementById('methodOverride').disabled = false;
+
+    // Pre-fill fields
+    document.getElementById('v_customer_id').value = customer_id;
+    document.getElementById('v_vehicle_number').value = vehicle_number;
+    document.getElementById('v_vehicle_type').value = vehicle_type || "";
+    document.getElementById('v_chassis_number').value = chassis_number || "CH";
+    document.getElementById('v_engine_number').value = engine_number || "EN";
+    document.getElementById('v_registration_date').value = registration_date || "";
+
+    document.getElementById('vehicleModal').style.display = 'block';
+  }
+
+  function closeModal() {
+    document.getElementById('vehicleModal').style.display = 'none';
+  }
+
   document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll(".status-toggle").forEach(checkbox => {
       checkbox.addEventListener("change", async (e) => {
@@ -163,96 +253,6 @@
           e.target.checked = !isActive;
         }
       });
-    });
-  });
-</script>
-
-
-<!-- VEHICLE MODAL -->
-<div id="vehicleModal" class="modal-overlay">
-  <div class="modal-box">
-
-    <div class="modal-header">
-      <h2>Add New Vehicle</h2>
-      <button class="close-modal" id="closeVehicleModal">&times;</button>
-    </div>
-
-    <form action="/vehicles" method="POST">
-
-    <div class="form-row">
-      <div class="form-group">
-        <label>Customer</label>
-        <select name="customer_id" required>
-          <option value="">Select Customer</option>
-          <% customers.forEach(c => { %>
-          <option value="<%= c.id %>"><%= c.name %></option>
-          <% }) %>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Vehicle Number</label>
-        <input type="text" name="vehicle_number" required>
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label>Vehicle Type</label>
-        <select name="vehicle_type" required>
-          <option value="">Select Type</option>
-          <option value="MCWOG">Motor Cycle Without Gear</option>
-          <option value="MCWG">Motor Cycle With Gear</option>
-          <option value="LMV">Light Motor Vehicle</option>
-          <option value="MGV">Medium Goods Vehicle</option>
-          <option value="HGV">Heavy Goods Vehicle</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Chassis Number</label>
-        <input type="text" name="chassis_number" required>
-      </div>
-    </div>
-    
-    <div class="form-row">
-      <div class="form-group">
-        <label>Engine Number</label>
-        <input type="text" name="engine_number" required>
-      </div>
-
-      <div class="form-group">
-        <label>Registration Date</label>
-        <input type="date" name="registration_date">
-      </div>
-    </div>
-
-      <button type="submit" class="btn btn-primary">Save Vehicle</button>
-
-    </form>
-
-  </div>
-</div>
-
-
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const modal = document.getElementById("vehicleModal");
-    const openBtn = document.getElementById("openVehicleModal");
-    const closeBtn = document.getElementById("closeVehicleModal");
-
-    openBtn.addEventListener("click", () => {
-      modal.style.display = "flex";
-    });
-
-    closeBtn.addEventListener("click", () => {
-      modal.style.display = "none";
-    });
-
-    window.addEventListener("click", (e) => {
-      if (e.target === modal) {
-        modal.style.display = "none";
-      }
     });
   });
 </script>

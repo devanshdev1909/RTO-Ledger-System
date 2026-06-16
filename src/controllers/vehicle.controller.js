@@ -5,14 +5,13 @@ const pool = require("../config/db");
 module.exports.index = async (req, res) => {
     try {
         const vehicles = await Vehicle.getAll();
-
         const customersResult = await pool.query(
             "SELECT id, name FROM customers ORDER BY name ASC"
         );
 
         res.render("vehicles/index", {
             vehicles,
-            customers: customersResult.rows,  // ⭐ ADD THIS
+            customers: customersResult.rows,
             userName: req.session.userName
         });
 

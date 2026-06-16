@@ -177,28 +177,18 @@
 
                 <div class="form-group" style="margin-top: 15px;">
                     <label>Service Name *</label>
-                    <input type="text" id="service_name" name="service_name" required
-                        style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                    <input type="text" id="service_name" name="service_name" required>
                 </div>
 
                 <div class="form-group" style="margin-top: 15px;">
                     <label>Default Fee *</label>
-                    <input type="number" id="default_fee" name="default_fee" required
-                        style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                    <input type="number" id="default_fee" name="default_fee" required>
                 </div>
 
                 <div class="form-group" style="margin-top: 15px;">
                     <label>Description</label>
-                    <textarea id="description" name="description" rows="3"
-                        style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+                    <textarea id="description" name="description" rows="3"></textarea>
                 </div>
-
-                <div class="form-group" style="margin-top: 15px;">
-                    <label>
-                        <input type="checkbox" id="is_active" name="is_active" checked> Active
-                    </label>
-                </div>
-
                 <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
                     <button type="button" onclick="document.getElementById('serviceModal').style.display='none'"
                         class="btn btn-secondary">Cancel</button>
@@ -215,7 +205,6 @@
             document.getElementById('serviceForm').action = '/services';
             document.getElementById('methodOverride').disabled = true; // Use normal POST
             document.getElementById('serviceForm').reset();
-            document.getElementById('is_active').checked = true;
         }
 
         function openEditServiceModal(id, name, fee, desc, isActive) {
@@ -227,7 +216,6 @@
             document.getElementById('service_name').value = name;
             document.getElementById('default_fee').value = fee;
             document.getElementById('description').value = desc;
-            document.getElementById('is_active').checked = (isActive === 'true');
         }
     </script>
 
