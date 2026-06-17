@@ -1,5 +1,5 @@
 <div id="quickAddModal" class="modal">
-    <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+    <div class="modal-content" style="width: 900px; max-height: 600px;">
         <div class="modal-header">
             <h2>Quick Add Registration</h2>
             <span class="close-modal" onclick="closeQuickAddModal()">&times;</span>
@@ -23,17 +23,17 @@
                                 placeholder="Enter 10 digit Mobile" required>
                         </div>
                     </div>
-                    <div class="form-row">
+                    
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="qa_c_email" placeholder="Enter Email Address">
+                        </div>
                         <div class="form-group">
                             <label>Address</label>
                             <textarea id="qa_c_address" rows="1" placeholder="Enter Address"
                                 style="height: 100px;"></textarea>
                         </div>
-                        <div class="form-group">
-                            <label>Email Address</label>
-                            <input type="email" id="qa_c_email" placeholder="Enter Email Address">
-                        </div>
-                    </div>
+                    
                     <div style="text-align: right; margin-top: 20px;">
                         <button type="button" class="btn btn-primary" onclick="goToStep(2)">Next: Vehicles
                             &rarr;</button>
@@ -140,11 +140,11 @@
                 <label>Engine No.</label>
                 <input type="text" class="v_engine" placeholder="e.g. EN4252145987" maxlength="12" minlength="12" pattern="^EN[A-Z0-9]{10}$" onfocus="if(!this.value) this.value='EN';" oninput="let v = this.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); if (!v.startsWith('EN')) v = 'EN' + v.replace(/^(EN|E)?/, ''); this.value = v.slice(0, 12);" style="text-transform: uppercase;">
             </div>
-            <div class="form-group">
+          </div>
+          <div class="form-group">
                 <label>Registration Date</label>
                 <input type="date" class="v_reg_date">
             </div>
-          </div>
         </div>`;
         container.insertAdjacentHTML('beforeend', html);
         updateServiceVehicleDropdowns();
@@ -176,16 +176,17 @@
                     ${serviceOptions}
                 </select>
             </div>
+          </div>
+          <div class="form-row">
             <div class="form-group">
                 <label>Service Fee (Total Cost) *</label>
                 <input type="number" class="s_service_fee" readonly required>
             </div>
-          </div>
-          <div class="form-row">
             <div class="form-group">
                 <label>Paid Amount *</label>
                 <input type="number" class="s_paid_amount" placeholder="0" required>
             </div>
+           </div>
             <div class="form-group">
                 <label>Payment Method *</label>
                 <select class="s_payment_mode" required>
@@ -195,7 +196,6 @@
                     <option value="Net Banking">Net Banking</option>
                 </select>
             </div>
-          </div>
         </div>`;
         container.insertAdjacentHTML('beforeend', html);
         updateServiceVehicleDropdowns();
