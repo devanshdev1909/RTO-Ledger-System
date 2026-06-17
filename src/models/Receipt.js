@@ -28,8 +28,7 @@ class Receipt {
         return result.rows[0];
     }
 
-<<<<<<< Updated upstream
-   static async getAll() {
+    static async getAll() {
     const result = await pool.query(`
         SELECT
             r.*,
@@ -48,23 +47,6 @@ class Receipt {
 
     return result.rows;
 }
-=======
-    static async getAll() {
-        const result = await pool.query(`
-            SELECT 
-                r.*,
-                c.name AS customer_name,
-                c.customer_code,
-                u.username AS created_by_name
-            FROM receipts r
-            LEFT JOIN ledgers l ON r.ledger_id = l.id
-            LEFT JOIN customers c ON l.customer_id = c.id
-            LEFT JOIN users u ON r.received_by = u.id
-            ORDER BY r.received_at DESC
-        `);
-        return result.rows;
-    }
->>>>>>> Stashed changes
 
     static async getById(id) {
         const result = await pool.query(`
