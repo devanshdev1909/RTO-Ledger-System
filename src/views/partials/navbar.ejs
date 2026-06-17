@@ -19,9 +19,21 @@
         <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌙</button>
 
         <div class="user-menu">
-            <button type="button" class="user-trigger" id="userMenuButton" aria-expanded="false" aria-haspopup="true">
-                <span class="user-greet">Hi, <%= typeof userName !=='undefined' ? userName : 'User' %></span>
-                <span class="user-avatar">👤</span>
+            <button type="button" class="user-trigger user-trigger-custom" id="userMenuButton" aria-expanded="false"
+                aria-haspopup="true"
+                style="display: flex; align-items: center; gap: 5px; border-radius: 999px;border: 2px solid #cbd5e1; background: #fff; cursor: pointer;height: 40px;padding: 0 3px;padding-left:10px;">
+                <span class="user-greet"
+                    style="font-size: 15px; font-weight: 600; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif">Hi,
+                    <%= typeof userName !=='undefined' ? userName : 'User' %>
+                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-user"
+                    style="border-radius: 50%; background-color: #1e40af; width: 32px; height: 32px; padding: 3px;">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+                    <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                </svg>
             </button>
             <div class="user-dropdown" id="userDropdown">
                 <a href="/logout">Logout</a>
