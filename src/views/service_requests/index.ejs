@@ -27,14 +27,14 @@
 
           <thead>
             <tr>
-              <th>#</th>
-              <th>Request No</th>
-              <th>Customer</th>
-              <th>Vehicle</th>
-              <th>Service</th>
-              <th>Amount</th>
-              <th>Status</th>
-              <th>Actions</th>
+              <th style="text-align: center;">#</th>
+              <th style="text-align: center;">Request No</th>
+              <th style="text-align: center;">Customer</th>
+              <th style="text-align: center;">Vehicle</th>
+              <th style="text-align: center;">Service</th>
+              <th style="text-align: center;">Amount</th>
+              <th style="text-align: center;">Status</th>
+              <th style="text-align: center;">Actions</th>
             </tr>
           </thead>
 
@@ -51,25 +51,25 @@
             <% requests.forEach((r, i)=> { %>
             <tr>
 
-              <td>
+              <td style="text-align: center;">
                 <%= i + 1 %>
               </td>
-              <td>
+              <td style="text-align: center;">
                 <%= r.request_no %>
               </td>
-              <td>
+              <td style="text-align: center;">
                 <%= r.customer_name %>
               </td>
-              <td>
+              <td style="text-align: center;">
                 <%= r.vehicle_number %>
               </td>
-              <td>
+              <td style="text-align: center;">
                 <%= r.service_name %>
               </td>
-              <td>₹ <%= r.amount %>
+              <td style="text-align: center;">₹ <%= r.amount %>
               </td>
 
-              <td>
+              <td style="text-align: center;">
                 <select class="status-select <%= r.status === 'Requested' ? 'requested' : r.status === 'Pending' ? 'pending' : r.status === 'Completed' ? 'completed' : r.status === 'Cancelled' ? 'cancelled' : '' %>" data-id="<%= r.id %>">
                   <option value="Requested" <%=r.status==='Requested'
                                                                 ? 'selected' : '' %>>Requested (Wait)</option>
@@ -83,7 +83,7 @@
               </td>
 
               <!-- ACTIONS -->
-              <td class="actions">
+              <td class="actions" style="text-align: center;">
 
                 <!-- VIEW -->
                 <a href="/services/requests/<%= r.id %>" class="btn-icon view-icon" title="View">
@@ -96,7 +96,7 @@
                 <% if (permissions.includes('service.create')) { %>
 
                 <!-- EDIT -->
-                <button type="button" onclick="openEditReqModal('<%= r.id %>', '<%= r.customer_id %>', '<%= r.vehicle_id || '' %>', '<%= r.service_id %>', '<%= r.amount %>', '<%= r.status %>', `<%= r.remarks || '' %>`)" class="btn-icon edit-icon" title="Edit">
+                <button type="button" onclick="openEditReqModal('<%= r.id %>', '<%= r.customer_id %>', '<%= r.vehicle_id || '' %>', '<%= r.service_id %>', '<%= r.amount %>', '<%= r.status %>', `<%= r.remarks || '' %>`)" class="btn-icon edit-icon" title="Edit" >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />

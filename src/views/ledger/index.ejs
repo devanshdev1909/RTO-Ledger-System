@@ -18,16 +18,16 @@
         <table class="data-table">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Customer</th>
-              <th>Vehicle</th>
-              <th>Service</th>
-              <th>Service Fee</th>
-              <th>Amount Paid</th>
-              <th>Due Amount</th>
-              <th>Status</th>
-              <th>Date</th>
-              <th>Actions</th>
+              <th style="text-align: center;">#</th>
+              <th style="text-align: center;">Customer</th>
+              <th style="text-align: center;">Vehicle</th>
+              <th style="text-align: center;">Service</th>
+              <th style="text-align: center;">Service Fee</th>
+              <th style="text-align: center;">Amount Paid</th>
+              <th style="text-align: center;">Due Amount</th>
+              <th style="text-align: center;">Status</th>
+              <th style="text-align: center;">Date</th>
+              <th style="text-align: center;">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -38,42 +38,42 @@
             <% } else { %>
             <% ledgers.forEach((l, i)=> { %>
             <tr>
-              <td>
+              <td style="text-align: center;">
                 <%= i + 1 %>
               </td>
-              <td><strong>
+              <td style="text-align: center;"><strong>
                   <%= l.customer_name || "N/A" %>
                 </strong><br>
                 <small>
                   <%= l.customer_code || "" %>
                 </small>
               </td>
-              <td>
+              <td style="text-align: center;">
                 <%= l.vehicle_number || "N/A" %>
               </td>
-              <td>
+              <td style="text-align: center;">
                 <%= l.service_name || "Manual Entry" %>
               </td>
-              <td>₹<%= Number(l.service_fee).toLocaleString("en-IN") %>
+              <td style="text-align: center;">₹<%= Number(l.service_fee).toLocaleString("en-IN") %>
               </td>
-              <td>₹<%= Number(l.amount_paid).toLocaleString("en-IN") %>
+              <td style="text-align: center;">₹<%= Number(l.amount_paid).toLocaleString("en-IN") %>
               </td>
               <% const dueColor=l.due_amount> 0 ? 'amount-due' : 'amount-clear';
                                                         %>
               <td class="<%= dueColor %>">
                 ₹<%= Number(l.due_amount).toLocaleString("en-IN") %>
               </td>
-              <td>
+              <td style="text-align: center;">
                 <% const badgeClass=l.status==='Paid' ? 'badge badge-paid'
                                                                 : 'badge badge-unpaid' ; %>
                 <span class="<%= badgeClass %>">
                   <%= l.status %>
                 </span>
               </td>
-              <td>
+              <td style="text-align: center;">
                 <%= new Date(l.created_at).toLocaleDateString("en-IN") %>
               </td>
-              <td class="actions">
+              <td class="actions" style="text-align: center;">
 
                 <!-- VIEW -->
                 <a href="/ledger/customer/<%= l.customer_id %>" class="btn-icon view-icon" title="View">

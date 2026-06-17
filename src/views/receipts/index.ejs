@@ -15,14 +15,14 @@
         <table class="data-table">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Receipt No</th>
-              <th>Customer</th>
-              <th>Service</th>
-              <th>Amount Received</th>
-              <th>Payment Mode</th>
-              <th>Date</th>
-              <th>Actions</th>
+              <th style="text-align: center;">#</th>
+              <th style="text-align: center;">Receipt No</th>
+              <th style="text-align: center;">Customer</th>
+              <th style="text-align: center;">Service</th>
+              <th style="text-align: center;">Amount Received</th>
+              <th style="text-align: center;">Payment Mode</th>
+              <th style="text-align: center;">Date</th>
+              <th style="text-align: center;">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -33,31 +33,31 @@
             <% } else { %>
             <% receipts.forEach((r, i)=> { %>
             <tr>
-              <td>
+              <td style="text-align: center;">
                 <%= i + 1 %>
               </td>
-              <td><strong>
+              <td style="text-align: center;"><strong>
                   <%= r.receipt_no %>
                 </strong></td>
-              <td>
+              <td style="text-align: center;">
                 <%= r.customer_name %>
               </td>
-              <td>
+              <td style="text-align: center;">
                 <%= r.service_name %>
               </td>
-              <td>₹<%= parseFloat(r.amount_received).toFixed(2) %>
+              <td style="text-align: center;">₹<%= parseFloat(r.amount_received).toFixed(2) %>
               </td>
-              <td>
+              <td style="text-align: center;">
                 <span class="badge" style="background:#e0f2fe; color:#0369a1; padding: 4px 8px; border-radius: 4px; font-weight: bold;">
                   <%= r.payment_mode %>
                 </span>
               </td>
-              <td>
+              <td style="text-align: center;">
                 <%= new Date(r.received_at).toLocaleString('en-IN', {
                                                             timeZone: 'Asia/Kolkata' , dateStyle: 'short' ,
                                                             timeStyle: 'short' }) %>
               </td>
-              <td class="actions">
+              <td class="actions" style="text-align: center;">
 
                 <!-- VIEW / PRINT ICON -->
                 <a href="/receipts/<%= r.id %>" class="btn-icon view-icon" title="View & Print">

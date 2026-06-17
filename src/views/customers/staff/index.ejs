@@ -20,14 +20,14 @@
         <table class="data-table">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Customer Code</th>
-              <th>Name</th>
-              <th>Mobile</th>
-              <th>Email</th>
-              <th>Address</th>
-              <th>Status</th>
-              <th>Actions</th>
+              <th style="text-align: center;">#</th>
+              <th style="text-align: center;">Customer Code</th>
+              <th style="text-align: center;">Name</th>
+              <th style="text-align: center;">Mobile</th>
+              <th style="text-align: center;">Email</th>
+              <th style="text-align: center;">Address</th>
+              <th style="text-align: center;">Status</th>
+              <th style="text-align: center;">Actions</th>
             </tr>
           </thead>
 
@@ -36,31 +36,31 @@
             <% customers.forEach((customer, i)=> { %>
             <tr>
 
-              <td>
+              <td style="text-align: center;">
                 <%= i + 1 %>
               </td>
 
-              <td><strong>
+              <td style="text-align: center;"><strong>
                   <%= customer.customer_code || "N/A" %>
                 </strong></td>
 
-              <td>
+              <td style="text-align: center;">
                 <%= customer.name %>
               </td>
 
-              <td>
+              <td style="text-align: center;">
                 <%= customer.mobile %>
               </td>
 
-              <td>
+              <td style="text-align: center;">
                 <%= customer.email %>
               </td>
 
-              <td>
+              <td style="text-align: center;">
                 <%= customer.address %>
               </td>
 
-              <td>
+              <td style="text-align: center;">
                 <div class="status-container">
                   <span class="status-text <%= customer.is_active !== false ? 'active' : 'inactive' %>">
                     <%= customer.is_active !==false ? 'Active' : 'Inactive' %>
