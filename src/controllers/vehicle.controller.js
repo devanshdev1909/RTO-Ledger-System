@@ -119,9 +119,9 @@ module.exports.delete = async (req, res) => {
     } catch (err) {
         console.log(err);
         if (err.code === '23503' || (err.message && err.message.includes('violates foreign key constraint'))) {
-            return res.send("Cannot delete this vehicle because it is currently linked to existing service requests or ledgers. Please remove those connections first.");
+            return res.redirect('/vehicles?error=' + encodeURIComponent("Cannot delete this vehicle because it is currently linked to existing service requests or ledgers. Please remove those connections first."));
         }
-        res.send(err.message);
+        res.redirect('/vehicles?error=' + encodeURIComponent(err.message));
     }
 };
 

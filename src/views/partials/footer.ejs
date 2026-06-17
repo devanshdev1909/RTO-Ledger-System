@@ -4,5 +4,19 @@
     </p>
 </div>
 
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorMsg = urlParams.get('error');
+    if (errorMsg) {
+        alert(errorMsg);
+        // Remove the error parameter from the URL so it doesn't show again on refresh
+        const url = new URL(window.location);
+        url.searchParams.delete('error');
+        window.history.replaceState({}, document.title, url);
+    }
+  });
+</script>
+
 </body>
 </html>
