@@ -126,11 +126,11 @@
           <div class="form-row">
             <div class="form-group">
                 <label>Chassis No.</label>
-                <input type="text" class="v_chassis" placeholder="e.g. CH4759857525" maxlength="13" oninput="this.value = this.value.toUpperCase().replace(/\\s/g, '').slice(0, 13);" style="text-transform: uppercase;">
+                <input type="text" class="v_chassis" placeholder="e.g. CH4759857525" maxlength="12" minlength="12" pattern="^CH[A-Z0-9]{10}$" onfocus="if(!this.value) this.value='CH';" oninput="let v = this.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); if (!v.startsWith('CH')) v = 'CH' + v.replace(/^(CH|C)?/, ''); this.value = v.slice(0, 12);" style="text-transform: uppercase;">
             </div>
             <div class="form-group">
                 <label>Engine No.</label>
-                <input type="text" class="v_engine" placeholder="e.g. EN4252145987" maxlength="13" oninput="this.value = this.value.toUpperCase().replace(/\\s/g, '').slice(0, 13);" style="text-transform: uppercase;">
+                <input type="text" class="v_engine" placeholder="e.g. EN4252145987" maxlength="12" minlength="12" pattern="^EN[A-Z0-9]{10}$" onfocus="if(!this.value) this.value='EN';" oninput="let v = this.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); if (!v.startsWith('EN')) v = 'EN' + v.replace(/^(EN|E)?/, ''); this.value = v.slice(0, 12);" style="text-transform: uppercase;">
             </div>
             <div class="form-group">
                 <label>Registration Date</label>
