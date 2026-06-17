@@ -96,7 +96,7 @@ exports.postAddVehicle = async (req, res) => {
 exports.postCreateRequest = async (req, res) => {
     const customerId = req.session.customerId;
     const { vehicle_id, service_id, amount, remarks } = req.body;
-
+    try {
         await ServiceRequest.create(customerId, vehicle_id, service_id, amount, remarks);
         res.redirect('/portal/my-requests');
     } catch (err) {
