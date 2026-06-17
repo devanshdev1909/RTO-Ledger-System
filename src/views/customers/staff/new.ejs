@@ -4,7 +4,7 @@
 
     <div class="modal-header">
       <h2>Add New Customer</h2>
-      <span class="close-modal">&times;</span>
+      <span class="close-modal-new" style="cursor:pointer; font-size: 24px;">&times;</span>
     </div>
 
     <form action="/customers" method="POST">
@@ -65,7 +65,7 @@
       modal.classList.add("active");
     });
 
-  document.querySelector(".close-modal")
+  document.querySelector(".close-modal-new")
     ?.addEventListener("click", () => {
       modal.classList.remove("active");
     });
