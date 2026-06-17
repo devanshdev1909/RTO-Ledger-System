@@ -255,6 +255,14 @@
       });
     });
   });
+
+  window.addEventListener('click', function(e) {
+    const modal = document.getElementById('vehicleModal');
+
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
 </script>
 
 <%- include("../partials/footer") %>

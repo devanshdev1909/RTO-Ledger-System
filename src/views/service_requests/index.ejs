@@ -323,6 +323,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
+window.addEventListener('click', function(e) {
+    const modal = document.getElementById('requestModal');
+
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+
 </script>
 
 <%- include("../partials/footer") %>
