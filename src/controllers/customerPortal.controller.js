@@ -1,4 +1,5 @@
 const pool = require('../config/db');
+const Customer = require('../models/Customer');
 
 exports.getDashboard = async (req, res) => {
     const customerId = req.session.customerId;
@@ -227,12 +228,7 @@ exports.postProfile = async (req, res) => {
     const customerId = req.session.customerId;
     const { name, mobile, email, address } = req.body;
     try {
-        await pool.query(
-            `UPDATE customers 
-             SET name = $1, mobile = $2, email = $3, address = $4, updated_at = NOW()
-             WHERE id = $5`,
-            [name, mobile, email, address, customerId]
-        );
+        await Customer.updateProfile(customerId, name, mobile, email, address);
         
         // Update session name if it changed
         req.session.customerName = name;

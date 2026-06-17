@@ -1,43 +1,21 @@
 const pool = require("../config/db");
+const Customer = require("../models/Customer");
+const Ledger = require("../models/Ledger");
 
 // List all ledger entries
 // List all ledger entries
 module.exports.index = async (req, res) => {
     try {
-        const result = await pool.query(`
-            SELECT 
-                l.*,
-                c.name AS customer_name,
-                c.customer_code,
-                v.vehicle_number,
-                s.service_name
-            FROM ledgers l
-            LEFT JOIN customers c ON l.customer_id = c.id
-            LEFT JOIN vehicles v ON l.vehicle_id = v.id
-            LEFT JOIN service_requests sr ON l.service_request_id = sr.id
-            LEFT JOIN services s ON sr.service_id = s.id
-            ORDER BY l.id DESC
-        `);
+        const ledgers = await Ledger.getAll();
 
         // ADD THIS NEW QUERY TO FETCH SERVICE REQUESTS
-        const availableRequests = await pool.query(`
-            SELECT 
-                sr.id, sr.request_no, sr.customer_id, sr.vehicle_id, sr.amount,
-                c.name AS customer_name, v.vehicle_number, s.service_name
-            FROM service_requests sr
-            LEFT JOIN ledgers l ON sr.id = l.service_request_id
-            JOIN customers c ON sr.customer_id = c.id
-            LEFT JOIN vehicles v ON sr.vehicle_id = v.id
-            JOIN services s ON sr.service_id = s.id
-            WHERE l.id IS NULL AND sr.status = 'Pending'
-            ORDER BY sr.created_at DESC
-        `);
+        const availableRequests = await Ledger.getPendingRequests();
 
         res.render("ledger/index", {
             activePage: "ledger",
             userName: req.session.userName,
-            ledgers: result.rows,
-            requests: availableRequests.rows // PASS IT TO THE VIEW HERE
+            ledgers: ledgers,
+            requests: availableRequests // PASS IT TO THE VIEW HERE
         });
     } catch (err) {
         console.log(err);
@@ -51,28 +29,15 @@ module.exports.customerLedger = async (req, res) => {
     try {
         const { customerId } = req.params;
 
-        const customer = await pool.query(
-            "SELECT * FROM customers WHERE id = $1", [customerId]
-        );
-
-        if (customer.rows.length === 0) {
+        const customer = await Customer.findById(customerId);
+        
+        if (!customer) {
             return res.send("Customer not found");
         }
 
-        const ledgers = await pool.query(`
-            SELECT 
-                l.*,
-                v.vehicle_number,
-                s.service_name
-            FROM ledgers l
-            LEFT JOIN vehicles v ON l.vehicle_id = v.id
-            LEFT JOIN service_requests sr ON l.service_request_id = sr.id
-            LEFT JOIN services s ON sr.service_id = s.id
-            WHERE l.customer_id = $1
-            ORDER BY l.created_at DESC
-        `, [customerId]);
+        const ledgers = await Ledger.findByCustomerId(customerId);
 
-        const totals = ledgers.rows.reduce((acc, row) => {
+        const totals = ledgers.reduce((acc, row) => {
             acc.totalFee += parseFloat(row.service_fee || 0);
             acc.totalPaid += parseFloat(row.amount_paid || 0);
             acc.totalDue += parseFloat(row.due_amount || 0);
@@ -82,8 +47,8 @@ module.exports.customerLedger = async (req, res) => {
         res.render("ledger/customer", {
             activePage: "ledger",
             userName: req.session.userName,
-            customer: customer.rows[0],
-            ledgers: ledgers.rows,
+            customer: customer,
+            ledgers: ledgers,
             totals
         });
     } catch (err) {
@@ -95,29 +60,12 @@ module.exports.customerLedger = async (req, res) => {
 // Render new ledger entry form
 module.exports.renderNew = async (req, res) => {
     try {
-        const availableRequests = await pool.query(`
-            SELECT 
-                sr.id,
-                sr.request_no,
-                sr.customer_id,
-                sr.vehicle_id,
-                sr.amount,
-                c.name AS customer_name,
-                v.vehicle_number,
-                s.service_name
-            FROM service_requests sr
-            LEFT JOIN ledgers l ON sr.id = l.service_request_id
-            JOIN customers c ON sr.customer_id = c.id
-            LEFT JOIN vehicles v ON sr.vehicle_id = v.id
-            JOIN services s ON sr.service_id = s.id
-            WHERE l.id IS NULL AND sr.status = 'Pending'
-            ORDER BY sr.created_at DESC
-        `);
+        const availableRequests = await Ledger.getPendingRequests();
 
         res.render("ledger/new", {
             activePage: "ledger",
             userName: req.session.userName,
-            requests: availableRequests.rows
+            requests: availableRequests
         });
     } catch (err) {
         console.log(err);
@@ -208,25 +156,19 @@ module.exports.create = async (req, res) => {
 module.exports.renderEdit = async (req, res) => {
     try {
         const { id } = req.params;
-        const ledger = await pool.query(`
-    SELECT l.*, c.name AS customer_name, v.vehicle_number
-    FROM ledgers l
-    LEFT JOIN customers c ON l.customer_id = c.id
-    LEFT JOIN vehicles v ON l.vehicle_id = v.id
-    WHERE l.id = $1
-`, [id]);
+        const ledger = await Ledger.findById(id);
         // (Keep your existing query)
 
-        if (ledger.rows.length === 0) return res.send("Ledger entry not found");
+        if (!ledger) return res.send("Ledger entry not found");
 
-        const vehicles = await pool.query("SELECT id, vehicle_number FROM vehicles WHERE customer_id = $1 ORDER BY vehicle_number", [ledger.rows[0].customer_id]);
+        const vehicles = await pool.query("SELECT id, vehicle_number FROM vehicles WHERE customer_id = $1 ORDER BY vehicle_number", [ledger.customer_id]);
         // Add this line to fetch services:
         const services = await pool.query("SELECT id, service_name, default_fee FROM services WHERE is_active = true ORDER BY service_name");
 
         res.render("ledger/edit", {
             activePage: "ledger",
             userName: req.session.userName,
-            ledger: ledger.rows[0],
+            ledger: ledger,
             vehicles: vehicles.rows,
             services: services.rows
         });
@@ -249,23 +191,19 @@ module.exports.update = async (req, res) => {
             await client.query('BEGIN');
 
             // Fetch original ledger record to calculate payment difference and validate fee
-            const originalRes = await client.query("SELECT amount_paid, service_fee FROM ledgers WHERE id = $1", [id]);
-            if (originalRes.rows.length === 0) {
+            const originalLedger = await Ledger.getPaymentDetails(id, client);
+            if (!originalLedger) {
                 throw new Error("Ledger entry not found");
             }
-            const oldPaid = parseFloat(originalRes.rows[0].amount_paid) || 0;
-            const fee = parseFloat(originalRes.rows[0].service_fee) || 0;
+            const oldPaid = parseFloat(originalLedger.amount_paid) || 0;
+            const fee = parseFloat(originalLedger.service_fee) || 0;
 
             if (paid > fee) {
                 throw new Error("Amount paid cannot be greater than the service fee");
             }
 
             // Update ledger record
-            await client.query(`
-                UPDATE ledgers
-                SET amount_paid = $1, status = $2
-                WHERE id = $3
-            `, [paid, status, id]);
+            await Ledger.updatePayment(id, paid, status, client);
 
             // If new amount paid is higher than old, generate a receipt for the payment difference
             if (paid > oldPaid) {
