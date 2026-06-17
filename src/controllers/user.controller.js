@@ -1,32 +1,30 @@
 const pool = require("../config/db");
+const User = require("../models/User");
+const Role = require("../models/Role");
 
 // List all users
 module.exports.listUsers = async (req, res) => {
     try {
         // We added u.role_id here so we can look up their role permissions!
-        const usersRes = await pool.query(`
-            SELECT u.id, u.username, u.email, u.is_active, u.role_id, r.name as role_name 
-            FROM users u
-            JOIN roles r ON u.role_id = r.id
-            WHERE r.name != 'Admin'
-            ORDER BY u.id ASC
-        `);
-        const rolesRes = await pool.query("SELECT * FROM roles ORDER BY name ASC");
+        const allUsers = await User.getAllWithRoles();
+        const usersList = allUsers.filter(u => u.role_name !== 'Admin');
+
+        const rolesList = await Role.getAll();
 
         // Fetch permissions mappings for the modal
-        const allPermissionsRes = await pool.query("SELECT * FROM permissions ORDER BY id ASC");
-        const userPermsRes = await pool.query("SELECT user_id, permission_id FROM user_permissions");
-        const rolePermsRes = await pool.query("SELECT role_id, permission_id FROM role_permissions");
+        const allPermissionsList = await Role.getPermissions();
+        const userPermsList = await User.getAllUserPermissions();
+        const rolePermsList = await Role.getRolePermissions();
 
-        const users = usersRes.rows.map(u => {
+        const users = usersList.map(u => {
             // First look for custom user permissions
-            let perms = userPermsRes.rows
+            let perms = userPermsList
                 .filter(up => up.user_id === u.id)
                 .map(up => parseInt(up.permission_id, 10));
 
             // Fallback: If no custom permissions, use the role's default permissions
             if (perms.length === 0) {
-                perms = rolePermsRes.rows
+                perms = rolePermsList
                     .filter(rp => rp.role_id === u.role_id)
                     .map(rp => parseInt(rp.permission_id, 10));
             }
@@ -37,8 +35,8 @@ module.exports.listUsers = async (req, res) => {
             activePage: "admin",
             userName: req.session.userName,
             users: users,
-            roles: rolesRes.rows,
-            allPermissions: allPermissionsRes.rows, // Pass permissions to view
+            roles: rolesList,
+            allPermissions: allPermissionsList, // Pass permissions to view
             error: req.query.error || null
         });
     } catch (err) {
@@ -54,32 +52,27 @@ module.exports.renderEditPermissions = async (req, res) => {
         const { id } = req.params;
 
         // Fetch target user details
-        const userRes = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
-        if (userRes.rows.length === 0) return res.status(404).send("User not found");
+        const user = await User.findById(id);
+        if (!user) return res.status(404).send("User not found");
 
         // Fetch all system permissions
-        const allPermissionsRes = await pool.query("SELECT * FROM permissions ORDER BY id ASC");
+        const allPermissions = await Role.getPermissions();
 
         // Fetch user's current permissions (from user_permissions)
-        let userPermsRes = await pool.query(`
-            SELECT permission_id FROM user_permissions WHERE user_id = $1
-        `, [id]);
-
-        let checkedPermissionIds = userPermsRes.rows.map(r => String(r.permission_id));
+        const userPerms = await User.getUserPermissions(id);
+        let checkedPermissionIds = userPerms.map(r => String(r.permission_id));
 
         // Fallback: If no custom permissions set, default to role permissions
         if (checkedPermissionIds.length === 0) {
-            const rolePermsRes = await pool.query(`
-                SELECT permission_id FROM role_permissions WHERE role_id = $1
-            `, [userRes.rows[0].role_id]);
-            checkedPermissionIds = rolePermsRes.rows.map(r => String(r.permission_id));
+            const rolePerms = await Role.getPermissionsForRole(user.role_id);
+            checkedPermissionIds = rolePerms.map(r => String(r.permission_id));
         }
 
         res.render("admin/edit_permissions", {
             activePage: "admin",
             userName: req.session.userName,
-            user: userRes.rows[0],
-            allPermissions: allPermissionsRes.rows,
+            user: user,
+            allPermissions: allPermissions,
             checkedPermissionIds
         });
     } catch (err) {
@@ -99,16 +92,11 @@ module.exports.updatePermissions = async (req, res) => {
         await client.query("BEGIN");
 
         // Clear current permissions
-        await client.query("DELETE FROM user_permissions WHERE user_id = $1", [id]);
+        await User.clearPermissions(id, client);
 
         // Insert selected permissions
         if (checkedIds.length > 0) {
-            for (const permId of checkedIds) {
-                await client.query(`
-                    INSERT INTO user_permissions (user_id, permission_id) 
-                    VALUES ($1, $2)
-                `, [id, permId]);
-            }
+            await User.assignPermissions(id, checkedIds, client);
         }
 
         await client.query("COMMIT");
@@ -130,8 +118,8 @@ module.exports.createUser = async (req, res) => {
 
     try {
         // Check if username or email already exists
-        const checkUser = await pool.query("SELECT id FROM users WHERE username = $1 OR email = $2", [username, email]);
-        if (checkUser.rows.length > 0) {
+        const exists = await User.checkUserExists(username, email);
+        if (exists) {
             return res.redirect("/admin/users?error=UsernameOrEmailExists");
         }
 
@@ -140,10 +128,7 @@ module.exports.createUser = async (req, res) => {
         const password_hash = await bcrypt.hash(password, salt);
 
         // Insert new user
-        await pool.query(
-            "INSERT INTO users (username, email, password_hash, role_id) VALUES ($1, $2, $3, $4)",
-            [username, email, password_hash, role_id]
-        );
+        await User.create(username, email, password_hash, role_id);
 
         res.redirect("/admin/users");
     } catch (err) {
@@ -163,10 +148,7 @@ module.exports.toggleUserStatus = async (req, res) => {
             return res.status(400).json({ success: false, error: "You cannot deactivate your own account" });
         }
 
-        await pool.query(
-            "UPDATE users SET is_active = $1 WHERE id = $2",
-            [is_active, id]
-        );
+        await User.update(id, undefined, undefined, undefined, undefined, undefined, is_active);
         res.json({ success: true, message: "User status updated successfully" });
     } catch (err) {
         console.error(err);
@@ -188,10 +170,10 @@ module.exports.deleteUser = async (req, res) => {
         await client.query("BEGIN");
 
         // Delete related user_permissions first
-        await client.query("DELETE FROM user_permissions WHERE user_id = $1", [id]);
+        await User.clearPermissions(id, client);
 
         // Then delete the user
-        await client.query("DELETE FROM users WHERE id = $1", [id]);
+        await User.delete(id);
 
         await client.query("COMMIT");
         res.redirect("/admin/users");

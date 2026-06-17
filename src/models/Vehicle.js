@@ -115,7 +115,15 @@ class Vehicle {
         return result.rows[0];
     }
 
+    static async countByCustomerId(customerId) {
+        const result = await pool.query('SELECT COUNT(*) FROM vehicles WHERE customer_id = $1', [customerId]);
+        return parseInt(result.rows[0].count, 10);
+    }
 
+    static async getByCustomerId(customerId) {
+        const result = await pool.query('SELECT * FROM vehicles WHERE customer_id = $1 ORDER BY created_at DESC', [customerId]);
+        return result.rows;
+    }
 }
 
 module.exports = Vehicle;

@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const pool = require('../config/db');
+const Customer = require('../models/Customer');
 
 // Show login page
 exports.getLogin = (req, res) => {
@@ -9,6 +10,7 @@ exports.getLogin = (req, res) => {
 
 // Show register page
 exports.getRegister = (req, res) => {
+
     res.render('customers/portal/register', { error: null });
 };
 
@@ -21,10 +23,12 @@ exports.postRegister = async (req, res) => {
         const customerCode = 'CUST' + Date.now().toString().slice(-6);
 
         // Account is immediately active (is_active = true)
-        const result = await pool.query(
-            `INSERT INTO customers (customer_code, name, mobile, email, password, is_active, created_at) 
-             VALUES ($1, $2, $3, $4, $5, true, NOW()) RETURNING id`,
-            [customerCode, name, mobile, email, hashedPassword]
+        const customer = await Customer.create(
+            customerCode,
+            name,
+            mobile,
+            email,
+            hashedPassword
         );
 
         res.redirect('/login');
@@ -38,12 +42,10 @@ exports.postRegister = async (req, res) => {
 exports.postLogin = async (req, res) => {
     const { identifier, password } = req.body;
     try {
-        const result = await pool.query('SELECT * FROM customers WHERE mobile = $1 OR email = $1', [identifier]);
-        if (result.rows.length === 0) {
+        const customer = await Customer.findByIdentifier(identifier);
+        if (!customer) {
             return res.render('auth/login', { activeTab: 'customer', error: 'Invalid credentials' });
         }
-
-        const customer = result.rows[0];
 
         // Basic check for users created before passwords were added
         if (!customer.password) {
