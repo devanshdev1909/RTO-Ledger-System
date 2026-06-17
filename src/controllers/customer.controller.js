@@ -80,6 +80,9 @@ const deleteCustomer = async (req, res) => {
         res.redirect("/customers");
     } catch (err) {
         console.log(err);
+        if (err.code === '23503' || (err.message && err.message.includes('violates foreign key constraint'))) {
+            return res.send("Cannot delete this customer because they are currently linked to existing vehicles, service requests, or ledgers. Please remove those connections first.");
+        }
         res.send(err.message);
     }
 };

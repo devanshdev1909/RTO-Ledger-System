@@ -115,7 +115,7 @@ module.exports.create = async (req, res) => {
 
             // Generate receipt automatically if amount paid >= 0
             if (paid >= 0) {
-                const receiptNo = await Receipt.getNextReceiptNo();
+                const receiptNo = await Receipt.getNextReceiptNo(client);
                 await Receipt.create(
                     receiptNo,
                     ledgerId,
@@ -201,7 +201,7 @@ module.exports.update = async (req, res) => {
             // If new amount paid is higher than old, generate a receipt for the payment difference
             if (paid > oldPaid) {
                 const diff = paid - oldPaid;
-                const receiptNo = await Receipt.getNextReceiptNo();
+                const receiptNo = await Receipt.getNextReceiptNo(client);
                 await Receipt.create(
                     receiptNo,
                     id,

@@ -28,39 +28,16 @@ class Vehicle {
         return result.rows[0];
     }
 
-    static async create(
-        customerId,
-        vehicleNumber,
-        vehicleType,
-        chassisNumber,
-        engineNumber,
-        registrationDate
-    ) {
-        const result = await pool.query(
-            `
-            INSERT INTO vehicles
-            (
-                customer_id,
-                vehicle_number,
-                vehicle_type,
-                chassis_number,
-                engine_number,
-                registration_date
-            )
-            VALUES ($1,$2,$3,$4,$5,$6)
-            RETURNING *
-            `,
-            [
-                customerId,
-                vehicleNumber,
-                vehicleType,
-                chassisNumber,
-                engineNumber,
-                registrationDate
-            ]
+    static async create(customerId, vehicleNumber, vehicleType, chassisNumber, engineNumber, registrationDate, client) {
+        const dbClient = client || pool;
+        const result = await dbClient.query(
+            `INSERT INTO vehicles (customer_id, vehicle_number, vehicle_type, chassis_number, engine_number, registration_date)
+         VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+            [customerId, vehicleNumber, vehicleType, chassisNumber, engineNumber, registrationDate]
         );
         return result.rows[0];
     }
+
 
     static async update(
         id,

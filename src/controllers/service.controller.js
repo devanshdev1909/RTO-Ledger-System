@@ -1,5 +1,16 @@
 const db = require("../config/db");
 
+const apiGetActiveServices = async (req, res) => {
+    try {
+        const result = await db.query(
+            "SELECT id, service_name, default_fee FROM services WHERE is_active = true ORDER BY service_name"
+        );
+        res.json({ success: true, services: result.rows });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+};
+
 // SERVICES PAGE
 const showServices = async (req, res) => {
     try {
@@ -393,6 +404,7 @@ const updateRequestStatus = async (req, res) => {
 
 
 module.exports = {
+    apiGetActiveServices,
     showServices,
     showNewServiceForm,
     createService,

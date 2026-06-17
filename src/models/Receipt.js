@@ -1,8 +1,9 @@
 const pool = require("../config/db");
 
 class Receipt {
-    static async getNextReceiptNo() {
-        const result = await pool.query("SELECT receipt_no FROM receipts WHERE receipt_no LIKE 'REC-%'");
+    static async getNextReceiptNo(client) {
+        const dbClient = client || pool;
+        const result = await dbClient.query("SELECT receipt_no FROM receipts WHERE receipt_no LIKE 'REC-%'");
         let maxNum = 0;
         result.rows.forEach(row => {
             const match = row.receipt_no.match(/^REC-(\d+)$/i);
@@ -19,14 +20,15 @@ class Receipt {
     static async create(receiptNo, ledgerId, customerId, amount, paymentMode, remarks, createdBy, client) {
         const dbClient = client || pool;
         const result = await dbClient.query(
-            `INSERT INTO receipts (receipt_no, ledger_id, customer_id, amount, payment_mode, remarks, created_by)
-             VALUES ($1, $2, $3, $4, $5, $6, $7)
+            `INSERT INTO receipts (receipt_no, ledger_id, amount_received, payment_mode, remarks, received_by)
+             VALUES ($1, $2, $3, $4, $5, $6)
              RETURNING id`,
-            [receiptNo, ledgerId, customerId, amount, paymentMode, remarks, createdBy]
+            [receiptNo, ledgerId, amount, paymentMode, remarks, createdBy]
         );
         return result.rows[0];
     }
 
+<<<<<<< Updated upstream
    static async getAll() {
     const result = await pool.query(`
         SELECT
@@ -46,6 +48,23 @@ class Receipt {
 
     return result.rows;
 }
+=======
+    static async getAll() {
+        const result = await pool.query(`
+            SELECT 
+                r.*,
+                c.name AS customer_name,
+                c.customer_code,
+                u.username AS created_by_name
+            FROM receipts r
+            LEFT JOIN ledgers l ON r.ledger_id = l.id
+            LEFT JOIN customers c ON l.customer_id = c.id
+            LEFT JOIN users u ON r.received_by = u.id
+            ORDER BY r.received_at DESC
+        `);
+        return result.rows;
+    }
+>>>>>>> Stashed changes
 
     static async getById(id) {
         const result = await pool.query(`

@@ -20,7 +20,7 @@ class Customer {
 
     static async findById(id) {
         const result = await pool.query(
-            "SELECT * FROM customers WHERE id = $1", 
+            "SELECT * FROM customers WHERE id = $1",
             [id]
         );
         return result.rows[0];
@@ -41,8 +41,9 @@ class Customer {
         return result.rows;
     }
 
-    static async getNextCustomerCode() {
-        const result = await pool.query("SELECT customer_code FROM customers WHERE customer_code LIKE 'CUST-%'");
+    static async getNextCustomerCode(client) {
+        const dbClient = client || pool;
+        const result = await dbClient.query("SELECT customer_code FROM customers WHERE customer_code LIKE 'CUST-%'");
         let maxNum = 0;
         result.rows.forEach(row => {
             const match = row.customer_code.match(/^CUST-(\d+)$/i);
@@ -53,14 +54,15 @@ class Customer {
                 }
             }
         });
-        return `CUST-${String(maxNum + 1).padStart(4, '0')}`;
+        return `CUST-${String(maxNum + 1).padStart(3, '0')}`;
     }
 
-    static async createStaff(customerCode, name, mobile, email, address) {
-        const result = await pool.query(
-            `INSERT INTO customers (customer_code, name, mobile, email, address, is_active, created_at) 
-             VALUES ($1, $2, $3, $4, $5, true, NOW()) RETURNING id`,
-            [customerCode, name, mobile, email, address]
+    static async createStaff(customerCode, name, mobile, email, address, createdBy, client) {
+        const dbClient = client || pool;
+        const result = await dbClient.query(
+            `INSERT INTO customers (customer_code, name, mobile, email, address, created_by, is_active, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, true, NOW()) RETURNING id`,
+            [customerCode, name, mobile, email, address, createdBy]
         );
         return result.rows[0];
     }

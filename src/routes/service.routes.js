@@ -3,6 +3,7 @@ const router = express.Router();
 const serviceController = require("../controllers/service.controller");
 const { isLoggedIn, hasPermission } = require("../middleware/auth");
 
+router.get("/api/active", isLoggedIn, serviceController.apiGetActiveServices);
 router.get("/", isLoggedIn, hasPermission('service.view'), serviceController.showServices);
 router.get("/requests", isLoggedIn, hasPermission('service.view'), serviceController.showRequests);
 router.post("/requests", isLoggedIn, hasPermission('service.create'), serviceController.createRequest);
