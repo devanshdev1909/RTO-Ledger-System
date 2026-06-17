@@ -71,6 +71,16 @@ class Ledger {
         return result.rows[0];
     }
 
+    static async create(customerId, vehicleId, serviceRequestId, serviceFee, amountPaid, status, client) {
+        const dbClient = client || pool;
+        const result = await dbClient.query(`
+            INSERT INTO ledgers (customer_id, vehicle_id, service_request_id, service_fee, amount_paid, status)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            RETURNING id
+        `, [customerId, vehicleId, serviceRequestId, serviceFee, amountPaid, status]);
+        return result.rows[0];
+    }
+
     static async updatePayment(id, amountPaid, status, client) {
         // Option to pass a client for transactions
         const dbClient = client || pool;

@@ -35,6 +35,61 @@ class Customer {
         );
         return result.rows[0];
     }
+
+    static async getAll() {
+        const result = await pool.query("SELECT * FROM customers ORDER BY created_at DESC");
+        return result.rows;
+    }
+
+    static async getNextCustomerCode() {
+        const result = await pool.query("SELECT customer_code FROM customers WHERE customer_code LIKE 'CUST-%'");
+        let maxNum = 0;
+        result.rows.forEach(row => {
+            const match = row.customer_code.match(/^CUST-(\d+)$/i);
+            if (match) {
+                const num = parseInt(match[1], 10);
+                if (num > maxNum) {
+                    maxNum = num;
+                }
+            }
+        });
+        return `CUST-${String(maxNum + 1).padStart(4, '0')}`;
+    }
+
+    static async createStaff(customerCode, name, mobile, email, address) {
+        const result = await pool.query(
+            `INSERT INTO customers (customer_code, name, mobile, email, address, is_active, created_at) 
+             VALUES ($1, $2, $3, $4, $5, true, NOW()) RETURNING id`,
+            [customerCode, name, mobile, email, address]
+        );
+        return result.rows[0];
+    }
+
+    static async update(id, customerCode, name, mobile, email, address) {
+        const result = await pool.query(
+            `UPDATE customers 
+             SET customer_code = $1, name = $2, mobile = $3, email = $4, address = $5, updated_at = NOW()
+             WHERE id = $6 RETURNING *`,
+            [customerCode, name, mobile, email, address, id]
+        );
+        return result.rows[0];
+    }
+
+    static async getById(id) {
+        return this.findById(id);
+    }
+
+    static async delete(id) {
+        await pool.query("DELETE FROM customers WHERE id = $1", [id]);
+    }
+
+    static async toggleStatus(id, isActive) {
+        const result = await pool.query(
+            "UPDATE customers SET is_active = $1 WHERE id = $2 RETURNING *",
+            [isActive, id]
+        );
+        return result.rows[0];
+    }
 }
 
 module.exports = Customer;

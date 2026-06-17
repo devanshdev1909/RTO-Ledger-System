@@ -1,16 +1,17 @@
 const pool = require("../config/db");
+const Role = require("../models/Role");
 
 
 // Get all roles
 exports.getRoles = async (req, res) => {
     try {
-        const rolesRes = await pool.query("SELECT * FROM roles WHERE name != 'Admin' ORDER BY id ASC");
-        const allPermissionsRes = await pool.query("SELECT * FROM permissions ORDER BY id ASC");
-        const rolePermsRes = await pool.query("SELECT role_id, permission_id FROM role_permissions");
+        const rolesList = await Role.getAll(true); // excludeAdmin = true
+        const allPermissionsList = await Role.getPermissions();
+        const rolePermsList = await Role.getRolePermissions();
 
         // Attach current permissions array to each role
-        const roles = rolesRes.rows.map(role => {
-            const perms = rolePermsRes.rows
+        const roles = rolesList.map(role => {
+            const perms = rolePermsList
                 .filter(rp => rp.role_id === role.id)
                 .map(rp => parseInt(rp.permission_id, 10));
             return { ...role, currentPermissions: perms };
@@ -18,7 +19,7 @@ exports.getRoles = async (req, res) => {
 
         res.render("admin/roles/index", {
             roles: roles,
-            allPermissions: allPermissionsRes.rows,
+            allPermissions: allPermissionsList,
             activePage: "roles",
             error: req.query.error || null
         });
@@ -32,10 +33,7 @@ exports.getRoles = async (req, res) => {
 exports.postCreateRole = async (req, res) => {
     const { role_name, description } = req.body;
     try {
-        await pool.query(
-            "INSERT INTO roles (name, description) VALUES ($1, $2)",
-            [role_name, description]
-        );
+        await Role.create(role_name, description);
         res.redirect("/admin/roles");
     } catch (err) {
         console.error(err);
@@ -48,12 +46,12 @@ exports.postDeleteRole = async (req, res) => {
     const roleId = req.params.id;
     try {
         // Prevent deleting roles that have users
-        const usersCheck = await pool.query("SELECT id FROM users WHERE role_id = $1 LIMIT 1", [roleId]);
-        if (usersCheck.rows.length > 0) {
+        const hasUsers = await Role.hasUsers(roleId);
+        if (hasUsers) {
             return res.redirect("/admin/roles?error=CannotDeleteRoleWithUsers");
         }
 
-        await pool.query("DELETE FROM roles WHERE id = $1", [roleId]);
+        await Role.delete(roleId);
         res.redirect("/admin/roles");
     } catch (err) {
         console.error(err);
@@ -65,23 +63,20 @@ exports.postDeleteRole = async (req, res) => {
 exports.getRolePermissions = async (req, res) => {
     const roleId = req.params.id;
     try {
-        const roleRes = await pool.query("SELECT * FROM roles WHERE id = $1", [roleId]);
-        if (roleRes.rows.length === 0) return res.redirect("/admin/roles");
+        const role = await Role.findById(roleId);
+        if (!role) return res.redirect("/admin/roles");
 
-        const allPermissionsRes = await pool.query("SELECT * FROM permissions ORDER BY id ASC");
+        const allPermissions = await Role.getPermissions();
 
         // Fetch current permissions for this role
-        const rolePermsRes = await pool.query(
-            "SELECT permission_id FROM role_permissions WHERE role_id = $1",
-            [roleId]
-        );
+        const rolePerms = await Role.getPermissionsForRole(roleId);
 
         // Map to an array of permission IDs
-        const currentPermissions = rolePermsRes.rows.map(r => parseInt(r.permission_id, 10));
+        const currentPermissions = rolePerms.map(r => parseInt(r.permission_id, 10));
 
         res.render("admin/roles/permissions", {
-            role: roleRes.rows[0],
-            allPermissions: allPermissionsRes.rows,
+            role: role,
+            allPermissions: allPermissions,
             currentPermissions,
             activePage: "roles"
         });
@@ -105,22 +100,14 @@ exports.postUpdateRolePermissions = async (req, res) => {
         await client.query("BEGIN");
 
         // Clear old permissions for this role
-        await client.query("DELETE FROM role_permissions WHERE role_id = $1", [roleId]);
+        await Role.clearPermissions(roleId, client);
 
         // Insert new permissions
         if (permissions && Array.isArray(permissions)) {
-            for (const p_id of permissions) {
-                await client.query(
-                    "INSERT INTO role_permissions (role_id, permission_id) VALUES ($1, $2)",
-                    [roleId, p_id]
-                );
-            }
+            await Role.assignPermissions(roleId, permissions, client);
         } else if (permissions) {
             // If only one checkbox is checked, it comes as a string
-            await client.query(
-                "INSERT INTO role_permissions (role_id, permission_id) VALUES ($1, $2)",
-                [roleId, permissions]
-            );
+            await Role.assignPermissions(roleId, [permissions], client);
         }
 
         await client.query("COMMIT");

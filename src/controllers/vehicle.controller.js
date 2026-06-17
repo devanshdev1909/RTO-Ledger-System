@@ -1,17 +1,15 @@
 const Vehicle = require("../models/Vehicle");
-const pool = require("../config/db");
+const Customer = require("../models/Customer");
 
 // Show all vehicles
 module.exports.index = async (req, res) => {
     try {
         const vehicles = await Vehicle.getAll();
-        const customersResult = await pool.query(
-            "SELECT id, name FROM customers ORDER BY name ASC"
-        );
+        const customers = await Customer.getAll();
 
         res.render("vehicles/index", {
             vehicles,
-            customers: customersResult.rows,
+            customers: customers,
             userName: req.session.userName
         });
 
@@ -24,11 +22,9 @@ module.exports.index = async (req, res) => {
 // Render create form
 module.exports.renderNew = async (req, res) => {
     try {
-        const customers = await pool.query(
-            "SELECT id, name FROM customers ORDER BY name"
-        );
+        const customers = await Customer.getAll();
         res.render("vehicles/new", {
-            customers: customers.rows,
+            customers: customers,
             userName: req.session.userName
         });
     } catch (err) {
@@ -69,9 +65,7 @@ module.exports.create = async (req, res) => {
 module.exports.renderEdit = async (req, res) => {
     try {
         const vehicle = await Vehicle.getById(req.params.id);
-        const customers = await pool.query(
-            "SELECT id, name FROM customers ORDER BY name"
-        );
+        const customers = await Customer.getAll();
 
         if (!vehicle) {
             return res.send("Vehicle not found");
@@ -79,7 +73,7 @@ module.exports.renderEdit = async (req, res) => {
 
         res.render("vehicles/edit", {
             vehicle,
-            customers: customers.rows,
+            customers: customers,
             userName: req.session.userName
         });
     } catch (err) {

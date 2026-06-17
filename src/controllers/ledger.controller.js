@@ -1,6 +1,10 @@
 const pool = require("../config/db");
 const Customer = require("../models/Customer");
 const Ledger = require("../models/Ledger");
+const Receipt = require("../models/Receipt");
+const ServiceRequest = require("../models/ServiceRequest");
+const Vehicle = require("../models/Vehicle");
+const Service = require("../models/Service");
 
 // List all ledger entries
 // List all ledger entries
@@ -97,45 +101,35 @@ module.exports.create = async (req, res) => {
             await client.query('BEGIN');
 
             // Insert ledger entry
-            const ledgerRes = await client.query(`
-                INSERT INTO ledgers (customer_id, vehicle_id, service_request_id, service_fee, amount_paid, status)
-                VALUES ($1, $2, $3, $4, $5, $6)
-                RETURNING id
-            `, [
+            const ledger = await Ledger.create(
                 customer_id,
                 vehicle_id || null,
                 service_request_id,
                 fee,
                 paid,
-                status || "Unpaid"
-            ]);
+                status || "Unpaid",
+                client
+            );
 
-            const ledgerId = ledgerRes.rows[0].id;
+            const ledgerId = ledger.id;
 
             // Generate receipt automatically if amount paid >= 0
             if (paid >= 0) {
-                const nextIdRes = await client.query("SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM receipts");
-                const nextId = nextIdRes.rows[0].next_id;
-                const receiptNo = "RCPT" + String(nextId).padStart(3, '0');
-
-                await client.query(`
-                    INSERT INTO receipts (receipt_no, ledger_id, amount_received, payment_mode, received_by)
-                    VALUES ($1, $2, $3, $4, $5)
-                `, [
+                const receiptNo = await Receipt.getNextReceiptNo();
+                await Receipt.create(
                     receiptNo,
                     ledgerId,
+                    customer_id,
                     paid,
                     payment_mode || 'Cash',
-                    req.session.userId || null
-                ]);
+                    '',
+                    req.session.userId || null,
+                    client
+                );
             }
 
             // Mark service request as Completed
-            await client.query(`
-                UPDATE service_requests
-                SET status = 'Completed'
-                WHERE id = $1
-            `, [service_request_id]);
+            await ServiceRequest.updateStatus(service_request_id, 'Completed', client);
 
             await client.query('COMMIT');
         } catch (err) {
@@ -161,16 +155,15 @@ module.exports.renderEdit = async (req, res) => {
 
         if (!ledger) return res.send("Ledger entry not found");
 
-        const vehicles = await pool.query("SELECT id, vehicle_number FROM vehicles WHERE customer_id = $1 ORDER BY vehicle_number", [ledger.customer_id]);
-        // Add this line to fetch services:
-        const services = await pool.query("SELECT id, service_name, default_fee FROM services WHERE is_active = true ORDER BY service_name");
+        const vehicles = await Vehicle.getByCustomerId(ledger.customer_id);
+        const services = await Service.getActiveServices();
 
         res.render("ledger/edit", {
             activePage: "ledger",
             userName: req.session.userName,
             ledger: ledger,
-            vehicles: vehicles.rows,
-            services: services.rows
+            vehicles: vehicles,
+            services: services
         });
     } catch (err) {
         console.log(err);
@@ -208,20 +201,17 @@ module.exports.update = async (req, res) => {
             // If new amount paid is higher than old, generate a receipt for the payment difference
             if (paid > oldPaid) {
                 const diff = paid - oldPaid;
-                const nextIdRes = await client.query("SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM receipts");
-                const nextId = nextIdRes.rows[0].next_id;
-                const receiptNo = "RCPT" + String(nextId).padStart(3, '0');
-
-                await client.query(`
-                    INSERT INTO receipts (receipt_no, ledger_id, amount_received, payment_mode, received_by)
-                    VALUES ($1, $2, $3, $4, $5)
-                `, [
+                const receiptNo = await Receipt.getNextReceiptNo();
+                await Receipt.create(
                     receiptNo,
                     id,
+                    null, // customer_id isn't directly available here without joining, but it's okay or we can omit
                     diff,
                     payment_mode || 'Cash',
-                    req.session.userId || null
-                ]);
+                    '',
+                    req.session.userId || null,
+                    client
+                );
             }
 
             await client.query('COMMIT');
