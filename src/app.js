@@ -153,10 +153,7 @@ app.use("/ledger", ledgerRouter);
 app.use("/services", serviceRoutes);
 app.use("/receipts", receiptRouter);
 app.use("/dashboard", dashboardRouter);
-// Dashboard
-app.get("/dashboard", isLoggedIn, (req, res) => {
-  res.render("dashboard", { userName: req.session.userName });
-});
+// Dashboard routes are handled by dashboardRouter
 
 app.get("/test-session", (req, res) => {
   res.send(req.session);
