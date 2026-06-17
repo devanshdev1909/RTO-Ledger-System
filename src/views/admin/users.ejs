@@ -92,8 +92,7 @@
 
 <!-- Add User Modal -->
 <!-- Add User Modal -->
-<div id="userModal"
-    style="
+<div id="userModal" style="
         display:none;
         position:fixed;
         top:0;
@@ -104,7 +103,7 @@
         z-index:1000;
         overflow-y:auto;
     ">
-    <div style="
+  <div style="
         background:white;
         width:90%;
         max-width:600px;
@@ -113,18 +112,15 @@
         border-radius:8px;
         position:relative;
     ">
-        <!-- Header -->
-        <div style="
+    <!-- Header -->
+    <div style="
             display:flex;
             justify-content:space-between;
             align-items:center;
             margin-bottom:20px;
         ">
-            <h2 style="margin:0;">Add New User</h2>
-            <button
-                type="button"
-                onclick="document.getElementById('userModal').style.display='none'"
-                style="
+      <h2 style="margin:0;">Add New User</h2>
+      <button type="button" onclick="document.getElementById('userModal').style.display='none'" style="
                     background:none;
                     border:none;
                     font-size:28px;
@@ -132,52 +128,39 @@
                     color:#888;
                     line-height:1;
                 ">
-                ×
-            </button>
-        </div>
-        <form action="/admin/users" method="POST">
-            <div style="margin-bottom:15px;">
-                <label style="display:block;margin-bottom:5px;">
-                    Username *
-                </label>
-                <input
-                    type="text"
-                    name="username"
-                    required
-                    style="
+        ×
+      </button>
+    </div>
+    <form action="/admin/users" method="POST">
+      <div style="margin-bottom:15px;">
+        <label style="display:block;margin-bottom:5px;">
+          Username *
+        </label>
+        <input type="text" name="username" required style="
                         width:100%;
                         padding:10px;
                         border:1px solid #ccc;
                         border-radius:4px;
                         box-sizing:border-box;
                     ">
-            </div>
-            <div style="margin-bottom:15px;">
-                <label style="display:block;margin-bottom:5px;">
-                    Email *
-                </label>
-                <input
-                    type="email"
-                    name="email"
-                    required
-                    style="
+      </div>
+      <div style="margin-bottom:15px;">
+        <label style="display:block;margin-bottom:5px;">
+          Email *
+        </label>
+        <input type="email" name="email" required style="
                         width:100%;
                         padding:10px;
                         border:1px solid #ccc;
                         border-radius:4px;
                         box-sizing:border-box;
                     ">
-            </div>
-            <div style="margin-bottom:15px; position:relative;">
-                <label style="display:block;margin-bottom:5px;">
-                    Password *
-                </label>
-                <input
-                    type="password"
-                    id="modalPassword"
-                    name="password"
-                    required
-                    style="
+      </div>
+      <div style="margin-bottom:15px; position:relative;">
+        <label style="display:block;margin-bottom:5px;">
+          Password *
+        </label>
+        <input type="password" id="modalPassword" name="password" required style="
                         width:100%;
                         padding:10px;
                         padding-right:45px;
@@ -185,10 +168,7 @@
                         border-radius:4px;
                         box-sizing:border-box;
                     ">
-                <button
-                    type="button"
-                    onclick="togglePassword('modalPassword','modalEyeIcon')"
-                    style="
+        <button type="button" onclick="togglePassword('modalPassword','modalEyeIcon')" style="
                         position:absolute;
                         right:12px;
                         top:38px;
@@ -197,61 +177,46 @@
                         cursor:pointer;
                         color:#6b7280;
                     ">
-                    <svg id="modalEyeIcon"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                </button>
-            </div>
-            <div style="margin-bottom:20px;">
-                <label style="display:block;margin-bottom:5px;">
-                    Role *
-                </label>
-                <select
-                    name="role_id"
-                    required
-                    style="
+          <svg id="modalEyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </button>
+      </div>
+      <div style="margin-bottom:20px;">
+        <label style="display:block;margin-bottom:5px;">
+          Role *
+        </label>
+        <select name="role_id" required style="
                         width:100%;
                         padding:10px;
                         border:1px solid #ccc;
                         border-radius:4px;
                         box-sizing:border-box;
                     ">
-                    <% if (typeof roles !== 'undefined') { %>
-                        <% roles.forEach(r => { %>
-                            <option value="<%= r.id %>">
-                                <%= r.name %>
-                            </option>
-                        <% }) %>
-                    <% } %>
-                </select>
-            </div>
-            <div style="
+          <% if (typeof roles !== 'undefined') { %>
+          <% roles.forEach(r => { %>
+          <option value="<%= r.id %>">
+            <%= r.name %>
+          </option>
+          <% }) %>
+          <% } %>
+        </select>
+      </div>
+      <div style="
                 display:flex;
                 justify-content:flex-end;
                 gap:10px;
             ">
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    onclick="document.getElementById('userModal').style.display='none'">
-                    Cancel
-                </button>
-                <button
-                    type="submit"
-                    class="btn btn-primary">
-                    Create User
-                </button>
-            </div>
-        </form>
-    </div>
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('userModal').style.display='none'">
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-primary">
+          Create User
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
 <!-- Manage User Permissions Modal -->
 <div id="userPermissionsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; overflow-y: auto;">
@@ -350,6 +315,20 @@
       cb.checked = currentPerms.includes(parseInt(cb.value, 10));
     });
   }
+  window.addEventListener('click', function(e) {
+    const modal = document.getElementById('userPermissionsModal');
+
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+  window.addEventListener('click', function(e) {
+    const modal = document.getElementById('userModal');
+
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
 </script>
 
 <%- include("../partials/footer") %>
