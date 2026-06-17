@@ -16,11 +16,13 @@
         </form>
     </div>
     <div class="navbar-right">
+        <% if (typeof permissions !== 'undefined' && permissions.includes('ledger.create')) { %>
         <!-- Quick Add Button as an additional feature -->
         <button type="button" class="btn btn-primary" onclick="openQuickAddModal()"
             style="margin-right: 15px; height: 40px;">
             + Quick Add
         </button>
+        <% } %>
 
         <div class="user-menu">
             <button type="button" class="user-trigger user-trigger-custom" id="userMenuButton" aria-expanded="false"

@@ -49,10 +49,9 @@
                                                 <a href="/receipts">Receipts</a>
                                             </li>
                                             <% } %>
-
-                                                <hr>
                                                 <% if (typeof permissions !=='undefined' &&
                                                     permissions.includes('role.manage')) { %>
+                                                    <hr>
                                                     <li class="<%= activePage === 'roles' ? 'active' : '' %>">
                                                         <a href="/admin/roles">Roles & Permissions</a>
                                                     </li>

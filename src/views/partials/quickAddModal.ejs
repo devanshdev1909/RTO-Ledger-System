@@ -10,29 +10,34 @@
             <!-- STEP 1: CUSTOMER -->
             <div id="qa-step-1" class="qa-step">
                 <h3 style="border-bottom: 1px solid #eee; padding-bottom: 5px;">Step 1: Customer Details</h3>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Full Name *</label>
-                        <input type="text" id="qa_c_name" placeholder="Enter Customer Name" required>
+                <br>
+                <div style="background-color:#f8fafc; padding:10px; border-radius: 10px;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Full Name *</label>
+                            <input type="text" id="qa_c_name" placeholder="Enter Customer Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mobile Number *</label>
+                            <input type="text" id="qa_c_mobile" maxlength="10" pattern="[0-9]{10}"
+                                placeholder="Enter 10 digit Mobile" required>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Mobile Number *</label>
-                        <input type="text" id="qa_c_mobile" maxlength="10" pattern="[0-9]{10}"
-                            placeholder="Enter 10 digit Mobile" required>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Address</label>
+                            <textarea id="qa_c_address" rows="1" placeholder="Enter Address"
+                                style="height: 100px;"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="qa_c_email" placeholder="Enter Email Address">
+                        </div>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Email Address</label>
-                        <input type="email" id="qa_c_email" placeholder="Enter Email Address">
+                    <div style="text-align: right; margin-top: 20px;">
+                        <button type="button" class="btn btn-primary" onclick="goToStep(2)">Next: Vehicles
+                            &rarr;</button>
                     </div>
-                    <div class="form-group">
-                        <label>Address</label>
-                        <textarea id="qa_c_address" rows="1" placeholder="Enter Address"></textarea>
-                    </div>
-                </div>
-                <div style="text-align: right; margin-top: 20px;">
-                    <button type="button" class="btn btn-primary" onclick="goToStep(2)">Next: Vehicles &rarr;</button>
                 </div>
             </div>
 
@@ -104,8 +109,11 @@
 
     function addVehicleRow() {
         const container = document.getElementById('vehicleContainer');
+        const deleteBtn = (vIndex > 0) ? `<button type="button" style="position: absolute; top: 10px; right: 10px; background: #dc2626; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center;" onclick="this.closest('.vehicle-row').remove(); updateServiceVehicleDropdowns();" title="Remove Vehicle">&times;</button>` : '';
+
         const html = `
-        <div class="vehicle-row" data-index="${vIndex}" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <div class="vehicle-row" data-index="${vIndex}" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 15px; position: relative;">
+          ${deleteBtn}
           <div class="form-row">
             <div class="form-group">
                 <label>Vehicle Number *</label>
@@ -151,8 +159,12 @@
             serviceOptions += `<option value="${s.id}" data-fee="${s.default_fee}">${s.service_name}</option>`;
         });
 
+        const currentServicesCount = container.querySelectorAll('.service-row').length;
+        const deleteBtn = (currentServicesCount > 0) ? `<button type="button" style="position: absolute; top: 10px; right: 10px; background: #dc2626; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center;" onclick="this.closest('.service-row').remove();" title="Remove Service">&times;</button>` : '';
+
         const html = `
-        <div class="service-row" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <div class="service-row" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 15px; position: relative;">
+          ${deleteBtn}
           <div class="form-row">
             <div class="form-group">
                 <label>Target Vehicle *</label>
@@ -265,7 +277,7 @@
                 if (printReceipts && data.receipts && data.receipts.length > 0) {
                     // Open receipts in new tabs
                     data.receipts.forEach(id => {
-                        window.open('/receipts/' + id, '_blank');
+                        window.open('/receipts/');
                     });
                 }
                 alert("Successfully created Registration!");
