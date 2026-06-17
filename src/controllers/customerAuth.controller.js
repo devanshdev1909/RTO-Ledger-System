@@ -10,6 +10,7 @@ exports.getLogin = (req, res) => {
 
 // Show register page
 exports.getRegister = (req, res) => {
+
     res.render('customers/portal/register', { error: null });
 };
 

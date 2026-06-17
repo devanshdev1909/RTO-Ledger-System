@@ -7,7 +7,7 @@ exports.getDashboard = async (req, res) => {
         // Fetch simple counts for dashboard
         const vehiclesCount = await pool.query('SELECT COUNT(*) FROM vehicles WHERE customer_id = $1', [customerId]);
         const requestsResult = await pool.query('SELECT status, COUNT(*) FROM service_requests WHERE customer_id = $1 GROUP BY status', [customerId]);
-        
+
         let totalRequests = 0;
         let pendingRequests = 0;
         let completedRequests = 0;
@@ -229,7 +229,7 @@ exports.postProfile = async (req, res) => {
     const { name, mobile, email, address } = req.body;
     try {
         await Customer.updateProfile(customerId, name, mobile, email, address);
-        
+
         // Update session name if it changed
         req.session.customerName = name;
 
