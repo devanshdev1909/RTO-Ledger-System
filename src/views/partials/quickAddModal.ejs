@@ -1,5 +1,5 @@
 <div id="quickAddModal" class="modal">
-    <div class="modal-content" style="width: 900px; max-height: 600px;">
+    <div class="modal-content" style="width: 900px; max-height: 80vh; overflow-y:auto;">
         <div class="modal-header">
             <h2>Quick Add Registration</h2>
             <span class="close-modal" onclick="closeQuickAddModal()">&times;</span>
@@ -149,6 +149,7 @@
         container.insertAdjacentHTML('beforeend', html);
         updateServiceVehicleDropdowns();
         vIndex++;
+        
     }
 
     function addServiceRow() {
