@@ -197,7 +197,7 @@
 
   function openEditModal(id, customer_id, vehicle_number, vehicle_type, chassis_number, engine_number, registration_date) {
     document.getElementById('modalTitle').textContent = "Edit Vehicle";
-    document.getElementById('vehicleForm').action = "/vehicles/" + id;
+    document.getElementById('vehicleForm').action = "/vehicles/" + id + "?_method=PUT";
     document.getElementById('methodOverride').disabled = false;
 
     // Pre-fill fields
