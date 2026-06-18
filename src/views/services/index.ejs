@@ -1,27 +1,26 @@
 <%- include("../partials/header") %>
 
 <style>
-    .actions {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 2px !important;   /* ya 0px */
+  .actions {
+    display: table-cell !important;
+    text-align: center;
+    vertical-align: middle !important;
 }
 
-.actions .btn-icon {
+  .actions .btn-icon {
     margin: 4px !important;
     padding: 4px !important;
-}
+  }
 
-.actions form {
+  .actions form {
     margin: 0 !important;
     padding: 0 !important;
     display: flex;
-}
+  }
 
-.actions button {
+  .actions button {
     margin: 0 !important;
-}
+  }
 </style>
 
 <div class="container">
@@ -75,7 +74,7 @@
               <td style="text-align: center;">₹ <%= service.default_fee %>
               </td>
 
-              <td style="text-align: center;">
+              <td style="width:300px; max-width:300px; text-align:center; vertical-align:top; word-break:break-all; white-space:normal;">
                 <%= service.description || "N/A" %>
               </td>
 
@@ -92,9 +91,20 @@
                 </div>
               </td>
 
-              <td class="actions" style="display:flex; justify-content:center; align-items:center; gap:0; margin:4px;">
+              <td class="actions">
+                <div style="display:flex; justify-content:center; align-items:center; gap:8px;">
                 <!-- EDIT ICON -->
-                <button type="button" onclick="openEditServiceModal('<%= service.id %>', '<%= service.service_name %>', '<%= service.default_fee %>', `<%= service.description || '' %>`, '<%= service.is_active %>')" class="btn-icon edit-icon" title="Edit Service">
+                <button
+                    type="button"
+                    onclick="openEditServiceModal(
+                    '<%= service.id %>',
+                    '<%= service.service_name %>',
+                    '<%= service.default_fee %>',
+                    `<%= service.description || '' %>`,
+                    '<%= service.is_active %>'
+                  )"
+                  class="btn-icon edit-icon"
+                  title="Edit Service">
                   <!-- Keep your existing SVG icon here -->
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -105,7 +115,7 @@
                 </button>
 
                 <!-- DELETE ICON -->
-                <form action="/services/<%= service.id %>?_method=DELETE" method="POST" class="delete-form" style="margin:0; padding:0;">
+                <form action="/services/<%= service.id %>?_method=DELETE" method="POST" style="margin:0; display:flex; align-items:center;">
                   <button type="submit" class="btn-icon delete-icon" title="Delete Service" onclick="return confirm('Are you sure you want to delete this service?')">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -117,6 +127,7 @@
                     </svg>
                   </button>
                 </form>
+                </div>
               </td>
             </tr>
             <% }) %>
