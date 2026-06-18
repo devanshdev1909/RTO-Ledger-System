@@ -17,13 +17,13 @@ class ServiceRequest {
         return result.rows;
     }
 
-    static async create(customerId, vehicleId, serviceId, amount, remarks, client) {
+    static async create(customerId, vehicleId, serviceId, amount, remarks, status = 'Pending', client) {
         const dbClient = client || pool;
         const requestNo = 'REQ-' + Date.now();
         const result = await dbClient.query(
             `INSERT INTO service_requests (request_no, customer_id, vehicle_id, service_id, amount, status, remarks, created_at)
-         VALUES ($1, $2, $3, $4, $5, 'Pending', $6, NOW()) RETURNING id`,
-            [requestNo, customerId, vehicleId, serviceId, amount, remarks]
+         VALUES ($1, $2, $3, $4, $5, $6, $7, NOW()) RETURNING id`,
+            [requestNo, customerId, vehicleId, serviceId, amount, status, remarks]
         );
         return result.rows[0];
     }

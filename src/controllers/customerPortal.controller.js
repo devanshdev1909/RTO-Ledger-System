@@ -97,7 +97,8 @@ exports.postCreateRequest = async (req, res) => {
     const customerId = req.session.customerId;
     const { vehicle_id, service_id, amount, remarks } = req.body;
     try {
-        await ServiceRequest.create(customerId, vehicle_id, service_id, amount, remarks);
+        // Customer-created requests always start as 'Requested' (awaiting staff review)
+        await ServiceRequest.create(customerId, vehicle_id, service_id, amount, remarks, 'Requested');
         res.redirect('/portal/my-requests');
     } catch (err) {
         console.error(err);
