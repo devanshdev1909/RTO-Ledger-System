@@ -16,7 +16,21 @@ exports.getRegister = (req, res) => {
 
 // Handle Registration (Direct Account Creation)
 exports.postRegister = async (req, res) => {
-    const { name, mobile, email, password } = req.body;
+    const { name, mobile, email, password, confirm_password } = req.body;
+
+    // Basic server-side validation
+    if (!name || !mobile || !password) {
+        return res.render('customers/portal/register', { error: 'Please fill in all required fields.' });
+    }
+
+    if (password !== confirm_password) {
+        return res.render('customers/portal/register', { error: 'Passwords do not match.' });
+    }
+
+    if (!/^[0-9]{10}$/.test(mobile)) {
+        return res.render('customers/portal/register', { error: 'Please enter a valid 10-digit mobile number.' });
+    }
+
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         // Generate a random customer code
@@ -27,14 +41,18 @@ exports.postRegister = async (req, res) => {
             customerCode,
             name,
             mobile,
-            email,
+            email || null,
             hashedPassword
         );
 
         res.redirect('/login');
     } catch (err) {
-        console.error(err);
-        res.render('customers/portal/register', { error: 'Registration failed. Try again.' });
+        console.error('Registration error:', err.message);
+        // Check for duplicate mobile/email
+        if (err.code === '23505') {
+            return res.render('customers/portal/register', { error: 'An account with this mobile number or email already exists.' });
+        }
+        res.render('customers/portal/register', { error: 'Registration failed: ' + err.message });
     }
 };
 
