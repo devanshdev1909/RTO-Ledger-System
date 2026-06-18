@@ -20,7 +20,11 @@
             <% if (locals.error) { %>
               <div
                 style="background-color: #ffdddd; color: #d8000c; padding: 12px 20px; margin-bottom: 20px; border-radius: 6px; font-size: 14px;">
-                <%= error %>
+                <% if (error === 'DuplicateRequest') { %>
+                  ⚠️ A service request for this vehicle and service already exists and is still active. Please wait for it to be completed or cancelled before submitting a new one.
+                <% } else { %>
+                  <%= error %>
+                <% } %>
               </div>
               <% } %>
 
@@ -29,23 +33,19 @@
                     <thead>
                       <tr>
                         <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">#</th>
-                        <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Request
-                          No</th>
-                        <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Vehicle
-                        </th>
-                        <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Service
-                          Fees</th>
-                        <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Status
-                        </th>
+                        <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Request No</th>
+                        <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Vehicle</th>
+                        <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Service Name</th>
+                        <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Service Fees</th>
+                        <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Status</th>
                         <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Date</th>
-                        <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Actions
-                        </th>
+                        <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       <% if (requests.length===0) { %>
                         <tr>
-                          <td colspan="7" class="empty-state">
+                          <td colspan="8" class="empty-state">
                             No service requests found. Request your first service!
                           </td>
                         </tr>
@@ -61,6 +61,9 @@
                               <td style="text-align: center;"><strong>
                                   <%= r.vehicle_number %>
                                 </strong></td>
+                              <td style="text-align: center;">
+                                <%= r.service_name %>
+                              </td>
                               <td style="text-align: center;">₹ <%= r.amount %>
                               </td>
                               <td style="text-align: center;">

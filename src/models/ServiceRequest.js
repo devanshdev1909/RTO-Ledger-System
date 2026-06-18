@@ -8,13 +8,30 @@ class ServiceRequest {
 
     static async getByCustomerId(customerId) {
         const result = await pool.query(`
-            SELECT sr.*, v.vehicle_number 
+            SELECT sr.*, v.vehicle_number, s.service_name
             FROM service_requests sr
             JOIN vehicles v ON sr.vehicle_id = v.id
+            JOIN services s ON sr.service_id = s.id
             WHERE sr.customer_id = $1
             ORDER BY sr.created_at DESC
         `, [customerId]);
         return result.rows;
+    }
+
+    static async checkDuplicate(vehicleId, serviceId, excludeRequestId = null) {
+        let query = `
+            SELECT id FROM service_requests
+            WHERE vehicle_id = $1
+              AND service_id = $2
+              AND status NOT IN ('Completed', 'Cancelled')
+        `;
+        const params = [vehicleId, serviceId];
+        if (excludeRequestId) {
+            query += ` AND id != $3`;
+            params.push(excludeRequestId);
+        }
+        const result = await pool.query(query, params);
+        return result.rows.length > 0;
     }
 
     static async create(customerId, vehicleId, serviceId, amount, remarks, status = 'Pending', client) {

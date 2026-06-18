@@ -180,6 +180,15 @@ const createRequest = async (req, res) => {
             remarks
         } = req.body;
 
+        // Block duplicate: same vehicle + same service still active
+        const ServiceRequest = require('../models/ServiceRequest');
+        const isDuplicate = await ServiceRequest.checkDuplicate(vehicle_id, service_id);
+        if (isDuplicate) {
+            return res.status(409).send(
+                `<script>alert('A service request for this vehicle and service already exists and is still active (not Completed or Cancelled). Please complete or cancel the existing request first.'); window.history.back();</script>`
+            );
+        }
+
         const requestNo = "REQ" + Date.now();
 
         await db.query(`

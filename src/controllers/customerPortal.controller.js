@@ -97,6 +97,12 @@ exports.postCreateRequest = async (req, res) => {
     const customerId = req.session.customerId;
     const { vehicle_id, service_id, amount, remarks } = req.body;
     try {
+        // Block duplicate: same vehicle + same service that is still active
+        const isDuplicate = await ServiceRequest.checkDuplicate(vehicle_id, service_id);
+        if (isDuplicate) {
+            return res.redirect('/portal/my-requests?error=DuplicateRequest');
+        }
+
         // Customer-created requests always start as 'Requested' (awaiting staff review)
         await ServiceRequest.create(customerId, vehicle_id, service_id, amount, remarks, 'Requested');
         res.redirect('/portal/my-requests');
