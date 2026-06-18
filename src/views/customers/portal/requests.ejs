@@ -64,7 +64,10 @@
                               <td style="text-align: center;">₹ <%= r.amount %>
                               </td>
                               <td style="text-align: center;">
-                                <% if (r.status==='Pending' ) { %>
+                                <% if (r.status==='Requested') { %>
+                                  <span class="status-text"
+                                    style="background-color: #6f42c1; color: white; padding: 3px 10px; border-radius: 4px; font-size: 0.85rem;">Requested (Wait)</span>
+                                <% } else if (r.status==='Pending' ) { %>
                                   <span class="status-text"
                                     style="background-color: #ffc107; color: #000; padding: 3px 10px; border-radius: 4px; font-size: 0.85rem;">Pending</span>
                                   <% } else if (r.status==='Completed' ) { %>
