@@ -37,7 +37,8 @@
               <td style="text-align: center;">
                 <%= role.description || "—" %>
               </td>
-              <td class="actions" style="text-align: center;gap: 25px; margin-left: 25px;">
+              <td style="text-align: center; vertical-align: middle;">
+                <div style="display: flex; justify-content: center; align-items: center; gap: 12px;">
                 <button type="button" class="btn btn-primary" style="font-size: 1rem;" onclick="openPermissionsModal('<%= role.id %>', '<%= role.name %>', '<%= JSON.stringify(role.currentPermissions) %>')">
                   Manage Permissions
                 </button>
@@ -58,6 +59,7 @@
 
                   </button>
                 </form>
+                </div>
               </td>
             </tr>
             <% }) %>
