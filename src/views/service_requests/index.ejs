@@ -70,6 +70,7 @@
               </td>
 
               <td style="text-align: center;">
+                <% if (permissions.includes('service.create')) { %>
                 <select class="status-select <%= r.status === 'Requested' ? 'requested' : r.status === 'Pending' ? 'pending' : r.status === 'Completed' ? 'completed' : r.status === 'Cancelled' ? 'cancelled' : '' %>" data-id="<%= r.id %>">
                   <option value="Requested" <%=r.status==='Requested'
                                                                 ? 'selected' : '' %>>Requested (Wait)</option>
@@ -80,6 +81,11 @@
                   <option value="Cancelled" <%=r.status==='Cancelled'
                                                                 ? 'selected' : '' %>>Cancelled</option>
                 </select>
+                <% } else { %>
+                <span class="status-select <%= r.status === 'Requested' ? 'requested' : r.status === 'Pending' ? 'pending' : r.status === 'Completed' ? 'completed' : r.status === 'Cancelled' ? 'cancelled' : '' %>" style="pointer-events:none;">
+                  <%= r.status %>
+                </span>
+                <% } %>
               </td>
 
               <!-- ACTIONS -->

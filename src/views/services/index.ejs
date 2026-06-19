@@ -34,7 +34,9 @@
       <div class="page-header">
         <h1>Services</h1>
 
+        <% if (permissions.includes('user.manage')) { %>
         <button onclick="openAddServiceModal()" class="btn btn-primary">+ Add Service</button>
+        <% } %>
 
       </div>
 
@@ -83,16 +85,19 @@
                   <span class="status-text <%= service.is_active ? 'active' : 'inactive' %>">
                     <%= service.is_active ? 'Active' : 'Inactive' %>
                   </span>
+                  <% if (permissions.includes('user.manage')) { %>
                   <label class="switch">
                     <input type="checkbox" class="status-toggle" data-id="<%= service.id %>" <%=service.is_active
                                                                     ? 'checked' : '' %>>
                     <span class="slider"></span>
                   </label>
+                  <% } %>
                 </div>
               </td>
 
               <td class="actions">
                 <div style="display:flex; justify-content:center; align-items:center; gap:8px;">
+                <% if (permissions.includes('user.manage')) { %>
                 <!-- EDIT ICON -->
                 <button
                     type="button"
@@ -127,6 +132,7 @@
                     </svg>
                   </button>
                 </form>
+                <% } %>
                 </div>
               </td>
             </tr>

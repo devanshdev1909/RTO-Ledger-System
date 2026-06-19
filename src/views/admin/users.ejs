@@ -23,7 +23,9 @@
       <% } %>
       <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
         <h1>User Management (RBAC)</h1>
+        <% if (permissions.includes('user.manage')) { %>
         <button onclick="document.getElementById('userModal').style.display='block'" class="btn btn-primary">+ Add User</button>
+        <% } %>
       </div>
       <div class="table-container">
         <table class="data-table">
@@ -53,14 +55,17 @@
                   <span class="status-text <%= u.is_active !== false ? 'active' : 'inactive' %>">
                     <%= u.is_active !==false ? 'Active' : 'Inactive' %>
                   </span>
+                  <% if (permissions.includes('user.manage')) { %>
                   <label class="switch">
                     <input type="checkbox" class="status-toggle" data-id="<%= u.id %>" <%=u.is_active !==false
                                                                     ? 'checked' : '' %>>
                     <span class="slider"></span>
                   </label>
+                  <% } %>
                 </div>
               </td>
               <td class="actions" style="text-align: center;gap: 25px; margin-left: 25px;">
+                <% if (permissions.includes('user.manage')) { %>
                 <button type="button" class="btn btn-primary" style="padding: 13px 18px; font-size: 0.85rem; display: flex; align-items: center;" onclick="openUserPermissionsModal('<%= u.id %>', '<%= u.username %>', '<%= JSON.stringify(u.currentPermissions) %>')">
                   Manage Permissions
                 </button>
@@ -80,6 +85,7 @@
 
                   </button>
                 </form>
+                <% } %>
               </td>
             </tr>
             <% }) %>

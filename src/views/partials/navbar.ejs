@@ -16,7 +16,12 @@
         </form>
     </div>
     <div class="navbar-right">
-        <% if (typeof permissions !== 'undefined' && permissions.includes('ledger.create')) { %>
+        <% if (typeof permissions !== 'undefined' &&
+               permissions.includes('customer.create') &&
+               permissions.includes('vehicle.create') &&
+               permissions.includes('service.create') &&
+               permissions.includes('ledger.create') &&
+               permissions.includes('receipt.print')) { %>
         <!-- Quick Add Button as an additional feature -->
         <button type="button" class="btn btn-primary" onclick="openQuickAddModal()"
             style="margin-right: 15px; height: 40px;">

@@ -66,10 +66,12 @@
                   <span class="status-text <%= v.is_active !== false ? 'active' : 'inactive' %>">
                     <%= v.is_active !==false ? 'Active' : 'Inactive' %>
                   </span>
+                  <% if (permissions.includes('vehicle.create')) { %>
                   <label class="switch">
                     <input type="checkbox" class="status-toggle" data-id="<%= v.id %>" <%=v.is_active !==false ? 'checked' : '' %>>
                     <span class="slider"></span>
                   </label>
+                  <% } %>
                 </div>
               </td>
 
