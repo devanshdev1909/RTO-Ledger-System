@@ -3,7 +3,7 @@ const User = require("../models/User");
 const pool = require("../config/db");
 
 module.exports.renderLogin = (req, res) => {
-    res.render("auth/login", { activeTab: 'staff', error: null });
+    res.render("auth/login", { activeTab: 'customer', error: null });
 };
 
 module.exports.login = async (req, res) => {
