@@ -56,6 +56,47 @@ exports.postRegister = async (req, res) => {
     }
 };
 
+// Show activate account page
+exports.getActivateAccount = (req, res) => {
+    res.render('customers/portal/activate', { error: null });
+};
+
+// Handle account activation (setting password for staff-created users)
+exports.postActivateAccount = async (req, res) => {
+    const { mobile, password, confirm_password } = req.body;
+
+    if (!mobile || !password) {
+        return res.render('customers/portal/activate', { error: 'Please fill in all required fields.' });
+    }
+
+    if (password !== confirm_password) {
+        return res.render('customers/portal/activate', { error: 'Passwords do not match.' });
+    }
+
+    try {
+        const customer = await Customer.findByIdentifier(mobile);
+        
+        if (!customer) {
+            return res.render('customers/portal/activate', { error: 'No account found with this mobile number.' });
+        }
+
+        if (customer.password) {
+            return res.render('customers/portal/activate', { error: 'Account is already active. Please log in.' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await Customer.setPassword(customer.id, hashedPassword);
+
+        // Set Customer Session
+        req.session.customerId = customer.id;
+        req.session.customerName = customer.name;
+        res.redirect('/portal/dashboard');
+    } catch (err) {
+        console.error(err);
+        res.render('customers/portal/activate', { error: 'Failed to activate account. Please try again.' });
+    }
+};
+
 // Handle Login
 exports.postLogin = async (req, res) => {
     const { identifier, password } = req.body;

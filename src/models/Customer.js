@@ -36,6 +36,14 @@ class Customer {
         return result.rows[0];
     }
 
+    static async setPassword(id, hashedPassword) {
+        const result = await pool.query(
+            "UPDATE customers SET password = $1, updated_at = NOW() WHERE id = $2 RETURNING *",
+            [hashedPassword, id]
+        );
+        return result.rows[0];
+    }
+
     static async getAll() {
         const result = await pool.query("SELECT * FROM customers ORDER BY created_at DESC");
         return result.rows;

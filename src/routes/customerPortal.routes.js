@@ -9,6 +9,8 @@ router.get('/login', customerAuth.getLogin);
 router.post('/login', customerAuth.postLogin);
 router.get('/register', customerAuth.getRegister);
 router.post('/register', customerAuth.postRegister);
+router.get('/activate', customerAuth.getActivateAccount);
+router.post('/activate', customerAuth.postActivateAccount);
 router.get('/logout', customerAuth.logout);
 
 // Portal Routes (Protected)

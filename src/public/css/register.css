@@ -97,7 +97,7 @@
 }
 
 /* ===== FORM STEPS ===== */
-#registerForm {
+#registerForm, #activateForm {
     padding: 18px 28px 10px;
     position: relative;
     overflow: hidden;
