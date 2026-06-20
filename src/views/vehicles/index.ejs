@@ -24,7 +24,9 @@
               <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Type</th>
               <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Customer</th>
               <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Chassis No.</th>
-              <th style="text-align: center; background-color:#203051 ; color:white; font-size:16px;">Engine No.</th>
+              <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Engine No.</th>
+              <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Driver Name</th>
+              <th style="text-align:center ; background-color:#203051; color:white; font-size:16px;">Driver Mobile</th>
               <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Reg. Date</th>
               <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Status</th>
               <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Actions</th>
@@ -33,7 +35,7 @@
           <tbody>
             <% if (vehicles.length===0) { %>
             <tr>
-              <td colspan="9" class="empty-state">
+              <td colspan="11" class="empty-state">
                 No vehicles found. Add your first vehicle!
               </td>
             </tr>
@@ -58,6 +60,12 @@
               <td style="text-align: center;">
                 <%= v.engine_number %>
               </td>
+              <td style="text-align:center;">
+                <%= v.driver_name || 'N/A' %>
+              </td>
+              <td style="text-align:center;">
+                <%= v.driver_mobile || 'N/A' %>
+              </td>
               <td style="text-align: center;">
                 <%= v.registration_date ? new Date(v.registration_date).toLocaleDateString("en-IN") : "N/A" %>
               </td>
@@ -78,7 +86,17 @@
               <td class="actions" style="text-align: center;">
 
                 <% if (permissions.includes('vehicle.create')) { %>
-                <button type="button" class="btn-icon edit-icon" title="Edit Vehicle" onclick="openEditModal('<%= v.id %>', '<%= v.customer_id %>', '<%= v.vehicle_number %>', '<%= v.vehicle_type %>', '<%= v.chassis_number %>', '<%= v.engine_number %>', '<%= v.registration_date ? new Date(v.registration_date).toISOString().split('T')[0] : '' %>')">
+                <button type="button" class="btn-icon edit-icon" title="Edit Vehicle" onclick="openEditModal(
+    '<%= v.id %>',
+    '<%= v.customer_id %>',
+    '<%= v.vehicle_number %>',
+    '<%= v.vehicle_type || '' %>',
+    '<%= v.chassis_number || '' %>',
+    '<%= v.engine_number || '' %>',
+    '<%= v.registration_date ? new Date(v.registration_date).toISOString().substring(0,10) : '' %>',
+    '<%= v.driver_name || '' %>',
+    '<%= v.driver_mobile || '' %>'
+  )">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
@@ -166,6 +184,16 @@
         </div>
 
         <div class="form-group">
+          <label>Driver Name</label>
+          <input type="text" name="driver_name" id="v_driver_name" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+
+        <div class="form-group">
+          <label>Driver Mobile</label>
+          <input type="text" name="driver_mobile" id="v_driver_mobile" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+
+        <div class="form-group">
           <label for="v_registration_date">Registration Date</label>
           <input type="date" name="registration_date" id="v_registration_date" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
         </div>
@@ -193,11 +221,12 @@
     document.getElementById('v_chassis_number').value = "CH";
     document.getElementById('v_engine_number').value = "EN";
     document.getElementById('v_registration_date').value = "";
-
+    document.getElementById('v_driver_name').value = "";
+    document.getElementById('v_driver_mobile').value = "";
     document.getElementById('vehicleModal').style.display = 'block';
   }
 
-  function openEditModal(id, customer_id, vehicle_number, vehicle_type, chassis_number, engine_number, registration_date) {
+  function openEditModal(id, customer_id, vehicle_number, vehicle_type, chassis_number, engine_number, registration_date, driver_name, driver_mobile) {
     document.getElementById('modalTitle').textContent = "Edit Vehicle";
     document.getElementById('vehicleForm').action = "/vehicles/" + id + "?_method=PUT";
     document.getElementById('methodOverride').disabled = false;
@@ -209,6 +238,8 @@
     document.getElementById('v_chassis_number').value = chassis_number || "CH";
     document.getElementById('v_engine_number').value = engine_number || "EN";
     document.getElementById('v_registration_date').value = registration_date || "";
+    document.getElementById('v_driver_name').value = driver_name || "";
+    document.getElementById('v_driver_mobile').value = driver_mobile || "";
 
     document.getElementById('vehicleModal').style.display = 'block';
   }

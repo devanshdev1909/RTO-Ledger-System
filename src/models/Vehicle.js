@@ -28,12 +28,13 @@ class Vehicle {
         return result.rows[0];
     }
 
-    static async create(customerId, vehicleNumber, vehicleType, chassisNumber, engineNumber, registrationDate, client) {
+    static async create(customerId, vehicleNumber, vehicleType, chassisNumber, engineNumber, registrationDate, driverName,
+    driverMobile, client) {
         const dbClient = client || pool;
         const result = await dbClient.query(
-            `INSERT INTO vehicles (customer_id, vehicle_number, vehicle_type, chassis_number, engine_number, registration_date)
-         VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
-            [customerId, vehicleNumber, vehicleType, chassisNumber, engineNumber, registrationDate]
+            `INSERT INTO vehicles (customer_id, vehicle_number, vehicle_type, chassis_number, engine_number, registration_date, driver_name, driver_mobile)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
+            [customerId, vehicleNumber, vehicleType, chassisNumber, engineNumber, registrationDate, driverName, driverMobile]
         );
         return result.rows[0];
     }
@@ -46,7 +47,9 @@ class Vehicle {
         vehicleType,
         chassisNumber,
         engineNumber,
-        registrationDate
+        registrationDate,
+        driverName,
+        driverMobile
     ) {
         const result = await pool.query(
             `
@@ -56,8 +59,10 @@ class Vehicle {
                 vehicle_type = $3,
                 chassis_number = $4,
                 engine_number = $5,
-                registration_date = $6
-            WHERE id = $7
+                registration_date = $6,
+                driver_name = $7,
+                driver_mobile = $8
+            WHERE id = $9
             RETURNING *
             `,
             [
@@ -67,6 +72,8 @@ class Vehicle {
                 chassisNumber,
                 engineNumber,
                 registrationDate,
+                driverName,
+                driverMobile,
                 id
             ]
         );

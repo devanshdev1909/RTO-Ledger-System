@@ -42,7 +42,9 @@ module.exports.create = async (req, res) => {
             vehicle_type,
             chassis_number,
             engine_number,
-            registration_date
+            registration_date,
+            driver_name,
+            driver_mobile
         } = req.body;
 
         await Vehicle.create(
@@ -51,7 +53,9 @@ module.exports.create = async (req, res) => {
             vehicle_type,
             chassis_number,
             engine_number,
-            registration_date
+            registration_date,
+            driver_name,
+            driver_mobile
         );
 
         res.redirect("/vehicles");
@@ -91,7 +95,9 @@ module.exports.update = async (req, res) => {
             vehicle_type,
             chassis_number,
             engine_number,
-            registration_date
+            registration_date,
+            driver_name,
+            driver_mobile
         } = req.body;
 
         await Vehicle.update(
@@ -101,7 +107,9 @@ module.exports.update = async (req, res) => {
             vehicle_type,
             chassis_number,
             engine_number,
-            registration_date
+            registration_date,
+            driver_name,
+            driver_mobile
         );
 
         res.redirect("/vehicles");
