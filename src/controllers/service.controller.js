@@ -1,4 +1,26 @@
 const db = require("../config/db");
+const mailer = require('../utils/mailer');
+
+// Helper function to fetch request details and send email
+const sendUpdateNotification = async (id) => {
+    try {
+        const reqDetailsRes = await db.query(`
+            SELECT sr.*, c.name AS customer_name, c.email AS customer_email, v.vehicle_number, s.service_name 
+            FROM service_requests sr
+            LEFT JOIN customers c ON sr.customer_id = c.id
+            LEFT JOIN vehicles v ON sr.vehicle_id = v.id
+            LEFT JOIN services s ON sr.service_id = s.id
+            WHERE sr.id = $1
+        `, [id]);
+
+        if (reqDetailsRes.rows.length > 0) {
+            const updatedRequest = reqDetailsRes.rows[0];
+            await mailer.sendStatusUpdateEmail(updatedRequest.customer_email, updatedRequest.customer_name, updatedRequest);
+        }
+    } catch (mailErr) {
+        console.error("Failed to send status update email:", mailErr);
+    }
+};
 
 const apiGetActiveServices = async (req, res) => {
     try {
@@ -356,6 +378,9 @@ const updateRequest = async (req, res) => {
 
         await db.query('COMMIT');
 
+        // Send email notification
+        await sendUpdateNotification(id);
+
         res.redirect("/services/requests");
     } catch (err) {
         await db.query('ROLLBACK');
@@ -403,6 +428,9 @@ const updateRequestStatus = async (req, res) => {
             "UPDATE service_requests SET status = $1 WHERE id = $2",
             [status, id]
         );
+
+        // Send email notification
+        await sendUpdateNotification(id);
 
         res.json({ success: true, message: "Status updated successfully" });
     } catch (err) {
