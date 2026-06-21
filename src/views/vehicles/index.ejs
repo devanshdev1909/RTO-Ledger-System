@@ -10,7 +10,7 @@
 
       <div class="page-header">
         <h1>Vehicles</h1>
-        <% if (permissions.includes('vehicle.create')) { %>
+        <% if (typeof permissions !== 'undefined' && permissions.includes('vehicle.create')) { %>
         <button id="openVehicleModal" class="btn btn-primary" onclick="openCreateModal()">+ Add Vehicle</button>
         <% } %>
       </div>
@@ -74,7 +74,7 @@
                   <span class="status-text <%= v.is_active !== false ? 'active' : 'inactive' %>">
                     <%= v.is_active !==false ? 'Active' : 'Inactive' %>
                   </span>
-                  <% if (permissions.includes('vehicle.create')) { %>
+                  <% if (typeof permissions !== 'undefined' && permissions.includes('vehicle.create')) { %>
                   <label class="switch">
                     <input type="checkbox" class="status-toggle" data-id="<%= v.id %>" <%=v.is_active !==false ? 'checked' : '' %>>
                     <span class="slider"></span>
@@ -83,20 +83,21 @@
                 </div>
               </td>
 
-              <td class="actions" style="text-align: center;">
+              <td class="actions">
+                <div class="actions-wrapper">
 
-                <% if (permissions.includes('vehicle.create')) { %>
-                <button type="button" class="btn-icon edit-icon" title="Edit Vehicle" onclick="openEditModal(
-    '<%= v.id %>',
-    '<%= v.customer_id %>',
-    '<%= v.vehicle_number %>',
-    '<%= v.vehicle_type || '' %>',
-    '<%= v.chassis_number || '' %>',
-    '<%= v.engine_number || '' %>',
-    '<%= v.registration_date ? new Date(v.registration_date).toISOString().substring(0,10) : '' %>',
-    '<%= v.driver_name || '' %>',
-    '<%= v.driver_mobile || '' %>'
-  )">
+                <% if (typeof permissions !== 'undefined' && permissions.includes('vehicle.create')) { %>
+                <button type="button" class="btn-icon edit-icon" title="Edit Vehicle"
+                  data-id="<%= v.id %>"
+                  data-customer-id="<%= v.customer_id %>"
+                  data-vehicle-number="<%= v.vehicle_number %>"
+                  data-vehicle-type="<%= v.vehicle_type || '' %>"
+                  data-chassis-number="<%= v.chassis_number || '' %>"
+                  data-engine-number="<%= v.engine_number || '' %>"
+                  data-registration-date="<%= v.registration_date ? new Date(v.registration_date).toISOString().substring(0,10) : '' %>"
+                  data-driver-name="<%= v.driver_name || '' %>"
+                  data-driver-mobile="<%= v.driver_mobile || '' %>"
+                  onclick="openEditModal(this)">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
@@ -106,7 +107,7 @@
                 </button>
                 <% } %>
 
-                <% if (permissions.includes('vehicle.create')) { %>
+                <% if (typeof permissions !== 'undefined' && permissions.includes('vehicle.create')) { %>
                 <form action="/vehicles/<%= v.id %>?_method=DELETE" method="POST" class="delete-form" style="display:inline;">
                   <button type="submit" class="btn-icon delete-icon" title="Delete Vehicle" onclick="return confirm('Are you sure?')">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -121,6 +122,7 @@
                 </form>
                 <% } %>
 
+                </div>
               </td>
             </tr>
             <% }) %>
@@ -226,20 +228,30 @@
     document.getElementById('vehicleModal').style.display = 'block';
   }
 
-  function openEditModal(id, customer_id, vehicle_number, vehicle_type, chassis_number, engine_number, registration_date, driver_name, driver_mobile) {
+  function openEditModal(btn) {
+    const id                = btn.dataset.id;
+    const customer_id       = btn.dataset.customerId;
+    const vehicle_number    = btn.dataset.vehicleNumber;
+    const vehicle_type      = btn.dataset.vehicleType;
+    const chassis_number    = btn.dataset.chassisNumber;
+    const engine_number     = btn.dataset.engineNumber;
+    const registration_date = btn.dataset.registrationDate;
+    const driver_name       = btn.dataset.driverName;
+    const driver_mobile     = btn.dataset.driverMobile;
+
     document.getElementById('modalTitle').textContent = "Edit Vehicle";
     document.getElementById('vehicleForm').action = "/vehicles/" + id + "?_method=PUT";
     document.getElementById('methodOverride').disabled = false;
 
     // Pre-fill fields
-    document.getElementById('v_customer_id').value = customer_id;
-    document.getElementById('v_vehicle_number').value = vehicle_number;
-    document.getElementById('v_vehicle_type').value = vehicle_type || "";
-    document.getElementById('v_chassis_number').value = chassis_number || "CH";
-    document.getElementById('v_engine_number').value = engine_number || "EN";
+    document.getElementById('v_customer_id').value       = customer_id       || "";
+    document.getElementById('v_vehicle_number').value    = vehicle_number    || "";
+    document.getElementById('v_vehicle_type').value      = vehicle_type      || "";
+    document.getElementById('v_chassis_number').value    = chassis_number    || "CH";
+    document.getElementById('v_engine_number').value     = engine_number     || "EN";
     document.getElementById('v_registration_date').value = registration_date || "";
-    document.getElementById('v_driver_name').value = driver_name || "";
-    document.getElementById('v_driver_mobile').value = driver_mobile || "";
+    document.getElementById('v_driver_name').value       = driver_name       || "";
+    document.getElementById('v_driver_mobile').value     = driver_mobile     || "";
 
     document.getElementById('vehicleModal').style.display = 'block';
   }

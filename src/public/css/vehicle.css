@@ -103,6 +103,10 @@
 ===================================================== */
 
 .actions {
+    vertical-align: middle;
+}
+
+.actions-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;

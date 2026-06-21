@@ -82,13 +82,30 @@ exports.getMyRequests = async (req, res) => {
 // Handle Direct Vehicle Addition
 exports.postAddVehicle = async (req, res) => {
     const customerId = req.session.customerId;
-    const { vehicle_number, vehicle_type, chassis_number, engine_number } = req.body;
+    const {
+        vehicle_number,
+        vehicle_type,
+        chassis_number,
+        engine_number,
+        driver_name,
+        driver_mobile,
+        registration_date
+    } = req.body;
     try {
-        await Vehicle.create(customerId, vehicle_number, vehicle_type, chassis_number, engine_number, null);
+        await Vehicle.create(
+            customerId,
+            vehicle_number,
+            vehicle_type,
+            chassis_number,
+            engine_number,
+            registration_date && registration_date.trim() !== '' ? registration_date : null,
+            driver_name    && driver_name.trim()    !== '' ? driver_name.trim()    : null,
+            driver_mobile  && driver_mobile.trim()  !== '' ? driver_mobile.trim()  : null
+        );
         res.redirect('/portal/my-vehicles');
     } catch (err) {
         console.error(err);
-        res.redirect('/portal/vehicle/add?error=VehicleAddFailed');
+        res.redirect('/portal/my-vehicles?error=VehicleAddFailed');
     }
 };
 
@@ -117,7 +134,15 @@ exports.postCreateRequest = async (req, res) => {
 exports.postEditVehicle = async (req, res) => {
     const customerId = req.session.customerId;
     const vehicleId = req.params.id;
-    const { vehicle_number, vehicle_type, chassis_number, engine_number } = req.body;
+    const {
+        vehicle_number,
+        vehicle_type,
+        chassis_number,
+        engine_number,
+        driver_name,
+        driver_mobile,
+        registration_date
+    } = req.body;
     try {
         // First verify ownership
         const vehicles = await Vehicle.getByCustomerId(customerId);
@@ -125,11 +150,21 @@ exports.postEditVehicle = async (req, res) => {
             return res.redirect('/portal/my-vehicles?error=Unauthorized');
         }
 
-        await Vehicle.update(vehicleId, customerId, vehicle_number, vehicle_type, chassis_number, engine_number, null);
+        await Vehicle.update(
+            vehicleId,
+            customerId,
+            vehicle_number,
+            vehicle_type,
+            chassis_number,
+            engine_number,
+            registration_date && registration_date.trim() !== '' ? registration_date : null,
+            driver_name    && driver_name.trim()    !== '' ? driver_name.trim()    : null,
+            driver_mobile  && driver_mobile.trim()  !== '' ? driver_mobile.trim()  : null
+        );
         res.redirect('/portal/my-vehicles');
     } catch (err) {
         console.error(err);
-        res.redirect(`/portal/vehicle/${vehicleId}/edit?error=VehicleUpdateFailed`);
+        res.redirect(`/portal/my-vehicles?error=VehicleUpdateFailed`);
     }
 };
 

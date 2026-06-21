@@ -68,25 +68,24 @@
                 <%= v.driver_mobile || 'N/A' %>
               </td>
               <td style="text-align: center;">
-                <%= new Date(v.registration_date).toLocaleDateString() %>
+                <%= v.registration_date ? new Date(v.registration_date).toLocaleDateString('en-IN') : 'N/A' %>
               </td>
 
-              <td class="actions" style="text-align: center; gap: 20px; justify-content: center;">
+              <td class="actions">
+                <div class="actions-wrapper">
 
                 <button type="button"
     class="btn-icon edit-icon"
     title="Edit Vehicle"
-    onclick="openEditModal(
-        '<%= v.id %>',
-        '<%= v.customer_id %>',
-        '<%= v.vehicle_number %>',
-        '<%= v.vehicle_type %>',
-        '<%= v.chassis_number %>',
-        '<%= v.engine_number %>',
-        '<%= v.registration_date ? new Date(v.registration_date).toISOString().split('T')[0] : '' %>',
-        '<%= v.driver_name ? v.driver_name : "" %>',
-'<%= v.driver_mobile ? v.driver_mobile : "" %>'
-    )">
+    data-id="<%= v.id %>"
+    data-vehicle-number="<%= v.vehicle_number %>"
+    data-vehicle-type="<%= v.vehicle_type || '' %>"
+    data-chassis-number="<%= v.chassis_number || '' %>"
+    data-engine-number="<%= v.engine_number || '' %>"
+    data-registration-date="<%= v.registration_date ? new Date(v.registration_date).toISOString().substring(0,10) : '' %>"
+    data-driver-name="<%= v.driver_name || '' %>"
+    data-driver-mobile="<%= v.driver_mobile || '' %>"
+    onclick="openVehicleEditModal(this)">
 
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -112,6 +111,7 @@
                   </button>
                 </form>
 
+                </div>
               </td>
             </tr>
             <% }) %>

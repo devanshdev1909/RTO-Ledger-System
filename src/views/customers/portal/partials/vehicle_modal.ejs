@@ -36,6 +36,16 @@
           <label for="v_engine_number">Engine Number *</label>
           <input type="text" name="engine_number" id="v_engine_number" placeholder="EN1234567890" maxlength="12" minlength="12" pattern="^EN[A-Z0-9]{10}$" oninput="if(!this.value.toUpperCase().startsWith('EN')) { this.value = 'EN' + this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10); } else { this.value = 'EN' + this.value.substring(2).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10); }" style="text-transform: uppercase; width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;" required>
         </div>
+
+        <div class="form-group">
+          <label for="v_driver_name">Driver Name</label>
+          <input type="text" name="driver_name" id="v_driver_name" placeholder="Enter driver name" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+
+        <div class="form-group">
+          <label for="v_driver_mobile">Driver Mobile</label>
+          <input type="text" name="driver_mobile" id="v_driver_mobile" placeholder="Enter driver mobile" maxlength="10" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
       </div>
 
       <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
@@ -53,24 +63,36 @@
     document.getElementById('vehicleForm').action = "/portal/vehicle/add";
     
     // Clear fields
-    document.getElementById('v_vehicle_number').value = "";
-    document.getElementById('v_vehicle_type').value = "";
-    document.getElementById('v_chassis_number').value = "CH";
-    document.getElementById('v_engine_number').value = "EN";
+    document.getElementById('v_vehicle_number').value  = "";
+    document.getElementById('v_vehicle_type').value    = "";
+    document.getElementById('v_chassis_number').value  = "CH";
+    document.getElementById('v_engine_number').value   = "EN";
+    document.getElementById('v_driver_name').value     = "";
+    document.getElementById('v_driver_mobile').value   = "";
     
     document.getElementById('vehicleModal').style.display = 'block';
   }
 
-  function openVehicleEditModal(id, vehicle_number, vehicle_type, chassis_number, engine_number) {
+  function openVehicleEditModal(btn) {
+    const id              = btn.dataset.id;
+    const vehicle_number  = btn.dataset.vehicleNumber;
+    const vehicle_type    = btn.dataset.vehicleType;
+    const chassis_number  = btn.dataset.chassisNumber;
+    const engine_number   = btn.dataset.engineNumber;
+    const driver_name     = btn.dataset.driverName;
+    const driver_mobile   = btn.dataset.driverMobile;
+
     document.getElementById('vehicleModalTitle').textContent = "Edit Vehicle";
     document.getElementById('vehicleForm').action = "/portal/vehicle/" + id + "/edit";
-    
+
     // Pre-fill fields
-    document.getElementById('v_vehicle_number').value = vehicle_number;
-    document.getElementById('v_vehicle_type').value = vehicle_type || "";
-    document.getElementById('v_chassis_number').value = chassis_number || "CH";
-    document.getElementById('v_engine_number').value = engine_number || "EN";
-    
+    document.getElementById('v_vehicle_number').value  = vehicle_number  || "";
+    document.getElementById('v_vehicle_type').value    = vehicle_type    || "";
+    document.getElementById('v_chassis_number').value  = chassis_number  || "CH";
+    document.getElementById('v_engine_number').value   = engine_number   || "EN";
+    document.getElementById('v_driver_name').value     = driver_name     || "";
+    document.getElementById('v_driver_mobile').value   = driver_mobile   || "";
+
     document.getElementById('vehicleModal').style.display = 'block';
   }
 
