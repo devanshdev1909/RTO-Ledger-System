@@ -86,7 +86,6 @@
               <td class="actions">
                 <div class="actions-wrapper">
 
-                <% if (typeof permissions !== 'undefined' && permissions.includes('vehicle.create')) { %>
                 <button type="button" class="btn-icon edit-icon" title="Edit Vehicle"
                   data-id="<%= v.id %>"
                   data-customer-id="<%= v.customer_id %>"
@@ -105,9 +104,7 @@
                     <path d="M16 5l3 3" />
                   </svg>
                 </button>
-                <% } %>
 
-                <% if (typeof permissions !== 'undefined' && permissions.includes('vehicle.create')) { %>
                 <form action="/vehicles/<%= v.id %>?_method=DELETE" method="POST" class="delete-form" style="display:inline;">
                   <button type="submit" class="btn-icon delete-icon" title="Delete Vehicle" onclick="return confirm('Are you sure?')">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -120,7 +117,6 @@
                     </svg>
                   </button>
                 </form>
-                <% } %>
 
                 </div>
               </td>
@@ -137,7 +133,7 @@
 
 <!-- VEHICLE MODAL -->
 <div id="vehicleModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; overflow-y: auto;">
-  <div style="background:white; max-width:600px; margin: 10vh auto; padding: 25px; border-radius: 8px; position: relative;">
+  <div style="background:white; max-width:700px; margin: 10vh auto; padding: 25px; border-radius: 8px; position: relative;">
 
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
       <h2 id="modalTitle" style="margin: 0;">Add New Vehicle</h2>
@@ -186,17 +182,17 @@
         </div>
 
         <div class="form-group">
-          <label>Driver Name</label>
-          <input type="text" name="driver_name" id="v_driver_name" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+          <label for="v_driver_name">Driver Name</label>
+          <input type="text" name="driver_name" id="v_driver_name" placeholder="Enter driver name" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
         </div>
 
         <div class="form-group">
-          <label>Driver Mobile</label>
-          <input type="text" name="driver_mobile" id="v_driver_mobile" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+          <label for="v_driver_mobile">Driver Mobile</label>
+          <input type="text" name="driver_mobile" id="v_driver_mobile" placeholder="Enter driver mobile" maxlength="10" pattern="[0-9]{10}" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
         </div>
 
         <div class="form-group">
-          <label for="v_registration_date">Registration Date</label>
+          <label for="v_registration_date">Reg. Date</label>
           <input type="date" name="registration_date" id="v_registration_date" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
         </div>
       </div>

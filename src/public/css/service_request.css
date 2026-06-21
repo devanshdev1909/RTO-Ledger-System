@@ -26,7 +26,7 @@
     background: #fff;
     margin: 0 20px;
     border-radius: 12px;
-    overflow: hidden;
+    overflow-x: auto;
     border: 1px solid #e5e7eb;
 }
 
@@ -69,6 +69,11 @@
 
 /* ================= ACTIONS COLUMN ================= */
 .actions {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.actions-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
