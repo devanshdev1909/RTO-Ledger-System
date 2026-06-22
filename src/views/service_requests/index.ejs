@@ -225,12 +225,7 @@
       <div class="form-group">
         <label>Vehicle *</label>
         <select id="req_vehicle" name="vehicle_id" required>
-          <option value="">Select Vehicle</option>
-          <% vehicles.forEach(function(v) { %>
-          <option value="<%= v.id %>">
-            <%= v.vehicle_number %>
-          </option>
-          <% }) %>
+          <option value="">-- Select Customer First --</option>
         </select>
       </div>
       </div>
@@ -293,16 +288,49 @@ function openEditReqModal(id, customerId, vehicleId, serviceId, amount, status, 
     document.getElementById('reqForm').action = '/services/requests/' + id + '?_method=PUT';
 
     document.getElementById('req_customer').value = customerId;
-    document.getElementById('req_vehicle').value = vehicleId;
+    populateVehicles(customerId, vehicleId);
     document.getElementById('req_service').value = serviceId;
     document.getElementById('req_amount').value = amount;
     document.getElementById('req_status').value = status;
     document.getElementById('req_remarks').value = remarks || '';
 }
 
+const allVehicles = JSON.parse('<%- JSON.stringify((typeof vehicles !== "undefined" ? vehicles : [])) %>');
 const serviceFees = JSON.parse('<%- JSON.stringify((typeof services !== "undefined" ? services : []).reduce(function(acc, s) { acc[s.id] = Number(s.default_fee) || 0; return acc; }, {})) %>');
 
+function populateVehicles(customerId, selectedVehicleId) {
+    var vehicleSelect = document.getElementById('req_vehicle');
+    vehicleSelect.innerHTML = '<option value="">-- Select Vehicle --</option>';
+    if (!customerId) {
+        vehicleSelect.innerHTML = '<option value="">-- Select Customer First --</option>';
+        return;
+    }
+    var filtered = allVehicles.filter(function(v) {
+        return String(v.customer_id) === String(customerId);
+    });
+    if (filtered.length === 0) {
+        vehicleSelect.innerHTML += '<option value="" disabled>No vehicles found for this customer</option>';
+    } else {
+        filtered.forEach(function(v) {
+            var opt = document.createElement('option');
+            opt.value = v.id;
+            opt.textContent = v.vehicle_number;
+            if (selectedVehicleId && String(v.id) === String(selectedVehicleId)) {
+                opt.selected = true;
+            }
+            vehicleSelect.appendChild(opt);
+        });
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
+
+    const customerSelect = document.getElementById('req_customer');
+    if (customerSelect) {
+        customerSelect.addEventListener('change', function() {
+            populateVehicles(this.value, null);
+        });
+    }
 
     const serviceSelect = document.getElementById("req_service");
     const amountInput = document.getElementById("req_amount");
