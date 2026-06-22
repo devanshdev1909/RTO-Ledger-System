@@ -1,5 +1,8 @@
 const db = require("../config/db");
 const mailer = require('../utils/mailer');
+const Ledger = require('../models/Ledger');
+const Receipt = require('../models/Receipt');
+const ServiceRequest = require('../models/ServiceRequest');
 
 // Helper function to fetch request details and send email
 const sendUpdateNotification = async (id) => {
@@ -192,55 +195,58 @@ const showNewRequestForm = async (req, res) => {
 
 // CREATE SERVICE REQUEST
 const createRequest = async (req, res) => {
+    const client = await db.connect();
     try {
-
         const {
             customer_id,
             vehicle_id,
             service_id,
             amount,
+            status,
             remarks
         } = req.body;
 
         // Block duplicate: same vehicle + same service still active
-        const ServiceRequest = require('../models/ServiceRequest');
         const isDuplicate = await ServiceRequest.checkDuplicate(vehicle_id, service_id);
         if (isDuplicate) {
             return res.status(409).send(
-                `<script>alert('A service request for this vehicle and service already exists and is still active (not Completed or Cancelled). Please complete or cancel the existing request first.'); window.history.back();</script>`
+                `<script>alert('A service request for this vehicle and service already exists and is still active. Please complete or cancel the existing request first.'); window.history.back();</script>`
             );
         }
 
-        const requestNo = "REQ" + Date.now();
+        await client.query('BEGIN');
 
-        await db.query(`
-            INSERT INTO service_requests
-            (
-                request_no,
-                customer_id,
-                vehicle_id,
-                service_id,
-                amount,
-                status,
-                remarks
-            )
-            VALUES($1,$2,$3,$4,$5,$6,$7)
-        `,
-            [
-                requestNo,
-                customer_id,
-                vehicle_id,
-                service_id,
-                amount,
-                "Pending",
-                remarks
-            ]);
+        // 1. Create Service Request
+        const requestNo = 'REQ' + Date.now();
+        const srResult = await client.query(
+            `INSERT INTO service_requests (request_no, customer_id, vehicle_id, service_id, amount, status, remarks)
+             VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
+            [requestNo, customer_id, vehicle_id || null, service_id, amount, status || 'Pending', remarks]
+        );
+        const serviceRequestId = srResult.rows[0].id;
 
-        res.redirect("/services/requests");
+        // 2. Create Ledger entry (Unpaid — payment collected later via Receipts)
+        const parsedAmount = parseFloat(amount) || 0;
+        await Ledger.create(
+            customer_id,
+            vehicle_id || null,
+            serviceRequestId,
+            parsedAmount,   // service_fee
+            0,              // amount_paid: 0 initially (not yet collected)
+            'Unpaid',
+            client
+        );
+
+        await client.query('COMMIT');
+
+        res.redirect('/services/requests');
 
     } catch (err) {
+        await client.query('ROLLBACK');
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
+    } finally {
+        client.release();
     }
 };
 

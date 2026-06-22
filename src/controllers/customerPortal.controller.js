@@ -4,6 +4,8 @@ const Customer = require('../models/Customer');
 const Vehicle = require('../models/Vehicle');
 const ServiceRequest = require('../models/ServiceRequest');
 const Service = require('../models/Service');
+const Ledger = require('../models/Ledger');
+const Receipt = require('../models/Receipt');
 
 exports.getDashboard = async (req, res) => {
     const customerId = req.session.customerId;
@@ -115,7 +117,7 @@ exports.postAddVehicle = async (req, res) => {
     }
 };
 
-// Handle Pending Service Request
+// Handle Service Request from Customer Portal (Razorpay Payment)
 exports.postCreateRequest = async (req, res) => {
     const customerId = req.session.customerId;
     const {
@@ -123,33 +125,95 @@ exports.postCreateRequest = async (req, res) => {
         razorpay_order_id, razorpay_payment_id, razorpay_signature
     } = req.body;
 
+    console.log('[Portal Request] Received:', {
+        customerId, vehicle_id, service_id, amount,
+        hasOrderId: !!razorpay_order_id,
+        hasPaymentId: !!razorpay_payment_id,
+        hasSignature: !!razorpay_signature
+    });
+
+    const client = await pool.connect();
     try {
-        // 1. Signature checks parameters verify
+        // 1. Verify payment fields are present
         if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+            console.log('[Portal Request] ❌ Missing Razorpay fields');
+            client.release();
             return res.redirect('/portal/my-requests?error=PaymentRequired');
         }
 
+        // 2. Verify Razorpay signature
         const expectedSignature = crypto
             .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
             .update(razorpay_order_id + '|' + razorpay_payment_id)
             .digest('hex');
 
+        console.log('[Portal Request] Signature match:', expectedSignature === razorpay_signature);
+
         if (expectedSignature !== razorpay_signature) {
+            console.log('[Portal Request] ❌ Signature mismatch');
+            console.log('[Portal Request] Expected:', expectedSignature);
+            console.log('[Portal Request] Received:', razorpay_signature);
+            client.release();
             return res.redirect('/portal/my-requests?error=PaymentVerificationFailed');
         }
+        console.log('[Portal Request] ✅ Signature verified');
 
-        // 2. Prevent duplicate entries
+        // 3. Prevent duplicate entries
         const isDuplicate = await ServiceRequest.checkDuplicate(vehicle_id, service_id);
         if (isDuplicate) {
+            console.log('[Portal Request] ❌ Duplicate request');
+            client.release();
             return res.redirect('/portal/my-requests?error=DuplicateRequest');
         }
 
-        // 3. Complete database insertion with Pending status
-        await ServiceRequest.create(customerId, vehicle_id, service_id, amount, remarks, 'Pending');
+        // 3. Begin DB transaction
+        await client.query('BEGIN');
+
+        // 4. Create Service Request
+        const fullRemarks = `Paid via Razorpay | Order: ${razorpay_order_id} | Payment: ${razorpay_payment_id}` + (remarks ? ` | ${remarks}` : '');
+        const serviceRequest = await ServiceRequest.create(
+            customerId, vehicle_id, service_id, amount, fullRemarks, 'Pending', client
+        );
+        console.log('[Portal Request] ✅ ServiceRequest created, ID:', serviceRequest.id);
+
+        // 5. Create Ledger entry — Paid (full payment via Razorpay)
+        const parsedAmount = parseFloat(amount) || 0;
+        const ledger = await Ledger.create(
+            customerId,
+            vehicle_id || null,
+            serviceRequest.id,
+            parsedAmount,   // service_fee
+            parsedAmount,   // amount_paid (full payment done)
+            'Paid',
+            client
+        );
+        console.log('[Portal Request] ✅ Ledger created, ID:', ledger.id);
+
+        // 6. Generate Receipt
+        const receiptNo = await Receipt.getNextReceiptNo(client);
+        await Receipt.create(
+            receiptNo,
+            ledger.id,
+            customerId,
+            parsedAmount,
+            'Online (Razorpay)',
+            `Razorpay Payment ID: ${razorpay_payment_id}` + (remarks ? ` | ${remarks}` : ''),
+            null,
+            client
+        );
+        console.log('[Portal Request] ✅ Receipt created, No:', receiptNo);
+
+        await client.query('COMMIT');
+        console.log('[Portal Request] ✅ Transaction committed — all done!');
+
         res.redirect('/portal/my-requests?success=RequestCreated');
     } catch (err) {
-        console.error(err);
+        await client.query('ROLLBACK').catch(() => {});
+        console.error('[Portal Request] ❌ Error:', err.message);
+        console.error('[Portal Request] Detail:', err.detail || '');
         res.redirect('/portal/my-requests?error=RequestFailed');
+    } finally {
+        client.release().catch(() => {});
     }
 };
 
