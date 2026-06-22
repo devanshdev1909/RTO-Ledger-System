@@ -62,7 +62,17 @@
     document.getElementById('requestModal').style.display = 'block';
   }
 
-  function openRequestEditModal(id, vehicle_id, service_id, amount, remarks) {
+  function openRequestEditModal(elementOrId, vehicle_id, service_id, amount, remarks) {
+    let id;
+    if (elementOrId && typeof elementOrId === 'object' && elementOrId.dataset) {
+      id = elementOrId.dataset.id;
+      vehicle_id = elementOrId.dataset.vehicleId;
+      service_id = elementOrId.dataset.serviceId;
+      amount = elementOrId.dataset.amount;
+      remarks = elementOrId.dataset.remarks;
+    } else {
+      id = elementOrId;
+    }
     document.getElementById('requestModalTitle').textContent = "Edit Request";
     document.getElementById('requestForm').action = "/portal/request/" + id + "/edit";
     
@@ -91,14 +101,10 @@
     const serviceSelect = document.getElementById('r_service_id');
     const amountInput = document.getElementById('r_amount');
     
-    const serviceFees = {
-      <% services.forEach(s => { %>
-        "<%= s.id %>": <%= s.default_fee %>,
-      <% }) %>
-    };
+    const serviceFees = JSON.parse('<%- JSON.stringify((locals.services || []).reduce((acc, s) => { acc[s.id] = Number(s.default_fee) || 0; return acc; }, {})) %>');
 
     serviceSelect.addEventListener('change', function() {
-      if (this.value && serviceFees[this.value]) {
+      if (this.value && serviceFees[this.value] !== undefined) {
         amountInput.value = serviceFees[this.value];
       } else {
         amountInput.value = "";

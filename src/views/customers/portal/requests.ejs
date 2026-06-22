@@ -95,7 +95,12 @@
 
                                   <!-- EDIT -->
                                   <button type="button" class="btn-icon edit-icon" title="Edit Request"
-                                    onclick="openRequestEditModal('<%= r.id %>', '<%= r.vehicle_id %>', '<%= r.service_id %>', '<%= r.amount %>', '<%= r.remarks ? r.remarks.replace(/'/g, '\\\'') : '' %>')">
+                                    data-id="<%= r.id %>"
+                                    data-vehicle-id="<%= r.vehicle_id %>"
+                                    data-service-id="<%= r.service_id %>"
+                                    data-amount="<%= r.amount %>"
+                                    data-remarks="<%= r.remarks || '' %>"
+                                    onclick="openRequestEditModal(this)">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                       stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                       stroke-linejoin="round">
