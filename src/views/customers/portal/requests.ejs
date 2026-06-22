@@ -17,16 +17,26 @@
                 Request Service</button>
             </div>
 
-            <% if (locals.error) { %>
-              <div
-                style="background-color: #ffdddd; color: #d8000c; padding: 12px 20px; margin-bottom: 20px; border-radius: 6px; font-size: 14px;">
+            <% if (locals.success) { %>
+              <div style="background-color:#d4edda; color:#155724; padding:12px 20px; margin-bottom:20px; border-radius:6px; font-size:14px;">
+                ✅ Service request created successfully! Payment has been received.
+              </div>
+            <% } %>
+
+                        <% if (locals.error) { %>
+              <div style="background-color: #ffdddd; color: #d8000c; padding: 12px 20px; margin-bottom: 20px; border-radius: 6px; font-size: 14px;">
                 <% if (error === 'DuplicateRequest') { %>
                   ⚠️ A service request for this vehicle and service already exists and is still active. Please wait for it to be completed or cancelled before submitting a new one.
+                <% } else if (error === 'PaymentRequired') { %>
+                  💳 Payment is required to submit a service request. Please complete the payment.
+                <% } else if (error === 'PaymentVerificationFailed') { %>
+                  ❌ Payment verification failed. Please try again or contact support.
                 <% } else { %>
                   <%= error %>
                 <% } %>
               </div>
-              <% } %>
+            <% } %>
+
 
                 <div class="table-container">
                   <table class="data-table">

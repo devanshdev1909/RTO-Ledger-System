@@ -1,3 +1,4 @@
+const crypto = require('crypto'); 
 const pool = require('../config/db');
 const Customer = require('../models/Customer');
 const Vehicle = require('../models/Vehicle');
@@ -43,6 +44,9 @@ exports.getDashboard = async (req, res) => {
 
 exports.getMyVehicles = async (req, res) => {
     const customerId = req.session.customerId;
+    if (!customerId) {
+        return res.redirect('/login');
+    }
     try {
         const vehicles = await Vehicle.getByCustomerId(customerId);
         res.render('customers/portal/vehicles', {
@@ -68,8 +72,10 @@ exports.getMyRequests = async (req, res) => {
             requests: requests,
             vehicles: vehicles,
             services: services,
+            customerId: customerId,
             activePage: 'requests',
-            error: req.query.error || null
+            error: req.query.error || null ,
+            success: req.query.success || null
         });
     } catch (error) {
         console.error(error);
@@ -112,20 +118,38 @@ exports.postAddVehicle = async (req, res) => {
 // Handle Pending Service Request
 exports.postCreateRequest = async (req, res) => {
     const customerId = req.session.customerId;
-    const { vehicle_id, service_id, amount, remarks } = req.body;
+    const {
+        vehicle_id, service_id, amount, remarks,
+        razorpay_order_id, razorpay_payment_id, razorpay_signature
+    } = req.body;
+
     try {
-        // Block duplicate: same vehicle + same service that is still active
+        // 1. Signature checks parameters verify
+        if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+            return res.redirect('/portal/my-requests?error=PaymentRequired');
+        }
+
+        const expectedSignature = crypto
+            .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+            .update(razorpay_order_id + '|' + razorpay_payment_id)
+            .digest('hex');
+
+        if (expectedSignature !== razorpay_signature) {
+            return res.redirect('/portal/my-requests?error=PaymentVerificationFailed');
+        }
+
+        // 2. Prevent duplicate entries
         const isDuplicate = await ServiceRequest.checkDuplicate(vehicle_id, service_id);
         if (isDuplicate) {
             return res.redirect('/portal/my-requests?error=DuplicateRequest');
         }
 
-        // Customer-created requests always start as 'Requested' (awaiting staff review)
-        await ServiceRequest.create(customerId, vehicle_id, service_id, amount, remarks, 'Requested');
-        res.redirect('/portal/my-requests');
+        // 3. Complete database insertion with Pending status
+        await ServiceRequest.create(customerId, vehicle_id, service_id, amount, remarks, 'Pending');
+        res.redirect('/portal/my-requests?success=RequestCreated');
     } catch (err) {
         console.error(err);
-        res.redirect('/portal/request/create?error=RequestFailed');
+        res.redirect('/portal/my-requests?error=RequestFailed');
     }
 };
 

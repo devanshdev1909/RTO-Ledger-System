@@ -48,7 +48,7 @@
             </tr>
             <% } else { %>
 
-            <% requests.forEach((r, i)=> { %>
+            <% requests.forEach(function(r, i) { %>
             <tr>
 
               <td style="text-align: center;">
@@ -72,14 +72,10 @@
               <td style="text-align: center;">
                 <% if (permissions.includes('service.create')) { %>
                 <select class="status-select <%= r.status === 'Requested' ? 'requested' : r.status === 'Pending' ? 'pending' : r.status === 'Completed' ? 'completed' : r.status === 'Cancelled' ? 'cancelled' : '' %>" data-id="<%= r.id %>">
-                  <option value="Requested" <%=r.status==='Requested'
-                                                                ? 'selected' : '' %>>Requested (Wait)</option>
-                  <option value="Pending" <%=r.status==='Pending' ? 'selected'
-                                                                : '' %>>Pending (Started)</option>
-                  <option value="Completed" <%=r.status==='Completed'
-                                                                ? 'selected' : '' %>>Completed</option>
-                  <option value="Cancelled" <%=r.status==='Cancelled'
-                                                                ? 'selected' : '' %>>Cancelled</option>
+                  <option value="Requested" <%= r.status === 'Requested' ? 'selected' : '' %>>Requested (Wait)</option>
+                  <option value="Pending" <%= r.status === 'Pending' ? 'selected' : '' %>>Pending (Started)</option>
+                  <option value="Completed" <%= r.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+                  <option value="Cancelled" <%= r.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
                 </select>
                 <% } else { %>
                 <span class="status-select <%= r.status === 'Requested' ? 'requested' : r.status === 'Pending' ? 'pending' : r.status === 'Completed' ? 'completed' : r.status === 'Cancelled' ? 'cancelled' : '' %>" style="pointer-events:none;">
@@ -218,7 +214,7 @@
         <label>Customer *</label>
         <select id="req_customer" name="customer_id" required>
           <option value="">Select Customer</option>
-          <% customers.forEach(c=> { %>
+          <% customers.forEach(function(c) { %>
           <option value="<%= c.id %>">
             <%= c.name %>
           </option>
@@ -230,7 +226,7 @@
         <label>Vehicle *</label>
         <select id="req_vehicle" name="vehicle_id" required>
           <option value="">Select Vehicle</option>
-          <% vehicles.forEach(v=> { %>
+          <% vehicles.forEach(function(v) { %>
           <option value="<%= v.id %>">
             <%= v.vehicle_number %>
           </option>
@@ -244,7 +240,7 @@
         <label>Service *</label>
         <select id="req_service" name="service_id" required>
           <option value="">Select Service</option>
-          <% services.forEach(s=> { %>
+          <% services.forEach(function(s) { %>
           <option value="<%= s.id %>">
             <%= s.service_name %>
           </option>
@@ -304,11 +300,7 @@ function openEditReqModal(id, customerId, vehicleId, serviceId, amount, status, 
     document.getElementById('req_remarks').value = remarks || '';
 }
 
-const serviceFees = {
-  <% services.forEach(s => { %>
-    "<%= s.id %>": <%= s.default_fee || 0 %>,
-  <% }) %>
-};
+const serviceFees = JSON.parse('<%- JSON.stringify((typeof services !== "undefined" ? services : []).reduce(function(acc, s) { acc[s.id] = Number(s.default_fee) || 0; return acc; }, {})) %>');
 
 document.addEventListener("DOMContentLoaded", function () {
 

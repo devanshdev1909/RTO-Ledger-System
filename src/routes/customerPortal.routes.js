@@ -3,6 +3,8 @@ const router = express.Router();
 const customerAuth = require('../controllers/customerAuth.controller');
 const customerPortal = require('../controllers/customerPortal.controller');
 const isCustomerAuth = require('../middleware/customerAuth');
+const paymentController = require('../controllers/payment.controller');
+
 
 // Auth Routes
 router.get('/login', customerAuth.getLogin);
@@ -29,5 +31,10 @@ router.post('/request/:id/delete', customerPortal.postDeleteRequest);
 
 
 router.post('/profile', customerPortal.postProfile);
+
+// Payment integration endpoints
+router.post('/payment/create-order', paymentController.createOrder);
+router.post('/payment/verify', paymentController.verifyPayment);
+
 
 module.exports = router;

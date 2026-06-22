@@ -16,6 +16,7 @@ const ledgerRouter = require("./routes/ledger.routes");
 const serviceRoutes = require("./routes/service.routes");
 const roleRoutes = require("./routes/role.routes");
 const receiptRouter = require("./routes/receipt.routes");
+const paymentRoutes = require("./routes/payment.routes");
 const dashboardRouter = require("./routes/dashboard.routes");
 const pool = require("./config/db");
 const app = express();
@@ -153,6 +154,7 @@ app.use("/ledger", ledgerRouter);
 app.use("/services", serviceRoutes);
 app.use("/receipts", receiptRouter);
 app.use("/dashboard", dashboardRouter);
+app.use("/payments", paymentRoutes);
 // Dashboard routes are handled by dashboardRouter
 
 app.get("/test-session", (req, res) => {

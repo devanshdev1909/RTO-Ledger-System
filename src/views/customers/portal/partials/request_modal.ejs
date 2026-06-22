@@ -9,11 +9,16 @@
 
     <form id="requestForm" action="/portal/request/create" method="POST">
 
+      <!-- Hidden fields to store Razorpay response -->
+      <input type="hidden" name="razorpay_order_id"   id="h_razorpay_order_id">
+      <input type="hidden" name="razorpay_payment_id" id="h_razorpay_payment_id">
+      <input type="hidden" name="razorpay_signature"  id="h_razorpay_signature">
+
       <div class="form-group" style="margin-bottom: 15px;">
         <label for="r_vehicle_id">Select Vehicle *</label>
         <select name="vehicle_id" id="r_vehicle_id" required style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
           <option value="">-- Choose Vehicle --</option>
-          <% vehicles.forEach(v => { %>
+          <% vehicles.forEach(function(v) { %>
           <option value="<%= v.id %>"><%= v.vehicle_number %></option>
           <% }) %>
         </select>
@@ -23,7 +28,7 @@
         <label for="r_service_id">Select Service *</label>
         <select name="service_id" id="r_service_id" required style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
           <option value="">-- Choose Service --</option>
-          <% services.forEach(s => { %>
+          <% services.forEach(function(s) { %>
           <option value="<%= s.id %>"><%= s.service_name %> (₹<%= s.default_fee %>)</option>
           <% }) %>
         </select>
@@ -41,28 +46,33 @@
 
       <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
         <button type="button" class="btn btn-secondary" onclick="closeRequestModal()">Cancel</button>
-        <button type="submit" class="btn btn-primary">Save Request</button>
+        <button type="button" id="requestSubmitBtn" class="btn btn-primary" style="background-color:#203051; color:white; border:none; padding:8px 18px; border-radius:5px; font-weight:bold; cursor:pointer;">Pay &amp; Submit</button>
       </div>
 
     </form>
   </div>
 </div>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
+  let _modalMode = 'create';
+
   function openRequestCreateModal() {
+    _modalMode = 'create';
     document.getElementById('requestModalTitle').textContent = "Request Service";
     document.getElementById('requestForm').action = "/portal/request/create";
     
-    // Clear fields
     document.getElementById('r_vehicle_id').value = "";
     document.getElementById('r_service_id').value = "";
     document.getElementById('r_amount').value = "";
     document.getElementById('r_remarks').value = "";
     
+    document.getElementById('requestSubmitBtn').textContent = "Pay & Submit";
     document.getElementById('requestModal').style.display = 'block';
   }
 
   function openRequestEditModal(elementOrId, vehicle_id, service_id, amount, remarks) {
+    _modalMode = 'edit';
     let id;
     if (elementOrId && typeof elementOrId === 'object' && elementOrId.dataset) {
       id = elementOrId.dataset.id;
@@ -76,12 +86,12 @@
     document.getElementById('requestModalTitle').textContent = "Edit Request";
     document.getElementById('requestForm').action = "/portal/request/" + id + "/edit";
     
-    // Pre-fill fields
     document.getElementById('r_vehicle_id').value = vehicle_id;
     document.getElementById('r_service_id').value = service_id;
     document.getElementById('r_amount').value = amount;
     document.getElementById('r_remarks').value = remarks || "";
     
+    document.getElementById('requestSubmitBtn').textContent = "Save Request";
     document.getElementById('requestModal').style.display = 'block';
   }
 
@@ -96,19 +106,86 @@
     }
   });
 
-  // Auto-fill amount based on service selection
-  document.addEventListener("DOMContentLoaded", function() {
-    const serviceSelect = document.getElementById('r_service_id');
-    const amountInput = document.getElementById('r_amount');
-    
-    const serviceFees = JSON.parse('<%- JSON.stringify((locals.services || []).reduce((acc, s) => { acc[s.id] = Number(s.default_fee) || 0; return acc; }, {})) %>');
+  const serviceFees = JSON.parse('<%- JSON.stringify((locals.services || []).reduce((acc, s) => { acc[s.id] = Number(s.default_fee) || 0; return acc; }, {})) %>');
 
-    serviceSelect.addEventListener('change', function() {
-      if (this.value && serviceFees[this.value] !== undefined) {
-        amountInput.value = serviceFees[this.value];
-      } else {
-        amountInput.value = "";
+  document.getElementById('r_service_id').addEventListener('change', function() {
+    const amountInput = document.getElementById('r_amount');
+    if (this.value && serviceFees[this.value] !== undefined) {
+      amountInput.value = serviceFees[this.value];
+    } else {
+      amountInput.value = "";
+    }
+  });
+
+  // Submit button handler logic
+  document.getElementById('requestSubmitBtn').addEventListener('click', async function() {
+    const form = document.getElementById('requestForm');
+    
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    if (_modalMode === 'edit') {
+      form.submit();
+      return;
+    }
+
+    const amount = document.getElementById('r_amount').value;
+    const btn = this;
+    btn.disabled = true;
+    btn.innerHTML = "⏳ Processing...";
+
+    try {
+      // Step A: Backend standard order generate karega
+      const res = await fetch('/portal/payment/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount })
+      });
+      const orderData = await res.json();
+      
+      if (!orderData.success) {
+        alert('Payment initiation failed.');
+        btn.disabled = false;
+        btn.innerHTML = "Pay & Submit";
+        return;
       }
-    });
+
+      // Step B: Razorpay Widget load call
+      const options = {
+        key: orderData.key_id,
+        amount: orderData.amount,
+        currency: "INR",
+        name: "RTO Ledger System",
+        description: "Service Request Fee",
+        order_id: orderData.order_id,
+        handler: function(response) {
+          // Callback - Response fields form me append karke backend par submit
+          document.getElementById('h_razorpay_order_id').value = response.razorpay_order_id;
+          document.getElementById('h_razorpay_payment_id').value = response.razorpay_payment_id;
+          document.getElementById('h_razorpay_signature').value = response.razorpay_signature;
+          form.submit();
+        },
+        prefill: {
+          name:    "<%= locals.profile ? locals.profile.name : '' %>",
+          email:   "<%= locals.profile ? locals.profile.email : '' %>",
+          contact: "<%= locals.profile ? locals.profile.mobile : '' %>"
+        },
+        modal: {
+          ondismiss: function() {
+            btn.disabled = false;
+            btn.innerHTML = "Pay & Submit";
+          }
+        }
+      };
+      
+      const rzp = new Razorpay(options);
+      rzp.open();
+    } catch(err) {
+      alert('Error during checkout.');
+      btn.disabled = false;
+      btn.innerHTML = "Pay & Submit";
+    }
   });
 </script>
