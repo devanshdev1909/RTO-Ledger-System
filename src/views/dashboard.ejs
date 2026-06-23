@@ -1,5 +1,5 @@
 <%- include("partials/header") %>
-<script>document.documentElement.classList.add('page-dashboard');</script>
+    <script>document.documentElement.classList.add('page-dashboard');</script>
 
     <div class="container">
 
@@ -177,17 +177,23 @@
                         <div class="charts-container"
                             style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 32px;">
                             <!-- Job status pie chart -->
-                            <div class="card chart-card" style="min-height:300px; display: flex; flex-direction: column; align-items: center; justify-content: center; border:2px solid rgb(208, 207, 207);">
-                                <h4 style="margin-bottom: 20px; color: var(--text-primary); text-align: center;">Job Status Overview</h4>
-                                <div style="width: 100%; max-width: 280px; flex-grow: 1; display: flex; align-items: center; justify-content: center;">
+                            <div class="card chart-card"
+                                style="min-height:300px; display: flex; flex-direction: column; align-items: center; justify-content: center; border:2px solid rgb(208, 207, 207);">
+                                <h4 style="margin-bottom: 20px; color: var(--text-primary); text-align: center;">Job
+                                    Status Overview</h4>
+                                <div
+                                    style="width: 100%; max-width: 280px; flex-grow: 1; display: flex; align-items: center; justify-content: center;">
                                     <canvas id="jobStatusChart"></canvas>
                                 </div>
-                            </div>  
+                            </div>
 
                             <!-- Financial Overview Doughnut Chart -->
-                            <div class="card chart-card" style="min-height:300px; display: flex; flex-direction: column; align-items: center; justify-content: center; border:2px solid rgb(208, 207, 207);">
-                                <h4 style="margin-bottom: 20px; text-align: center; color: var(--text-primary);">Financial Overview</h4>
-                                <div style="width: 100%; max-width: 280px; flex-grow: 1; display: flex; align-items: center; justify-content: center;">
+                            <div class="card chart-card"
+                                style="min-height:300px; display: flex; flex-direction: column; align-items: center; justify-content: center; border:2px solid rgb(208, 207, 207);">
+                                <h4 style="margin-bottom: 20px; text-align: center; color: var(--text-primary);">
+                                    Financial Overview</h4>
+                                <div
+                                    style="width: 100%; max-width: 280px; flex-grow: 1; display: flex; align-items: center; justify-content: center;">
                                     <canvas id="financeChart"></canvas>
                                 </div>
                             </div>
@@ -207,8 +213,9 @@
             // Backend se EJS ke through aapka data le rahe hain
             const chartPending = Number("<%= stats.pendingJobs || 0 %>");
             const chartCompleted = Number("<%= stats.completedJobs || 0 %>");
-            const chartRevenue = Number("<%= stats.revenue || 0 %>");
+            const rawRevenue = Number("<%= stats.revenue || 0 %>");
             const chartDue = Number("<%= stats.dueAmount || 0 %>");
+            const chartRevenue = rawRevenue - chartDue > 0 ? rawRevenue - chartDue : 0;
 
             // 1. Job Status ka Pie Chart draw karna
             const ctxJob = document.getElementById('jobStatusChart').getContext('2d');
@@ -224,11 +231,11 @@
                 },
                 options: {
                     responsive: true,
-                    plugins: { 
-                        legend: { 
+                    plugins: {
+                        legend: {
                             position: 'bottom',
                             labels: { boxWidth: 15 } // Smaller color box
-                        } 
+                        }
                     }
                 }
             });
@@ -238,7 +245,7 @@
             new Chart(ctxFinance, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Total Revenue', 'Due Amount'],
+                    labels: ['Collected Revenue', 'Due Amount'],
                     datasets: [{
                         data: [chartRevenue, chartDue],
                         backgroundColor: ['#00838f', '#d32f2f'], // Teal & Red colors
@@ -247,11 +254,11 @@
                 },
                 options: {
                     responsive: true,
-                    plugins: { 
-                        legend: { 
+                    plugins: {
+                        legend: {
                             position: 'bottom',
                             labels: { boxWidth: 15 } // Smaller color box
-                        } 
+                        }
                     }
                 }
             });
