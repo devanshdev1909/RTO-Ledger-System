@@ -12,11 +12,17 @@
     overflow-y: auto;
     overflow-x: hidden;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,0.1) transparent;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
 }
 
-.sidebar::-webkit-scrollbar { width: 4px; }
-.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+.sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
 
 /* ===========================
    MENU LIST
@@ -30,14 +36,14 @@
 /* ===========================
    MENU ITEM
 =========================== */
-.menu > li {
+.menu>li {
     border-radius: 8px;
     margin-bottom: 2px;
     transition: background 0.2s ease;
 }
 
-.menu > li > a,
-.menu > li > a.menu-toggle {
+.menu>li>a,
+.menu>li>a.menu-toggle {
     color: rgba(255, 255, 255, 0.72);
     text-decoration: none;
     display: flex;
@@ -52,21 +58,21 @@
     position: relative;
 }
 
-.menu > li > a:hover,
-.menu > li:hover > a {
+.menu>li>a:hover,
+.menu>li:hover>a {
     color: #ffffff;
-    background: rgba(255,255,255,0.07);
+    background: rgba(255, 255, 255, 0.07);
 }
 
 /* Active state */
-.menu > li.active > a {
+.menu>li.active>a {
     color: #ffffff;
     background: rgba(99, 102, 241, 0.18);
     font-weight: 600;
 }
 
 /* Left accent bar on active */
-.menu > li.active > a::before {
+.menu>li.active>a::before {
     content: '';
     position: absolute;
     left: 0;
@@ -95,8 +101,8 @@
     height: 20px;
 }
 
-.menu > li.active .menu-icon,
-.menu > li > a:hover .menu-icon {
+.menu>li.active .menu-icon,
+.menu>li>a:hover .menu-icon {
     opacity: 1;
 }
 
@@ -125,7 +131,7 @@
 }
 
 /* Rotate chevron when open */
-.service-menu.open > a .chevron {
+.service-menu.open>a .chevron {
     transform: rotate(180deg);
     opacity: 1;
 }
@@ -139,7 +145,7 @@
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                opacity 0.3s ease;
+        opacity 0.3s ease;
     opacity: 0;
 }
 
@@ -148,17 +154,17 @@
     opacity: 1;
 }
 
-.submenu > li {
+.submenu>li {
     border-radius: 6px;
     margin-bottom: 1px;
 }
 
-.submenu > li > a {
+.submenu>li>a {
     display: flex;
     align-items: center;
     gap: 9px;
     padding: 8px 10px;
-    color: rgba(255,255,255,0.58);
+    color: rgba(255, 255, 255, 0.58);
     text-decoration: none;
     font-size: 14px;
     font-weight: 400;
@@ -166,15 +172,15 @@
     transition: color 0.2s ease, background 0.2s ease;
 }
 
-.submenu > li > a:hover {
+.submenu>li>a:hover {
     color: #ffffff;
-    background: rgba(255,255,255,0.07);
+    background: rgba(255, 255, 255, 0.07);
 }
 
-.submenu > li.active > a {
+.submenu>li.active>a {
     color: #a5b4fc;
     font-weight: 600;
-    background: rgba(99,102,241,0.12);
+    background: rgba(99, 102, 241, 0.12);
 }
 
 /* Dot indicator */
@@ -182,18 +188,18 @@
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.3);
+    background: rgba(255, 255, 255, 0.3);
     flex-shrink: 0;
     transition: background 0.2s ease, transform 0.2s ease;
 }
 
-.submenu > li.active .submenu-dot {
+.submenu>li.active .submenu-dot {
     background: #6366f1;
     transform: scale(1.3);
 }
 
-.submenu > li > a:hover .submenu-dot {
-    background: rgba(255,255,255,0.7);
+.submenu>li>a:hover .submenu-dot {
+    background: rgba(255, 255, 255, 0.7);
 }
 
 /* ===========================
@@ -201,7 +207,7 @@
 =========================== */
 .sidebar-divider {
     border: none;
-    border-top: 1px solid rgba(255,255,255,0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
     margin: 10px 12px;
 }
 
@@ -213,29 +219,29 @@
     border-right: 1px solid #334155;
 }
 
-:root.dark-theme .menu > li > a {
+:root.dark-theme .menu>li>a {
     color: rgba(226, 232, 240, 0.72);
 }
 
-:root.dark-theme .menu > li > a:hover,
-:root.dark-theme .menu > li:hover > a {
+:root.dark-theme .menu>li>a:hover,
+:root.dark-theme .menu>li:hover>a {
     color: #ffffff;
-    background: rgba(255,255,255,0.06);
+    background: rgba(255, 255, 255, 0.06);
 }
 
-:root.dark-theme .menu > li.active > a {
+:root.dark-theme .menu>li.active>a {
     background: rgba(99, 102, 241, 0.25);
     color: #ffffff;
 }
 
-:root.dark-theme .submenu > li > a {
+:root.dark-theme .submenu>li>a {
     color: rgba(203, 213, 225, 0.6);
 }
 
-:root.dark-theme .submenu > li > a:hover {
+:root.dark-theme .submenu>li>a:hover {
     color: #ffffff;
 }
 
-:root.dark-theme .submenu > li.active > a {
+:root.dark-theme .submenu>li.active>a {
     color: #93c5fd;
 }
