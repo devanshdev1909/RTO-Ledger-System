@@ -34,7 +34,7 @@
             <% receipts.forEach((r, i)=> { %>
             <tr>
               <td style="text-align: center;">
-                <%= i + 1 %>
+                <%= (currentPage - 1) * 10 + i + 1 %>
               </td>
               <td style="text-align: center;"><strong>
                   <%= r.receipt_no %>
