@@ -198,6 +198,11 @@
     flex-direction: column;
 }
 
+.user-dropdown.show {
+    display: flex;
+    flex-direction: column;
+}
+
 .user-menu.open .user-dropdown {
     display: flex;
 }
@@ -263,15 +268,49 @@
 }
 
 @media (max-width: 768px) {
+    .navbar {
+        padding: 0 10px;
+        gap: 8px;
+    }
+
     .navbar-left {
         width: auto;
     }
 
+    .navbar-logo {
+        font-size: 1rem !important;
+        padding-right: 5px !important;
+    }
+
     .navbar-search {
         max-width: 100%;
+        height: 36px;
+    }
+
+    .navbar-search button {
+        width: 60px;
+        font-size: 0.8rem;
+    }
+
+    .navbar-search input {
+        padding: 0 8px;
+        font-size: 0.85rem;
     }
 
     .user-trigger .user-greet {
-        display: none;
+        display: none !important;
+    }
+
+    .user-trigger-custom {
+        padding: 0 !important;
+        border: none !important;
+        background: transparent !important;
+    }
+
+    /* Shrink the quick add button on mobile */
+    .btn-primary[onclick="openQuickAddModal()"] {
+        padding: 0 8px !important;
+        font-size: 0.8rem !important;
+        margin-right: 5px !important;
     }
 }

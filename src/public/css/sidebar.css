@@ -245,3 +245,39 @@
 :root.dark-theme .submenu>li.active>a {
     color: #93c5fd;
 }
+
+/* ===========================
+   MOBILE RESPONSIVENESS
+=========================== */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 999; /* Just below sidebar */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.show {
+    display: block;
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 1000;
+        top: 0; /* Cover full height on mobile */
+        height: 100%;
+        bottom: 0;
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+}
