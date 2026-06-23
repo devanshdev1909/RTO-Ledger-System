@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const pool = require("../config/db");
 const Customer = require("../models/Customer");
+const { sendWelcomeEmail, sendActivationEmail } = require("../utils/mailer");
 
 // Show login page
 exports.getLogin = (req, res) => {
@@ -49,6 +50,11 @@ exports.postRegister = async (req, res) => {
       email || null,
       hashedPassword,
     );
+
+    // Send Welcome Email
+    if (email) {
+      sendWelcomeEmail(email, name, customerCode);
+    }
 
     res.redirect("/login");
   } catch (err) {
@@ -103,6 +109,11 @@ exports.postActivateAccount = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     await Customer.setPassword(customer.id, hashedPassword);
+
+    // Send Activation Email
+    if (customer.email) {
+      sendActivationEmail(customer.email, customer.name);
+    }
 
     // Set Customer Session
     req.session.customerId = customer.id;

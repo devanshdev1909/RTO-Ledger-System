@@ -131,9 +131,11 @@ module.exports.create = async (req, res) => {
 
             const ledgerId = ledger.id;
 
+            let receiptNoForEmail = null;
             // Generate receipt automatically if amount paid >= 0
             if (paid >= 0) {
                 const receiptNo = await Receipt.getNextReceiptNo(client);
+                receiptNoForEmail = receiptNo;
                 await Receipt.create(
                     receiptNo,
                     ledgerId,
@@ -150,6 +152,21 @@ module.exports.create = async (req, res) => {
             await ServiceRequest.updateStatus(service_request_id, 'Completed', client);
 
             await client.query('COMMIT');
+
+            if (paid >= 0 && receiptNoForEmail) {
+                const Customer = require("../models/Customer");
+                const customer = await Customer.findById(customer_id);
+                if (customer && customer.email) {
+                    const receiptDetails = {
+                        receipt_no: receiptNoForEmail,
+                        amount: paid,
+                        payment_mode: payment_mode || 'Cash',
+                        remarks: ''
+                    };
+                    require("../utils/mailer").sendReceiptEmail(customer.email, customer.name, receiptDetails);
+                }
+            }
+
         } catch (err) {
             await client.query('ROLLBACK');
             throw err;
@@ -216,10 +233,14 @@ module.exports.update = async (req, res) => {
             // Update ledger record
             await Ledger.updatePayment(id, paid, status, client);
 
+            let receiptNoForEmail = null;
+            let emailDiffAmount = 0;
             // If new amount paid is higher than old, generate a receipt for the payment difference
             if (paid > oldPaid) {
                 const diff = paid - oldPaid;
+                emailDiffAmount = diff;
                 const receiptNo = await Receipt.getNextReceiptNo(client);
+                receiptNoForEmail = receiptNo;
                 await Receipt.create(
                     receiptNo,
                     id,
@@ -233,6 +254,24 @@ module.exports.update = async (req, res) => {
             }
 
             await client.query('COMMIT');
+
+            if (receiptNoForEmail) {
+                const Customer = require("../models/Customer");
+                // Original ledger might have customer_id or we need to get it via id
+                const ledger = await Ledger.findById(id);
+                if (ledger) {
+                    const customer = await Customer.findById(ledger.customer_id);
+                    if (customer && customer.email) {
+                        const receiptDetails = {
+                            receipt_no: receiptNoForEmail,
+                            amount: emailDiffAmount,
+                            payment_mode: payment_mode || 'Cash',
+                            remarks: ''
+                        };
+                        require("../utils/mailer").sendReceiptEmail(customer.email, customer.name, receiptDetails);
+                    }
+                }
+            }
         } catch (err) {
             await client.query('ROLLBACK');
             throw err;
