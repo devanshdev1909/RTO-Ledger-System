@@ -175,16 +175,22 @@
 
             const result = await response.json();
             if (!result.success) {
-              alert("Error updating status: " + result.error);
+              if (typeof showToast === 'function') showToast("Error updating status: " + result.error, "error");
+              else alert("Error updating status: " + result.error);
               e.target.value = previousStatus;
               updateSelectColor(e.target, previousStatus);
             } else {
               // Keep track of the current status
               e.target.setAttribute("data-prev", newStatus);
               updateSelectColor(e.target, newStatus);
+              
+              if (typeof showToast === 'function') {
+                  showToast("Status updated and email notification sent!", "success");
+              }
             }
           } catch (error) {
-            alert("Network error updating status.");
+            if (typeof showToast === 'function') showToast("Network error updating status.", "error");
+            else alert("Network error updating status.");
             e.target.value = previousStatus;
             updateSelectColor(e.target, previousStatus);
           }
