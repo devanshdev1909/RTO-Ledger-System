@@ -2,9 +2,8 @@ const pool = require("../config/db");
 
 class Vehicle {
 
-    static async getAll() {
-        const result = await pool.query(
-            `
+    static async getAll(limit = null, offset = null) {
+        let query = `
             SELECT 
                 v.*,
                 c.name AS customer_name
@@ -12,9 +11,19 @@ class Vehicle {
             LEFT JOIN customers c
             ON v.customer_id = c.id
             ORDER BY v.created_at DESC
-            `
-        );
+        `;
+        const params = [];
+        if (limit !== null && offset !== null) {
+            query += " LIMIT $1 OFFSET $2";
+            params.push(limit, offset);
+        }
+        const result = await pool.query(query, params);
         return result.rows;
+    }
+
+    static async getCount() {
+        const result = await pool.query("SELECT COUNT(*) FROM vehicles");
+        return parseInt(result.rows[0].count, 10);
     }
 
     static async getById(id) {
@@ -104,8 +113,14 @@ class Vehicle {
         return parseInt(result.rows[0].count, 10);
     }
 
-    static async getByCustomerId(customerId) {
-        const result = await pool.query('SELECT * FROM vehicles WHERE customer_id = $1 ORDER BY created_at DESC', [customerId]);
+    static async getByCustomerId(customerId, limit = null, offset = null) {
+        let query = 'SELECT * FROM vehicles WHERE customer_id = $1 ORDER BY created_at DESC';
+        const params = [customerId];
+        if (limit !== null && offset !== null) {
+            query += " LIMIT $2 OFFSET $3";
+            params.push(limit, offset);
+        }
+        const result = await pool.query(query, params);
         return result.rows;
     }
 }

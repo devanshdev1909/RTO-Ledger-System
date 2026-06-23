@@ -5,9 +5,15 @@ const Role = require("../models/Role");
 // List all users
 module.exports.listUsers = async (req, res) => {
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const offset = (page - 1) * limit;
+
         // We added u.role_id here so we can look up their role permissions!
-        const allUsers = await User.getAllWithRoles();
-        const usersList = allUsers.filter(u => u.role_name !== 'Admin');
+        const usersList = await User.getAllWithRoles(limit, offset);
+        
+        const totalUsers = await User.getCount();
+        const totalPages = Math.ceil(totalUsers / limit);
 
         const rolesList = await Role.getAll();
 
@@ -35,6 +41,8 @@ module.exports.listUsers = async (req, res) => {
             activePage: "admin",
             userName: req.session.userName,
             users: users,
+            currentPage: page,
+            totalPages: totalPages,
             roles: rolesList,
             allPermissions: allPermissionsList, // Pass permissions to view
             error: req.query.error || null

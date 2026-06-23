@@ -2,12 +2,21 @@ const Customer = require("../models/Customer");
 
 const renderCustomersPage = async (req, res) => {
     try {
-        const customers = await Customer.getAll();
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const offset = (page - 1) * limit;
+
+        const customers = await Customer.getAll(limit, offset);
+        const totalCustomers = await Customer.getCount();
+        const totalPages = Math.ceil(totalCustomers / limit);
+        
         const nextCustomerCode = await Customer.getNextCustomerCode();
 
         res.render("customers/staff/index", {
             activePage: "customers",
             customers: customers,
+            currentPage: page,
+            totalPages: totalPages,
             userName: req.session.userName,
             nextCustomerCode
         });

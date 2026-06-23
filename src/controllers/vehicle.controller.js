@@ -4,11 +4,20 @@ const Customer = require("../models/Customer");
 // Show all vehicles
 module.exports.index = async (req, res) => {
   try {
-    const vehicles = await Vehicle.getAll();
-    const customers = await Customer.getAll();
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const offset = (page - 1) * limit;
+
+    const vehicles = await Vehicle.getAll(limit, offset);
+    const totalVehicles = await Vehicle.getCount();
+    const totalPages = Math.ceil(totalVehicles / limit);
+
+    const customers = await Customer.getAll(); // we shouldn't paginate the customers list for the dropdown
 
     res.render("vehicles/index", {
       vehicles,
+      currentPage: page,
+      totalPages: totalPages,
       customers: customers,
       userName: req.session.userName,
     });

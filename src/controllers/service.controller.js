@@ -39,15 +39,25 @@ const apiGetActiveServices = async (req, res) => {
 // SERVICES PAGE
 const showServices = async (req, res) => {
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const offset = (page - 1) * limit;
+
         const result = await db.query(`
             SELECT *
             FROM services
             ORDER BY id DESC
-        `);
+            LIMIT $1 OFFSET $2
+        `, [limit, offset]);
+
+        const countRes = await db.query(`SELECT COUNT(*) FROM services`);
+        const totalPages = Math.ceil(parseInt(countRes.rows[0].count) / limit);
 
         res.render("services/index", {
             activePage: "services",
-            services: result.rows
+            services: result.rows,
+            currentPage: page,
+            totalPages: totalPages
         });
 
     } catch (err) {
@@ -126,6 +136,10 @@ const deleteService = async (req, res) => {
 // SERVICE REQUEST LIST
 const showRequests = async (req, res) => {
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const offset = (page - 1) * limit;
+
         const result = await db.query(`
             SELECT sr.*, c.name AS customer_name, v.vehicle_number, s.service_name
             FROM service_requests sr
@@ -133,7 +147,11 @@ const showRequests = async (req, res) => {
             LEFT JOIN vehicles v ON sr.vehicle_id = v.id
             LEFT JOIN services s ON sr.service_id = s.id
             ORDER BY sr.id DESC
-        `);
+            LIMIT $1 OFFSET $2
+        `, [limit, offset]);
+
+        const countRes = await db.query(`SELECT COUNT(*) FROM service_requests`);
+        const totalPages = Math.ceil(parseInt(countRes.rows[0].count) / limit);
 
         // Fetch data needed for the Modal dropdowns
         const customers = await db.query(`SELECT id, name FROM customers ORDER BY name`);
@@ -143,6 +161,8 @@ const showRequests = async (req, res) => {
         res.render("service_requests/index", {
             activePage: "service_requests",
             requests: result.rows,
+            currentPage: page,
+            totalPages: totalPages,
             customers: customers.rows,
             vehicles: vehicles.rows,
             services: services.rows

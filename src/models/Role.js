@@ -1,13 +1,30 @@
 const pool = require("../config/db");
 
 class Role {
-    static async getAll(excludeAdmin = false) {
-        let query = "SELECT * FROM roles ORDER BY id ASC";
+    static async getAll(excludeAdmin = false, limit = null, offset = null) {
+        let query = "SELECT * FROM roles";
         if (excludeAdmin) {
-            query = "SELECT * FROM roles WHERE name != 'Admin' ORDER BY id ASC";
+            query += " WHERE name != 'Admin'";
+        }
+        query += " ORDER BY id ASC";
+        
+        const params = [];
+        if (limit !== null && offset !== null) {
+            query += " LIMIT $1 OFFSET $2";
+            params.push(limit, offset);
+        }
+        
+        const result = await pool.query(query, params);
+        return result.rows;
+    }
+
+    static async getCount(excludeAdmin = false) {
+        let query = "SELECT COUNT(*) FROM roles";
+        if (excludeAdmin) {
+            query += " WHERE name != 'Admin'";
         }
         const result = await pool.query(query);
-        return result.rows;
+        return parseInt(result.rows[0].count, 10);
     }
 
     static async getPermissions() {

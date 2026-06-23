@@ -5,7 +5,15 @@ const Role = require("../models/Role");
 // Get all roles
 exports.getRoles = async (req, res) => {
     try {
-        const rolesList = await Role.getAll(true); // excludeAdmin = true
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const offset = (page - 1) * limit;
+
+        const rolesList = await Role.getAll(true, limit, offset); // excludeAdmin = true
+        
+        const totalRoles = await Role.getCount(true);
+        const totalPages = Math.ceil(totalRoles / limit);
+
         const allPermissionsList = await Role.getPermissions();
         const rolePermsList = await Role.getRolePermissions();
 
@@ -20,6 +28,8 @@ exports.getRoles = async (req, res) => {
         res.render("admin/roles/index", {
             roles: roles,
             allPermissions: allPermissionsList,
+            currentPage: page,
+            totalPages: totalPages,
             activePage: "roles",
             error: req.query.error || null
         });
