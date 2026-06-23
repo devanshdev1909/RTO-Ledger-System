@@ -34,6 +34,10 @@
     gap: 24px;
 }
 
+.dashboard-cards.four-cols {
+    grid-template-columns: repeat(4, 1fr);
+}
+
 .card {
     background: var(--theme-bg, var(--card-bg));
     padding: 18px;
@@ -95,7 +99,8 @@
 }
 
 @media (max-width: 900px) {
-    .dashboard-cards {
+    .dashboard-cards,
+    .dashboard-cards.four-cols {
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     }
 }
@@ -105,7 +110,8 @@
         padding: 18px;
     }
 
-    .dashboard-cards {
+    .dashboard-cards,
+    .dashboard-cards.four-cols {
         grid-template-columns: 1fr;
     }
 }
