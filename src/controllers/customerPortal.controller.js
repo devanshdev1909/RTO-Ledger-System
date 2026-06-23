@@ -230,6 +230,28 @@ exports.postCreateRequest = async (req, res) => {
         await client.query('COMMIT');
         console.log('[Portal Request] ✅ Transaction committed — all done!');
 
+        // Fetch customer to send emails
+        const customer = await Customer.findById(customerId);
+        if (customer && customer.email) {
+            // Send Request Created Email
+            const requestDetails = {
+                request_no: serviceRequest.request_no || 'Pending',
+                service_name: "Online Request", // We don't have the exact service name here without another query
+                vehicle_number: "Online Vehicle", // We don't have the exact vehicle number here without another query
+                status: 'Pending'
+            };
+            require("../utils/mailer").sendRequestCreatedEmail(customer.email, customer.name, requestDetails);
+
+            // Send Receipt Email
+            const receiptDetails = {
+                receipt_no: receiptNo,
+                amount: parsedAmount,
+                payment_mode: 'Online (Razorpay)',
+                remarks: `Razorpay Payment ID: ${razorpay_payment_id}` + (remarks ? ` | ${remarks}` : '')
+            };
+            require("../utils/mailer").sendReceiptEmail(customer.email, customer.name, receiptDetails);
+        }
+
         res.redirect('/portal/my-requests');
     } catch (err) {
         await client.query('ROLLBACK').catch(() => {});

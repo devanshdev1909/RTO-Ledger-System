@@ -7,6 +7,7 @@ const ServiceRequest = require('../models/ServiceRequest');
 // Helper function to fetch request details and send email
 const sendUpdateNotification = async (id) => {
     try {
+        console.log("DEBUG: sendUpdateNotification called for id:", id);
         const reqDetailsRes = await db.query(`
             SELECT sr.*, c.name AS customer_name, c.email AS customer_email, v.vehicle_number, s.service_name 
             FROM service_requests sr
@@ -16,8 +17,10 @@ const sendUpdateNotification = async (id) => {
             WHERE sr.id = $1
         `, [id]);
 
+        console.log("DEBUG: Query result length:", reqDetailsRes.rows.length);
         if (reqDetailsRes.rows.length > 0) {
             const updatedRequest = reqDetailsRes.rows[0];
+            console.log("DEBUG: customer email is:", updatedRequest.customer_email);
             await mailer.sendStatusUpdateEmail(updatedRequest.customer_email, updatedRequest.customer_name, updatedRequest);
         }
     } catch (mailErr) {

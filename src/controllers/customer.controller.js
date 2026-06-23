@@ -47,6 +47,11 @@ const createCustomer = async (req, res) => {
             customer_code = await Customer.getNextCustomerCode();
         }
         await Customer.createStaff(customer_code, name, mobile, email, address, req.session.userId);
+
+        if (email) {
+            require("../utils/mailer").sendWelcomeEmail(email, name, customer_code);
+        }
+
         res.redirect("/customers");
     } catch (err) {
         console.log(err);

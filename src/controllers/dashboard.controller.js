@@ -63,10 +63,36 @@ module.exports.postQuickAdd = async (req, res) => {
                         s.payment_mode, "Quick Add Registration", req.session.userId, client
                     );
                     receiptsToPrint.push(newReceipt.id);
+
+                    if (customer.email) {
+                        const receiptDetails = {
+                            receipt_no: receiptNo,
+                            amount: paidAmount,
+                            payment_mode: s.payment_mode,
+                            remarks: "Quick Add Registration"
+                        };
+                        require("../utils/mailer").sendReceiptEmail(customer.email, customer.name, receiptDetails);
+                    }
+                }
+
+                if (customer.email) {
+                    const matchedVehicle = vehicles ? vehicles.find(vec => vec.index === s.vehicle_index) : null;
+                    const requestDetails = {
+                        request_no: newRequest.request_no || newRequest.id || 'Pending',
+                        service_name: "Service (Quick Add)", // Best effort without additional DB query
+                        vehicle_number: matchedVehicle ? matchedVehicle.vehicle_number : 'N/A',
+                        status: 'Pending'
+                    };
+                    require("../utils/mailer").sendRequestCreatedEmail(customer.email, customer.name, requestDetails);
                 }
             }
         }
         await client.query("COMMIT");
+
+        // Send Welcome Email
+        if (customer.email) {
+            require("../utils/mailer").sendWelcomeEmail(customer.email, customer.name, customerCode);
+        }
         res.status(200).json({ success: true, receipts: receiptsToPrint });
     } catch (err) {
         await client.query("ROLLBACK");
