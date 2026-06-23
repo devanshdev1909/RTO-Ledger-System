@@ -22,9 +22,9 @@
               <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Customer</th>
               <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Vehicle</th>
               <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Service</th>
-              <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Service Fee</th>
-              <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Amount Paid</th>
-              <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Due Amount</th>
+              <th style="text-align: center; background-color:#203051; color:white; font-size:16px; white-space: nowrap;">Service Fee</th>
+              <th style="text-align: center; background-color:#203051; color:white; font-size:16px; white-space: nowrap;">Amount Paid</th>
+              <th style="text-align: center; background-color:#203051; color:white; font-size:16px; white-space: nowrap; text-align: center;">Due Amount</th>
               <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Status</th>
               <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Date</th>
               <th style="text-align: center; background-color:#203051; color:white; font-size:16px;">Actions</th>
@@ -60,7 +60,7 @@
               </td>
               <% const dueColor=l.due_amount> 0 ? 'amount-due' : 'amount-clear';
                                                         %>
-              <td class="<%= dueColor %>">
+              <td style="text-align: center;" class="<%= dueColor %>">
                 ₹<%= Number(l.due_amount).toLocaleString("en-IN") %>
               </td>
               <td style="text-align: center;">
