@@ -10,7 +10,13 @@ const Service = require("../models/Service");
 // List all ledger entries
 module.exports.index = async (req, res) => {
     try {
-        const ledgers = await Ledger.getAll();
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const offset = (page - 1) * limit;
+
+        const ledgers = await Ledger.getAll(limit, offset);
+        const totalLedgers = await Ledger.getCount();
+        const totalPages = Math.ceil(totalLedgers / limit);
 
         // ADD THIS NEW QUERY TO FETCH SERVICE REQUESTS
         const availableRequests = await Ledger.getPendingRequests();
@@ -19,6 +25,8 @@ module.exports.index = async (req, res) => {
             activePage: "ledger",
             userName: req.session.userName,
             ledgers: ledgers,
+            currentPage: page,
+            totalPages: totalPages,
             requests: availableRequests // PASS IT TO THE VIEW HERE
         });
     } catch (err) {
@@ -39,9 +47,17 @@ module.exports.customerLedger = async (req, res) => {
             return res.send("Customer not found");
         }
 
-        const ledgers = await Ledger.findByCustomerId(customerId);
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const offset = (page - 1) * limit;
 
-        const totals = ledgers.reduce((acc, row) => {
+        const ledgers = await Ledger.findByCustomerId(customerId, limit, offset);
+        const totalLedgers = await Ledger.getCountByCustomerId(customerId);
+        const totalPages = Math.ceil(totalLedgers / limit);
+
+        // calculate totals based on all ledgers (without pagination)
+        const allLedgers = await Ledger.findByCustomerId(customerId); // pass no limit/offset for totals calculation
+        const totals = allLedgers.reduce((acc, row) => {
             acc.totalFee += parseFloat(row.service_fee || 0);
             acc.totalPaid += parseFloat(row.amount_paid || 0);
             acc.totalDue += parseFloat(row.due_amount || 0);
@@ -53,6 +69,8 @@ module.exports.customerLedger = async (req, res) => {
             userName: req.session.userName,
             customer: customer,
             ledgers: ledgers,
+            currentPage: page,
+            totalPages: totalPages,
             totals
         });
     } catch (err) {

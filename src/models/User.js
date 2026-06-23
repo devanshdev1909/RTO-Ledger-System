@@ -27,14 +27,34 @@ class User {
 
         return result.rows[0];
     }
-    static async getAllWithRoles() {
-        const result = await pool.query(`
+    static async getAllWithRoles(limit = null, offset = null) {
+        let query = `
             SELECT u.*, r.name AS role_name 
             FROM users u
             LEFT JOIN roles r ON u.role_id = r.id
+            WHERE r.name != 'Admin' OR r.name IS NULL
             ORDER BY u.created_at DESC
-        `);
+        `;
+        const params = [];
+        if (limit !== null && offset !== null) {
+            query += " LIMIT $1 OFFSET $2";
+            params.push(limit, offset);
+        }
+        const result = await pool.query(query, params);
         return result.rows;
+    }
+
+    static async getCount() {
+        // We filter out 'Admin' in the controller, so we should filter it out here to be accurate, 
+        // but for simplicity, we can do a similar join or just count all.
+        // Wait, the controller filters u.role_name !== 'Admin'.
+        const result = await pool.query(`
+            SELECT COUNT(*) 
+            FROM users u
+            LEFT JOIN roles r ON u.role_id = r.id
+            WHERE r.name != 'Admin' OR r.name IS NULL
+        `);
+        return parseInt(result.rows[0].count, 10);
     }
 
     static async findById(id) {

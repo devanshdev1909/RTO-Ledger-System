@@ -4,12 +4,21 @@ const Receipt = require("../models/Receipt");
 // List all generated receipts
 module.exports.index = async (req, res) => {
     try {
-        const receipts = await Receipt.getAll();
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const offset = (page - 1) * limit;
+
+        const receipts = await Receipt.getAll(limit, offset);
+        
+        const totalReceipts = await Receipt.getCount();
+        const totalPages = Math.ceil(totalReceipts / limit);
 
         res.render("receipts/index", {
             activePage: "receipts",
             userName: req.session.userName,
-            receipts: receipts
+            receipts: receipts,
+            currentPage: page,
+            totalPages: totalPages
         });
     } catch (err) {
         console.log(err);

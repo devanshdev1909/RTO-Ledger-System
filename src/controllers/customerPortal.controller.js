@@ -50,9 +50,18 @@ exports.getMyVehicles = async (req, res) => {
         return res.redirect('/login');
     }
     try {
-        const vehicles = await Vehicle.getByCustomerId(customerId);
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const offset = (page - 1) * limit;
+
+        const vehicles = await Vehicle.getByCustomerId(customerId, limit, offset);
+        const totalVehicles = await Vehicle.countByCustomerId(customerId);
+        const totalPages = Math.ceil(totalVehicles / limit);
+
         res.render('customers/portal/vehicles', {
             vehicles: vehicles,
+            currentPage: page,
+            totalPages: totalPages,
             activePage: 'vehicles',
             error: req.query.error || null
         });
@@ -67,11 +76,20 @@ exports.getMyVehicles = async (req, res) => {
 exports.getMyRequests = async (req, res) => {
     const customerId = req.session.customerId;
     try {
-        const requests = await ServiceRequest.getByCustomerId(customerId);
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const offset = (page - 1) * limit;
+
+        const requests = await ServiceRequest.getByCustomerId(customerId, limit, offset);
+        const totalRequests = await ServiceRequest.getCountByCustomerId(customerId);
+        const totalPages = Math.ceil(totalRequests / limit);
+
         const vehicles = await Vehicle.getByCustomerId(customerId);
         const services = await Service.getActiveServices();
         res.render('customers/portal/requests', {
             requests: requests,
+            currentPage: page,
+            totalPages: totalPages,
             vehicles: vehicles,
             services: services,
             customerId: customerId,

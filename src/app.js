@@ -75,6 +75,11 @@ app.use(async (req, res, next) => {
   res.locals.permissions = req.session.permissions || [];
   res.locals.userRole = req.session.userRole || null;
   res.locals.userName = req.session.userName || null;
+  
+  res.locals.currentUrl = req.originalUrl;
+  res.locals.queryPath = req.path;
+  res.locals.queryParams = req.query;
+  
   next();
 });
 app.use("/admin", userRouter);
@@ -102,7 +107,7 @@ app.get("/search", isLoggedIn, async (req, res) => {
       const customerResult = await pool.query(
         `SELECT * FROM customers
          WHERE customer_code ILIKE $1 OR name ILIKE $1 OR mobile ILIKE $1 OR email ILIKE $1 OR address ILIKE $1
-         ORDER BY created_at DESC`,
+         ORDER BY created_at DESC LIMIT 10`,
         [searchTerm]
       );
       results.customers = customerResult.rows;
@@ -116,7 +121,7 @@ app.get("/search", isLoggedIn, async (req, res) => {
          FROM vehicles v
          LEFT JOIN customers c ON v.customer_id = c.id
          WHERE v.vehicle_number ILIKE $1 OR v.chassis_number ILIKE $1 OR v.engine_number ILIKE $1 OR v.vehicle_type ILIKE $1 OR c.name ILIKE $1
-         ORDER BY v.created_at DESC`,
+         ORDER BY v.created_at DESC LIMIT 10`,
         [searchTerm]
       );
       results.vehicles = vehicleResult.rows;
@@ -129,7 +134,7 @@ app.get("/search", isLoggedIn, async (req, res) => {
         `SELECT id, receipt_no, customer_name, service_name, amount_received, payment_mode, received_at
          FROM receipts
          WHERE receipt_no ILIKE $1 OR customer_name ILIKE $1 OR service_name ILIKE $1 OR payment_mode ILIKE $1
-         ORDER BY received_at DESC`,
+         ORDER BY received_at DESC LIMIT 10`,
         [searchTerm]
       );
       results.receipts = receiptResult.rows;

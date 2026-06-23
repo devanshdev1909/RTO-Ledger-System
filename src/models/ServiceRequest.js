@@ -6,16 +6,27 @@ class ServiceRequest {
         return result.rows;
     }
 
-    static async getByCustomerId(customerId) {
-        const result = await pool.query(`
+    static async getByCustomerId(customerId, limit = null, offset = null) {
+        let query = `
             SELECT sr.*, v.vehicle_number, s.service_name
             FROM service_requests sr
             JOIN vehicles v ON sr.vehicle_id = v.id
             JOIN services s ON sr.service_id = s.id
             WHERE sr.customer_id = $1
             ORDER BY sr.created_at DESC
-        `, [customerId]);
+        `;
+        const params = [customerId];
+        if (limit !== null && offset !== null) {
+            query += " LIMIT $2 OFFSET $3";
+            params.push(limit, offset);
+        }
+        const result = await pool.query(query, params);
         return result.rows;
+    }
+
+    static async getCountByCustomerId(customerId) {
+        const result = await pool.query("SELECT COUNT(*) FROM service_requests WHERE customer_id = $1", [customerId]);
+        return parseInt(result.rows[0].count, 10);
     }
 
     static async checkDuplicate(vehicleId, serviceId, excludeRequestId = null) {

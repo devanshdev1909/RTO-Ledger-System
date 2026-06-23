@@ -1,8 +1,8 @@
 const pool = require("../config/db");
 
 class Ledger {
-    static async getAll() {
-        const result = await pool.query(`
+    static async getAll(limit = null, offset = null) {
+        let query = `
             SELECT 
                 l.*,
                 c.name AS customer_name,
@@ -15,8 +15,19 @@ class Ledger {
             LEFT JOIN service_requests sr ON l.service_request_id = sr.id
             LEFT JOIN services s ON sr.service_id = s.id
             ORDER BY l.id DESC
-        `);
+        `;
+        const params = [];
+        if (limit !== null && offset !== null) {
+            query += " LIMIT $1 OFFSET $2";
+            params.push(limit, offset);
+        }
+        const result = await pool.query(query, params);
         return result.rows;
+    }
+
+    static async getCount() {
+        const result = await pool.query("SELECT COUNT(*) FROM ledgers");
+        return parseInt(result.rows[0].count, 10);
     }
 
     static async getPendingRequests() {
@@ -35,8 +46,8 @@ class Ledger {
         return result.rows;
     }
 
-    static async findByCustomerId(customerId) {
-        const result = await pool.query(`
+    static async findByCustomerId(customerId, limit = null, offset = null) {
+        let query = `
             SELECT 
                 l.*,
                 v.vehicle_number,
@@ -47,8 +58,19 @@ class Ledger {
             LEFT JOIN services s ON sr.service_id = s.id
             WHERE l.customer_id = $1
             ORDER BY l.created_at DESC
-        `, [customerId]);
+        `;
+        const params = [customerId];
+        if (limit !== null && offset !== null) {
+            query += " LIMIT $2 OFFSET $3";
+            params.push(limit, offset);
+        }
+        const result = await pool.query(query, params);
         return result.rows;
+    }
+
+    static async getCountByCustomerId(customerId) {
+        const result = await pool.query("SELECT COUNT(*) FROM ledgers WHERE customer_id = $1", [customerId]);
+        return parseInt(result.rows[0].count, 10);
     }
 
     static async findById(id) {

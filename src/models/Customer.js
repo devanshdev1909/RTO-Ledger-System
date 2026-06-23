@@ -44,9 +44,20 @@ class Customer {
         return result.rows[0];
     }
 
-    static async getAll() {
-        const result = await pool.query("SELECT * FROM customers ORDER BY created_at DESC");
+    static async getAll(limit = null, offset = null) {
+        let query = "SELECT * FROM customers ORDER BY created_at DESC";
+        const params = [];
+        if (limit !== null && offset !== null) {
+            query += " LIMIT $1 OFFSET $2";
+            params.push(limit, offset);
+        }
+        const result = await pool.query(query, params);
         return result.rows;
+    }
+
+    static async getCount() {
+        const result = await pool.query("SELECT COUNT(*) FROM customers");
+        return parseInt(result.rows[0].count, 10);
     }
 
     static async getNextCustomerCode(client) {
