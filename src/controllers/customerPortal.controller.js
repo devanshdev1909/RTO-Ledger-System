@@ -196,15 +196,21 @@ exports.postCreateRequest = async (req, res) => {
 
         // 5. Create Ledger entry — Paid (full payment via Razorpay)
         const parsedAmount = parseFloat(amount) || 0;
-        const ledger = await Ledger.create(
+        
+        const ledgerResult = await client.query(`
+            INSERT INTO ledgers (customer_id, vehicle_id, service_request_id, service_fee, amount_paid, status)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            RETURNING id
+        `, [
             customerId,
             vehicle_id || null,
             serviceRequest.id,
             parsedAmount,   // service_fee
-            parsedAmount,   // amount_paid (full payment done)
-            'Paid',
-            client
-        );
+            parsedAmount,   // amount_paid
+            'Paid'          // status
+        ]);
+        const ledger = ledgerResult.rows[0];
+        
         console.log('[Portal Request] ✅ Ledger created, ID:', ledger.id);
 
         // 6. Generate Receipt
@@ -224,14 +230,16 @@ exports.postCreateRequest = async (req, res) => {
         await client.query('COMMIT');
         console.log('[Portal Request] ✅ Transaction committed — all done!');
 
-        res.redirect('/portal/my-requests?success=RequestCreated');
+        res.redirect('/portal/my-requests');
     } catch (err) {
         await client.query('ROLLBACK').catch(() => {});
         console.error('[Portal Request] ❌ Error:', err.message);
         console.error('[Portal Request] Detail:', err.detail || '');
         res.redirect('/portal/my-requests?error=RequestFailed');
     } finally {
-        client.release().catch(() => {});
+        try {
+            client.release();
+        } catch(e) {}
     }
 };
 
