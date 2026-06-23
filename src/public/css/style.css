@@ -116,34 +116,6 @@ body {
     vertical-align: middle !important;
 }
 
-
-<<<<<<< HEAD
-=======
-
-.footer {
-    background: #ffffff;
-    border-top: 1px solid #e2e8f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px 20px;
-    height: 44px;
-    width: 100%;
-    text-align: center;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 20;
-}
-
-.footer p {
-    margin: 0;
-    color: #475569;
-    font-size: 0.95rem;
-}
-
->>>>>>> b3a2d263ad3adf9ebf134e28f457f5e2dc0dfadd
 .menu li.active {
     background-color: #2563eb;
     border-radius: 6px;
@@ -427,4 +399,55 @@ button,
 /* Prevent icons from stretching */
 .btn-icon svg {
     margin: auto;
+}
+
+/* =========================
+   MOBILE RESPONSIVENESS
+========================= */
+.mobile-toggle-btn {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #1f2937;
+    margin-right: 15px;
+    padding: 5px;
+}
+
+@media (max-width: 768px) {
+    .mobile-toggle-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .container {
+        margin-left: 0 !important;
+    }
+
+    /* Global Page Header */
+    .page-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 15px !important;
+        padding: 15px !important;
+        height: auto !important;
+    }
+
+    /* Global Modals */
+    .modal-box, .modal-content {
+        width: 95% !important;
+        margin: 10px auto !important;
+    }
+
+    /* Global Form Grids */
+    .form-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    /* Padding adjustments */
+    .dashboard-content, .content {
+        padding: 15px !important;
+    }
 }

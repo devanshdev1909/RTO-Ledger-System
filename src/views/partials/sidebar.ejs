@@ -1,4 +1,5 @@
-<div class="sidebar">
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
+<div class="sidebar" id="appSidebar">
 
   <ul class="menu">
 
@@ -151,6 +152,25 @@
     const serviceMenu = document.querySelector(".service-menu");
     if (serviceMenu && serviceMenu.classList.contains("open")) {
       // already handled via class in EJS
+    }
+
+    // Mobile Sidebar Toggle
+    const mobileToggleBtn = document.getElementById("mobileSidebarToggle");
+    const sidebar = document.getElementById("appSidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+
+    function closeSidebar() {
+      if(sidebar) sidebar.classList.remove("show");
+      if(overlay) overlay.classList.remove("show");
+    }
+
+    if (mobileToggleBtn && sidebar && overlay) {
+      mobileToggleBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("show");
+        overlay.classList.toggle("show");
+      });
+      
+      overlay.addEventListener("click", closeSidebar);
     }
   });
 </script>
