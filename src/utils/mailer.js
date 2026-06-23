@@ -22,7 +22,7 @@ const sendStatusUpdateEmail = async (toEmail, customerName, requestDetails) => {
     try {
         if (!toEmail) {
             console.log("No email provided for customer:", customerName);
-            return { success: false, error: "No email provided for customer" };
+            return { success: true, message: "No email provided for customer" };
         }
 
         const mailOptions = {
