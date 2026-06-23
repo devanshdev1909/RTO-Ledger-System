@@ -175,7 +175,7 @@
 
                         <!-- Charts Section -->
                         <div class="charts-container"
-                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 32px;">
+                            style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 32px;">
                             <!-- Job status pie chart -->
                             <div class="card chart-card"
                                 style="min-height:300px; display: flex; flex-direction: column; align-items: center; justify-content: center; border:2px solid rgb(208, 207, 207);">
@@ -195,6 +195,28 @@
                                 <div
                                     style="width: 100%; max-width: 280px; flex-grow: 1; display: flex; align-items: center; justify-content: center;">
                                     <canvas id="financeChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Requests Over Time Line Chart -->
+                            <div class="card chart-card"
+                                style="min-height:300px; display: flex; flex-direction: column; align-items: center; justify-content: center; border:2px solid rgb(208, 207, 207);">
+                                <h4 style="margin-bottom: 20px; text-align: center; color: var(--text-primary);">
+                                    Requests Over Time</h4>
+                                <div
+                                    style="width: 100%; max-width: 500px; flex-grow: 1; display: flex; align-items: center; justify-content: center;">
+                                    <canvas id="requestsTimeChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Customers Over Time Bar Chart -->
+                            <div class="card chart-card"
+                                style="min-height:300px; display: flex; flex-direction: column; align-items: center; justify-content: center; border:2px solid rgb(208, 207, 207);">
+                                <h4 style="margin-bottom: 20px; text-align: center; color: var(--text-primary);">
+                                    Customer Registrations</h4>
+                                <div
+                                    style="width: 100%; max-width: 500px; flex-grow: 1; display: flex; align-items: center; justify-content: center;">
+                                    <canvas id="customersTimeChart"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -260,6 +282,50 @@
                             labels: { boxWidth: 15 } // Smaller color box
                         }
                     }
+                }
+            });
+
+            // 3. Requests Over Time (Line Chart)
+            const requestsData = <%- chartData.requestsOverTime || '[]' %>;
+            const ctxRequests = document.getElementById('requestsTimeChart').getContext('2d');
+            new Chart(ctxRequests, {
+                type: 'line',
+                data: {
+                    labels: requestsData.map(d => d.month),
+                    datasets: [{
+                        label: 'Requests Generated',
+                        data: requestsData.map(d => parseInt(d.count)),
+                        borderColor: '#1976d2',
+                        backgroundColor: 'rgba(25, 118, 210, 0.2)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'top' } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+
+            // 4. Customers Over Time (Bar Chart)
+            const customersData = <%- chartData.customersOverTime || '[]' %>;
+            const ctxCustomers = document.getElementById('customersTimeChart').getContext('2d');
+            new Chart(ctxCustomers, {
+                type: 'bar',
+                data: {
+                    labels: customersData.map(d => d.month),
+                    datasets: [{
+                        label: 'New Customers',
+                        data: customersData.map(d => parseInt(d.count)),
+                        backgroundColor: '#e65100',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'top' } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
                 }
             });
         });

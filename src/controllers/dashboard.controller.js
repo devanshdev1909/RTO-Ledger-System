@@ -128,6 +128,22 @@ module.exports.renderDashboard = async (req, res) => {
             FROM ledgers
         `);
 
+        const requestsOverTime = await db.query(`
+            SELECT TO_CHAR(created_at, 'DD Mon') as month, COUNT(*) as count
+            FROM service_requests
+            WHERE created_at >= NOW() - INTERVAL '30 days'
+            GROUP BY TO_CHAR(created_at, 'DD Mon'), DATE_TRUNC('day', created_at)
+            ORDER BY DATE_TRUNC('day', created_at) ASC
+        `);
+
+        const customersOverTime = await db.query(`
+            SELECT TO_CHAR(created_at, 'DD Mon') as month, COUNT(*) as count
+            FROM customers
+            WHERE created_at >= NOW() - INTERVAL '30 days'
+            GROUP BY TO_CHAR(created_at, 'DD Mon'), DATE_TRUNC('day', created_at)
+            ORDER BY DATE_TRUNC('day', created_at) ASC
+        `);
+
         res.render("dashboard", {
             activePage: "dashboard",
             userName: req.session.userName || "Admin",
@@ -142,6 +158,10 @@ module.exports.renderDashboard = async (req, res) => {
                 todayRequests: todayRequests.rows[0].total,
                 revenue: revenue.rows[0].total,
                 dueAmount: dueAmount.rows[0].total
+            },
+            chartData: {
+                requestsOverTime: JSON.stringify(requestsOverTime.rows),
+                customersOverTime: JSON.stringify(customersOverTime.rows)
             }
         });
 
