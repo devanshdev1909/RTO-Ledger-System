@@ -38,8 +38,8 @@ exports.postRegister = async (req, res) => {
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    // Generate a random customer code
-    const customerCode = "CUST" + Date.now().toString().slice(-6);
+    // Generate a sequential customer code to match staff additions
+    const customerCode = await Customer.getNextCustomerCode();
 
     // Account is immediately active (is_active = true)
     const customer = await Customer.create(
