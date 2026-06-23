@@ -55,7 +55,7 @@
             <% ledgers.forEach((l, i)=> { %>
             <tr>
               <td>
-                <%= i + 1 %>
+                <%= (currentPage - 1) * 10 + i + 1 %>
               </td>
               <td>
                 <%= l.vehicle_number || "N/A" %>

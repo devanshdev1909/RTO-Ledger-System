@@ -48,7 +48,7 @@
                       <% vehicles.forEach((v, i)=> { %>
                         <tr>
                           <td style="text-align: center;">
-                            <%= i + 1 %>
+                            <%= (currentPage - 1) * 10 + i + 1 %>
                           </td>
                           <td style="text-align: center; white-space: nowrap;"><strong>
                               <%= v.vehicle_number %>
