@@ -1,42 +1,22 @@
 {
   "name": "rto-ledger",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "RTO Ledger System",
+  "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "bcrypt": "^6.0.0",
-    "bcryptjs": "^3.0.3",
-    "connect-flash": "^0.1.1",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "ejs": "^6.0.1",
-    "express": "^5.2.1",
-    "express-session": "^1.19.0",
-    "jsonwebtoken": "^9.0.3",
-    "method-override": "^3.0.0",
-    "nodemailer": "^9.0.1",
-    "passport": "^0.7.0",
-    "passport-local": "^1.0.0",
-    "pg": "^8.21.0",
-    "razorpay": "^2.9.6"
+    "dotenv": "^16.0.0",
+    "ejs": "^3.1.0",
+    "express": "^4.18.0",
+    "express-session": "^1.17.0",
+    "nodemailer": "^6.9.0",
+    "pg": "^8.11.0",
+    "razorpay": "^2.8.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/devanshdev1909/RTO-Ledger-System.git"
-  },
-  "bugs": {
-    "url": "https://github.com/devanshdev1909/RTO-Ledger-System/issues"
-  },
-  "homepage": "https://github.com/devanshdev1909/RTO-Ledger-System#readme"
+    "nodemon": "^3.0.0"
+  }
 }
