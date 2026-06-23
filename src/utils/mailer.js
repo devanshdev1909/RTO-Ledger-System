@@ -22,7 +22,7 @@ const sendStatusUpdateEmail = async (toEmail, customerName, requestDetails) => {
     try {
         if (!toEmail) {
             console.log("No email provided for customer:", customerName);
-            return;
+            return { success: false, error: "No email provided for customer" };
         }
 
         const mailOptions = {
@@ -53,9 +53,10 @@ const sendStatusUpdateEmail = async (toEmail, customerName, requestDetails) => {
 
         const info = await transporter.sendMail(mailOptions);
         console.log(`Email sent successfully to ${toEmail}: ${info.messageId}`);
+        return { success: true, messageId: info.messageId };
     } catch (error) {
         console.error(`Error sending email to ${toEmail}:`, error);
-        // We log the error but don't throw it, so it doesn't break the main application flow
+        return { success: false, error: error.message };
     }
 };
 

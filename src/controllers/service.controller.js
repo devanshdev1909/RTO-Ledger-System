@@ -21,10 +21,12 @@ const sendUpdateNotification = async (id) => {
         if (reqDetailsRes.rows.length > 0) {
             const updatedRequest = reqDetailsRes.rows[0];
             console.log("DEBUG: customer email is:", updatedRequest.customer_email);
-            await mailer.sendStatusUpdateEmail(updatedRequest.customer_email, updatedRequest.customer_name, updatedRequest);
+            return await mailer.sendStatusUpdateEmail(updatedRequest.customer_email, updatedRequest.customer_name, updatedRequest);
         }
+        return { success: false, error: "No request details found" };
     } catch (mailErr) {
         console.error("Failed to send status update email:", mailErr);
+        return { success: false, error: mailErr.message };
     }
 };
 
@@ -459,7 +461,11 @@ const updateRequestStatus = async (req, res) => {
         );
 
         // Send email notification
-        await sendUpdateNotification(id);
+        const emailResult = await sendUpdateNotification(id);
+        
+        if (emailResult && !emailResult.success) {
+            return res.json({ success: false, error: "Status updated but email failed: " + emailResult.error });
+        }
 
         res.json({ success: true, message: "Status updated successfully" });
     } catch (err) {
