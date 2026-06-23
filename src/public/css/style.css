@@ -49,9 +49,9 @@ body::-webkit-scrollbar {
     /* Chrome, Safari, Edge */
 }
 
-/* ── Staff Dashboard: re-enable page scroll ── */
-html.page-dashboard,
-html.page-dashboard body {
+/* ── Pages that need full body scroll (Dashboard, Search) ── */
+html.page-scrollable,
+html.page-scrollable body {
     overflow: auto;
 }
 
