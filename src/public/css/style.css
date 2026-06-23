@@ -107,6 +107,11 @@ body {
     position: sticky;
     top: 0;
     z-index: 10;
+    /* Globally enforced exact height */
+    height: 55px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    vertical-align: middle !important;
 }
 
 
@@ -392,4 +397,28 @@ input:checked+.slider:before {
 .tooltip:hover .tooltiptext {
     visibility: visible;
     opacity: 1;
+}
+
+/* =========================
+   GLOBAL BUTTON HEIGHT
+========================= */
+button,
+.btn-primary,
+.btn-secondary,
+.btn-icon,
+.login-btn,
+.reg-next-btn,
+.reg-submit-btn,
+.btn-back,
+.tab-btn {
+    height: 40px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+/* Prevent icons from stretching */
+.btn-icon svg {
+    margin: auto;
 }
