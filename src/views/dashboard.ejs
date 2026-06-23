@@ -1,5 +1,5 @@
 <%- include("partials/header") %>
-<script>document.documentElement.classList.add('page-scrollable');</script>
+    <script>document.documentElement.classList.add('page-scrollable');</script>
 
     <div class="container">
 
@@ -174,8 +174,7 @@
                         </div>
 
                         <!-- Charts Section -->
-                        <div class="charts-container"
-                            style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 32px;">
+                        <div class="charts-container">
                             <!-- Job status pie chart -->
                             <div class="card chart-card"
                                 style="min-height:300px; display: flex; flex-direction: column; align-items: center; justify-content: center; border:2px solid rgb(208, 207, 207);">
@@ -225,6 +224,11 @@
 
             </div>
 
+    </div>
+
+    <!-- Hidden div to safely pass backend data to frontend without formatter breaking it -->
+    <div id="chart-data-store" style="display:none;" data-requests="<%= chartData.requestsOverTime || '[]' %>"
+        data-customers="<%= chartData.customersOverTime || '[]' %>">
     </div>
 
     <!-- Ye line internet se Chart.js library fetch karegi, isliye npm install ki zaroorat nahi hai -->
@@ -286,7 +290,8 @@
             });
 
             // 3. Requests Over Time (Line Chart)
-            const requestsData = <%- chartData.requestsOverTime || '[]' %>;
+            const dataStore = document.getElementById('chart-data-store');
+            const requestsData = JSON.parse(dataStore.getAttribute('data-requests') || '[]');
             const ctxRequests = document.getElementById('requestsTimeChart').getContext('2d');
             new Chart(ctxRequests, {
                 type: 'line',
@@ -309,7 +314,7 @@
             });
 
             // 4. Customers Over Time (Bar Chart)
-            const customersData = <%- chartData.customersOverTime || '[]' %>;
+            const customersData = JSON.parse(dataStore.getAttribute('data-customers') || '[]');
             const ctxCustomers = document.getElementById('customersTimeChart').getContext('2d');
             new Chart(ctxCustomers, {
                 type: 'bar',
