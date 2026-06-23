@@ -117,33 +117,7 @@ body {
 }
 
 
-<<<<<<< HEAD
-=======
 
-.footer {
-    background: #ffffff;
-    border-top: 1px solid #e2e8f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px 20px;
-    height: 44px;
-    width: 100%;
-    text-align: center;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 20;
-}
-
-.footer p {
-    margin: 0;
-    color: #475569;
-    font-size: 0.95rem;
-}
-
->>>>>>> b3a2d263ad3adf9ebf134e28f457f5e2dc0dfadd
 .menu li.active {
     background-color: #2563eb;
     border-radius: 6px;
