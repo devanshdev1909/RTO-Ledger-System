@@ -117,9 +117,6 @@ body {
 }
 
 
-<<<<<<< HEAD
-=======
-
 .footer {
     background: #ffffff;
     border-top: 1px solid #e2e8f0;
@@ -142,8 +139,6 @@ body {
     color: #475569;
     font-size: 0.95rem;
 }
-
->>>>>>> b3a2d263ad3adf9ebf134e28f457f5e2dc0dfadd
 .menu li.active {
     background-color: #2563eb;
     border-radius: 6px;
