@@ -49,6 +49,12 @@ body::-webkit-scrollbar {
     /* Chrome, Safari, Edge */
 }
 
+/* ── Staff Dashboard: re-enable page scroll ── */
+html.page-dashboard,
+html.page-dashboard body {
+    overflow: auto;
+}
+
 body {
     font-family: Arial, sans-serif;
     display: block;
