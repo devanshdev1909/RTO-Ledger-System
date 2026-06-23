@@ -461,6 +461,8 @@ button,
     .modal-box, .modal-content {
         width: 95% !important;
         margin: 10px auto !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
     }
 
     /* Global Form Grids */
@@ -471,6 +473,13 @@ button,
 
     /* Padding adjustments */
     .dashboard-content, .content {
-        padding: 15px !important;
+        padding: 10px !important;
+        padding-bottom: 5px !important;
+    }
+    
+    .table-container {
+        max-height: none !important;
+        overflow-y: visible !important;
+        margin-bottom: 0 !important;
     }
 }
