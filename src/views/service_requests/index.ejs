@@ -395,7 +395,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         try {
-          const response = await fetch('/api/payments/create-order', {
+          const response = await fetch('/payments/create-order', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ amount: amount })
