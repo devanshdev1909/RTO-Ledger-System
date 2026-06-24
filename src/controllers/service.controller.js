@@ -22,9 +22,12 @@ const sendUpdateNotification = async (id) => {
             const updatedRequest = reqDetailsRes.rows[0];
             console.log("DEBUG: customer email is:", updatedRequest.customer_email);
             await mailer.sendStatusUpdateEmail(updatedRequest.customer_email, updatedRequest.customer_name, updatedRequest);
+            return { success: true };
         }
+        return { success: true };
     } catch (mailErr) {
         console.error("Failed to send status update email:", mailErr);
+        return { success: false, error: mailErr.message };
     }
 };
 
@@ -407,8 +410,13 @@ const updateRequest = async (req, res) => {
 
         await db.query('COMMIT');
 
-        // Send email notification without blocking the response
-        sendUpdateNotification(id).catch(console.error);
+        // Send email notification and handle failure
+        const emailResult = await sendUpdateNotification(id);
+        if (emailResult && !emailResult.success) {
+            req.flash("error", "Status updated but email failed: " + emailResult.error);
+        } else {
+            req.flash("success", "Status updated successfully.");
+        }
 
         res.redirect("/services/requests");
     } catch (err) {
@@ -458,8 +466,16 @@ const updateRequestStatus = async (req, res) => {
             [status, id]
         );
 
-        // Send email notification without blocking the response
-        sendUpdateNotification(id).catch(console.error);
+        // Send email notification and capture result
+        const emailResult = await sendUpdateNotification(id);
+        
+        if (emailResult && !emailResult.success) {
+            return res.json({ 
+                success: false, 
+                error: "status updated but email failed : " + emailResult.error,
+                partialSuccess: true // flag to inform frontend not to revert
+            });
+        }
 
         res.json({ success: true, message: "Status updated successfully" });
     } catch (err) {

@@ -51,9 +51,10 @@ const sendStatusUpdateEmail = async (toEmail, customerName, requestDetails) => {
 
         const info = await transporter.sendMail(mailOptions);
         console.log(`Email sent successfully to ${toEmail}: ${info.messageId}`);
+        return { success: true };
     } catch (error) {
         console.error(`Error sending email to ${toEmail}:`, error);
-        // We log the error but don't throw it, so it doesn't break the main application flow
+        throw error;
     }
 };
 

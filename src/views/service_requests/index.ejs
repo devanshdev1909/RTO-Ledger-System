@@ -176,8 +176,13 @@
             const result = await response.json();
             if (!result.success) {
               alert("Error updating status: " + result.error);
-              e.target.value = previousStatus;
-              updateSelectColor(e.target, previousStatus);
+              if (!result.partialSuccess) {
+                e.target.value = previousStatus;
+                updateSelectColor(e.target, previousStatus);
+              } else {
+                e.target.setAttribute("data-prev", newStatus);
+                updateSelectColor(e.target, newStatus);
+              }
             } else {
               // Keep track of the current status
               e.target.setAttribute("data-prev", newStatus);
