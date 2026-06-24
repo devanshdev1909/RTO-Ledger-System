@@ -407,8 +407,8 @@ const updateRequest = async (req, res) => {
 
         await db.query('COMMIT');
 
-        // Send email notification
-        await sendUpdateNotification(id);
+        // Send email notification without blocking the response
+        sendUpdateNotification(id).catch(console.error);
 
         res.redirect("/services/requests");
     } catch (err) {
@@ -458,8 +458,8 @@ const updateRequestStatus = async (req, res) => {
             [status, id]
         );
 
-        // Send email notification
-        await sendUpdateNotification(id);
+        // Send email notification without blocking the response
+        sendUpdateNotification(id).catch(console.error);
 
         res.json({ success: true, message: "Status updated successfully" });
     } catch (err) {
