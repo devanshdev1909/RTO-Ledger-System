@@ -1,5 +1,5 @@
 <%- include("../partials/header") %>
-
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <div class="container">
 
   <%- include("../partials/sidebar") %>
@@ -267,6 +267,15 @@
         </select>
       </div>
 
+      <div class="form-group" style="margin-top: 15px;" id="paymentMethodGroup">
+        <label>Payment Method (New Requests Only)</label>
+        <select id="req_payment_method" name="payment_method">
+          <option value="Pay Later">Pay Later (Unpaid)</option>
+          <option value="Cash">Cash (Paid)</option>
+          <option value="Razorpay">Razorpay (Online)</option>
+        </select>
+      </div>
+
       <div class="form-group">
         <label>Remarks</label>
         <textarea id="req_remarks" name="remarks" rows="3"></textarea>
@@ -286,6 +295,7 @@
     document.getElementById('reqModalTitle').innerText = 'New Service Request';
     document.getElementById('reqForm').action = '/services/requests';
     document.getElementById('reqMethodOverride').disabled = true;
+    document.getElementById('paymentMethodGroup').style.display = 'block';
     document.getElementById('reqForm').reset();
   }
 
@@ -294,6 +304,7 @@ function openEditReqModal(id, customerId, vehicleId, serviceId, amount, status, 
 
     document.getElementById('reqModalTitle').innerText = 'Edit Service Request';
     document.getElementById('reqForm').action = '/services/requests/' + id + '?_method=PUT';
+    document.getElementById('paymentMethodGroup').style.display = 'none';
 
     document.getElementById('req_customer').value = customerId;
     populateVehicles(customerId, vehicleId);
@@ -359,13 +370,88 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
-window.addEventListener('click', function(e) {
+  window.addEventListener('click', function(e) {
     const modal = document.getElementById('requestModal');
 
     if (e.target === modal) {
       modal.style.display = 'none';
     }
   });
+
+  const reqForm = document.getElementById('reqForm');
+  if (reqForm) {
+    reqForm.addEventListener('submit', async function(e) {
+      if (document.getElementById('reqMethodOverride').disabled === false) return; // Editing, let it submit normally
+
+      const paymentMethod = document.getElementById('req_payment_method').value;
+      if (paymentMethod === 'Razorpay') {
+        e.preventDefault();
+        
+        const amount = document.getElementById('req_amount').value;
+        if (!amount || amount <= 0) {
+          if (typeof showToast === 'function') showToast("Amount must be greater than 0 for Razorpay", "error");
+          else alert("Amount must be greater than 0 for Razorpay");
+          return;
+        }
+
+        try {
+          const response = await fetch('/api/payments/create-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: amount })
+          });
+          const data = await response.json();
+          
+          if (!data.success) {
+            if (typeof showToast === 'function') showToast('Failed to create Razorpay order: ' + data.message, "error");
+            else alert('Failed to create Razorpay order: ' + data.message);
+            return;
+          }
+
+          const options = {
+            "key": data.key_id,
+            "amount": data.amount,
+            "currency": "INR",
+            "name": "RTO Ledger System",
+            "description": "Service Request Payment",
+            "order_id": data.order_id,
+            "handler": function(response) {
+              // Append to form
+              const rOrderId = document.createElement('input');
+              rOrderId.type = 'hidden';
+              rOrderId.name = 'razorpay_order_id';
+              rOrderId.value = response.razorpay_order_id;
+              reqForm.appendChild(rOrderId);
+
+              const rPaymentId = document.createElement('input');
+              rPaymentId.type = 'hidden';
+              rPaymentId.name = 'razorpay_payment_id';
+              rPaymentId.value = response.razorpay_payment_id;
+              reqForm.appendChild(rPaymentId);
+
+              const rSignature = document.createElement('input');
+              rSignature.type = 'hidden';
+              rSignature.name = 'razorpay_signature';
+              rSignature.value = response.razorpay_signature;
+              reqForm.appendChild(rSignature);
+
+              reqForm.submit();
+            },
+            "prefill": {
+              "name": "Staff/Customer Payment"
+            },
+            "theme": { "color": "#203051" }
+          };
+
+          const rzp = new Razorpay(options);
+          rzp.open();
+        } catch (err) {
+          if (typeof showToast === 'function') showToast('Network error initializing payment', "error");
+          else alert('Network error initializing payment');
+        }
+      }
+    });
+  }
 
 </script>
 

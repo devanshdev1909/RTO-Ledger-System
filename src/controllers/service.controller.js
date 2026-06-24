@@ -219,6 +219,8 @@ const showNewRequestForm = async (req, res) => {
 };
 
 // CREATE SERVICE REQUEST
+const crypto = require('crypto');
+
 const createRequest = async (req, res) => {
     const client = await db.connect();
     try {
@@ -228,7 +230,11 @@ const createRequest = async (req, res) => {
             service_id,
             amount,
             status,
-            remarks
+            remarks,
+            payment_method,
+            razorpay_order_id,
+            razorpay_payment_id,
+            razorpay_signature
         } = req.body;
 
         // Block duplicate: same vehicle + same service still active
@@ -239,30 +245,88 @@ const createRequest = async (req, res) => {
             );
         }
 
+        let isPaid = false;
+        let paymentMode = 'Cash';
+
+        if (payment_method === 'Razorpay') {
+            if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+                return res.status(400).send("Missing Razorpay payment details.");
+            }
+            const expectedSignature = crypto
+                .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+                .update(razorpay_order_id + '|' + razorpay_payment_id)
+                .digest('hex');
+
+            if (expectedSignature !== razorpay_signature) {
+                return res.status(400).send("Payment signature verification failed.");
+            }
+            isPaid = true;
+            paymentMode = 'Razorpay';
+        } else if (payment_method === 'Cash') {
+            isPaid = true;
+            paymentMode = 'Cash';
+        }
+
         await client.query('BEGIN');
 
         // 1. Create Service Request
         const requestNo = 'REQ' + Date.now();
+        const fullRemarks = (payment_method === 'Razorpay' ? `Paid via Razorpay (${razorpay_payment_id}) | ` : '') + (remarks || '');
         const srResult = await client.query(
             `INSERT INTO service_requests (request_no, customer_id, vehicle_id, service_id, amount, status, remarks)
              VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
-            [requestNo, customer_id, vehicle_id || null, service_id, amount, status || 'Pending', remarks]
+            [requestNo, customer_id, vehicle_id || null, service_id, amount, status || 'Pending', fullRemarks]
         );
         const serviceRequestId = srResult.rows[0].id;
 
-        // 2. Create Ledger entry (Unpaid — payment collected later via Receipts)
+        // 2. Create Ledger entry
         const parsedAmount = parseFloat(amount) || 0;
-        await Ledger.create(
+        const amountPaid = isPaid ? parsedAmount : 0;
+        const ledgerStatus = isPaid ? 'Paid' : 'Unpaid';
+        
+        const ledgerResult = await Ledger.create(
             customer_id,
             vehicle_id || null,
             serviceRequestId,
             parsedAmount,   // service_fee
-            0,              // amount_paid: 0 initially (not yet collected)
-            'Unpaid',
+            amountPaid,     // amount_paid
+            ledgerStatus,
             client
         );
 
+        // 3. Generate Receipt if Paid
+        let receiptNoForEmail = null;
+        if (isPaid && parsedAmount > 0) {
+            const receiptNo = await Receipt.getNextReceiptNo(client);
+            receiptNoForEmail = receiptNo;
+            await Receipt.create(
+                receiptNo,
+                ledgerResult.id,
+                customer_id,
+                parsedAmount,
+                paymentMode,
+                '',
+                req.session.userId || null,
+                client
+            );
+        }
+
         await client.query('COMMIT');
+
+        // 4. Send Receipt Email (Fire and forget)
+        if (isPaid && parsedAmount > 0 && receiptNoForEmail) {
+            const customerRes = await db.query('SELECT email, name FROM customers WHERE id = $1', [customer_id]);
+            if (customerRes.rows.length > 0 && customerRes.rows[0].email) {
+                const receiptDetails = {
+                    receipt_no: receiptNoForEmail,
+                    amount: parsedAmount,
+                    payment_mode: paymentMode,
+                    remarks: ''
+                };
+                require("../utils/mailer").sendReceiptEmail(customerRes.rows[0].email, customerRes.rows[0].name, receiptDetails)
+                    .catch(e => console.error("Receipt email failed:", e));
+            }
+        }
 
         res.redirect('/services/requests');
 

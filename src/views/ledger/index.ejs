@@ -8,10 +8,6 @@
 
       <div class="page-header">
         <h1>Ledger</h1>
-        <% if (permissions.includes('ledger.create')) { %>
-        <button type="button" class="btn btn-primary" onclick="openCreateModal()">+ New
-          Entry</button>
-        <% } %>
       </div>
 
       <div class="table-container">
@@ -118,19 +114,7 @@
     <h2 id="modalTitle" style="margin: 0 0 20px 0;">New Ledger Entry</h2>
 
     <form id="myForm" action="/ledger" method="POST">
-      <input type="hidden" id="methodOverride" name="_method" value="PUT" disabled>
-
-      <div id="sr_dropdown_container" class="form-group">
-        <label for="service_request_id">Select Service Request <span style="color:red">*</span></label>
-        <select name="service_request_id" id="service_request_id" onchange="onServiceRequestChange(this)">
-          <option value="">-- Choose a Service Request --</option>
-          <% requests.forEach(r=> { %>
-          <option value="<%= r.id %>" data-customer-id="<%= r.customer_id %>" data-customer-name="<%= r.customer_name %>" data-vehicle-id="<%= r.vehicle_id %>" data-vehicle-number="<%= r.vehicle_number || 'No Vehicle' %>" data-amount="<%= r.amount %>" data-service-name="<%= r.service_name %>">
-            <%= r.request_no %> - <%= r.customer_name %> (<%= r.service_name %>)
-          </option>
-          <% }) %>
-        </select>
-      </div>
+      <input type="hidden" id="methodOverride" name="_method" value="PUT">
 
       <input type="hidden" name="customer_id" id="customer_id">
       <input type="hidden" name="vehicle_id" id="vehicle_id">
@@ -196,29 +180,6 @@
   </div>
 </div>
 <script>
-  function onServiceRequestChange(selectElement) {
-    const selectedOption = selectElement.options[selectElement.selectedIndex];
-    if (selectElement.value) {
-      document.getElementById("customer_id").value = selectedOption.dataset.customerId;
-      document.getElementById("customer_name_view").value = selectedOption.dataset.customerName;
-      document.getElementById("vehicle_id").value = selectedOption.dataset.vehicleId || "";
-      document.getElementById("vehicle_number_view").value = selectedOption.dataset.vehicleNumber;
-      document.getElementById("service_name_view").value = selectedOption.dataset.serviceName;
-      const amount = parseFloat(selectedOption.dataset.amount) || 0;
-      document.getElementById("service_fee").value = amount;
-      document.getElementById("service_fee_view").value = "₹ " + amount.toLocaleString("en-IN");
-    } else {
-      document.getElementById("customer_id").value = "";
-      document.getElementById("customer_name_view").value = "";
-      document.getElementById("vehicle_id").value = "";
-      document.getElementById("vehicle_number_view").value = "";
-      document.getElementById("service_name_view").value = "";
-      document.getElementById("service_fee").value = "";
-      document.getElementById("service_fee_view").value = "";
-    }
-    calcDue();
-  }
-
   function calcDue() {
     const fee = parseFloat(document.getElementById("service_fee").value) || 0;
     const paidInput = document.getElementById("amount_paid");
@@ -243,29 +204,9 @@
     }
   }
 
-  function openCreateModal() {
-    document.getElementById('modalTitle').textContent = "New Ledger Entry";
-    document.getElementById('myForm').action = "/ledger";
-    document.getElementById('methodOverride').disabled = true;
-
-    // Show dropdown for new entry
-    document.getElementById('sr_dropdown_container').style.display = 'block';
-    document.getElementById('service_request_id').required = true;
-    document.getElementById('service_request_id').value = "";
-    onServiceRequestChange(document.getElementById('service_request_id'));
-
-    document.getElementById('payment_mode').value = "UPI";
-    document.getElementById('myCustomModal').style.display = 'block';
-  }
-
   function openEditModal(id, customer_name, vehicle_number, service_name, service_fee, amount_paid) {
     document.getElementById('modalTitle').textContent = "Update Ledger Entry";
     document.getElementById('myForm').action = "/ledger/" + id + "?_method=PUT";
-    document.getElementById('methodOverride').disabled = false;
-
-    // Hide dropdown for editing
-    document.getElementById('sr_dropdown_container').style.display = 'none';
-    document.getElementById('service_request_id').required = false;
 
     document.getElementById('customer_name_view').value = customer_name;
     document.getElementById('vehicle_number_view').value = vehicle_number || 'No Vehicle';
